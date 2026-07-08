@@ -1,0 +1,67 @@
+name: 更新 A500 温度计
+
+on:
+  schedule:
+    # 每天北京时间 09:30 执行（UTC 01:30）
+    - cron: '30 1 * * *'
+  # 支持手动触发（GitHub 网页上点按钮就能跑）
+  workflow_dispatch:
+
+# 允许写入 repo + 部署 Pages
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 安装依赖
+        run: |
+          pip install akshare numpy pandas requests
+
+      - name: 运行温度计脚本
+        run: python fetch_a500_data.py
+        env:
+          NO_PROXY: '*'
+
+      - name: 准备 GitHub Pages 文件
+        run: |
+          # 温度计脚本产出 a500_dashboard.html，Pages 需要 index.html
+          cp a500_dashboard.html index.html
+          mkdir -p _site
+          cp index.html _site/
+
+      - name: 提交更新后的 PE 历史数据
+        run: |
+          git config user.name 'a500-bot'
+          git config user.email 'a500-bot@users.noreply.github.com'
+          git add pe_history.json
+          # 如果有变更就提交，没有变更就跳过
+          git diff --staged --quiet || git commit -m "📊 更新 PE 历史 $(date +'%Y-%m-%d')"
+          git push
+
+      - name: 部署到 GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
+          publish_branch: gh-pages
+          keep_files: false
