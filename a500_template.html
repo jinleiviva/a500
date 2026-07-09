@@ -85,6 +85,17 @@ body{
 .loading{text-align:center;padding:60px 0;color:#999}
 .loading .sp{width:24px;height:24px;margin:0 auto 8px;border:3px solid #eee;border-top-color:#e74c3c;border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Info buttons & modal ── */
+.info-btn{display:inline-block;width:16px;height:16px;line-height:16px;border-radius:50%;background:#ddd;color:#fff;font-size:10px;font-weight:700;text-align:center;cursor:pointer;vertical-align:middle;margin-left:3px;user-select:none}
+.info-btn:hover{background:#bbb}
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.35);z-index:999;justify-content:center;align-items:center}
+.modal-overlay.show{display:flex}
+.modal-box{background:#fff;border-radius:14px;padding:20px 18px;max-width:340px;width:88%;box-shadow:0 4px 24px rgba(0,0,0,0.15);position:relative}
+.modal-box .close{position:absolute;top:10px;right:14px;font-size:20px;color:#ccc;cursor:pointer;line-height:1}
+.modal-box .close:hover{color:#888}
+.modal-box .title{font-size:15px;font-weight:700;margin-bottom:8px}
+.modal-box .body{font-size:13px;color:#555;line-height:1.7}
 </style>
 </head>
 <body>
@@ -100,7 +111,7 @@ body{
     </div>
 
     <!-- Temperature -->
-    <div class="temp-wrap">
+    <div class="temp-wrap" style="position:relative">
       <div class="temp-ring">
         <svg viewBox="0 0 160 160">
           <circle class="bg" cx="80" cy="80" r="68"/>
@@ -109,6 +120,7 @@ body{
         <div class="num" id="tempNum">--</div>
         <div class="lbl" id="tempLbl">--</div>
       </div>
+      <span class="info-btn" onclick="showInfo('temp')" style="position:absolute;top:-2px;right:-2px">?</span>
     </div>
 
     <!-- Advice -->
@@ -122,23 +134,23 @@ body{
         <div class="g-sub" id="priceChg" style="color:#e74c3c">--</div>
       </div>
       <div class="g-cell">
-        <div class="g-lbl">回本年限（PE）</div>
+        <div class="g-lbl">回本年限（PE）<span class="info-btn" onclick="showInfo('pe')">?</span></div>
         <div class="g-val" id="peVal">--</div>
         <div class="g-sub" id="peRank" style="color:#e74c3c">贵不贵：--</div>
       </div>
       <div class="g-cell">
-        <div class="g-lbl">买股票的年回报</div>
+        <div class="g-lbl">盈利收益率<span class="info-btn" onclick="showInfo('stockYield')">?</span></div>
         <div class="g-val" id="stockVal" style="color:#27ae60">--</div>
       </div>
       <div class="g-cell">
-        <div class="g-lbl">买国债的年利息</div>
+        <div class="g-lbl">10年国债利率<span class="info-btn" onclick="showInfo('bondYield')">?</span></div>
         <div class="g-val" id="bondVal" style="color:#999">--</div>
       </div>
     </div>
 
     <!-- Compare: stock vs bond -->
     <div class="comp">
-      <div class="c-title">股票 vs 国债</div>
+      <div class="c-title">股票 vs 国债 <span class="info-btn" onclick="showInfo('premium')" style="width:14px;height:14px;line-height:14px">?</span></div>
       <div class="c-val" id="compVal" style="color:#27ae60">--</div>
     </div>
 
@@ -151,8 +163,8 @@ body{
       <div class="price" id="rtPrice">--</div>
       <div class="chg" id="rtChg">--</div>
       <div class="meta">
-        <div class="it"><div class="lab">估算回本</div><div class="num" id="rtPe">--</div></div>
-        <div class="it"><div class="lab">估算温度</div><div class="num" id="rtTemp">--°C</div></div>
+        <div class="it"><div class="lab">估算回本 <span class="info-btn" onclick="showInfo('rtPe')" style="width:13px;height:13px;line-height:13px;font-size:9px">?</span></div><div class="num" id="rtPe">--</div></div>
+        <div class="it"><div class="lab">估算温度 <span class="info-btn" onclick="showInfo('rtTemp')" style="width:13px;height:13px;line-height:13px;font-size:9px">?</span></div><div class="num" id="rtTemp">--°C</div></div>
       </div>
       <div class="foot"><span id="rtTime"></span><span id="rtCD"></span></div>
       <div class="err" id="rtErr"></div>
@@ -287,6 +299,47 @@ body{
   setTimeout(render,300);
 })();
 
+/* ── Info text ── */
+var INFO = {
+  temp: {
+    title: '温度是什么意思？',
+    body: '温度是把当前价格和历史价格做对比，再加上当前股票的贵不贵程度（PE分位），综合算出来的一个参考值。0°C最冷（便宜），100°C最热（贵）。<br><br>⚠️ 温度只是一个参考，不代表一定会涨或跌。温度高不代表马上跌，温度低也不代表马上涨。'
+  },
+  pe: {
+    title: '回本年限（PE）是什么？',
+    body: '回本年限 = A500的总市值 ÷ 500家公司的年总利润。<br><br>比如现在回本年限是16.6年，意思是如果这些公司每年赚的钱不变，16.6年才能赚回你的本金。<br><br>⚠️ 公司的利润每年会变，这个数字只是当前估值水平，不代表真的要16年才能回本。'
+  },
+  stockYield: {
+    title: '盈利收益率是什么？',
+    body: '盈利收益率 = 1 ÷ PE。<br><br>比如PE=16.6，盈利收益率≈6%。意思是：假设A500里的公司每年赚6块钱利润（每100块投入），全部拿出来分给你。<br><br>⚠️ 这只是个理论值，不代表你实际能赚6%。公司利润会波动，也不全部分红。它的主要用途是和国债利率对比，看股票相对债券划不划算。'
+  },
+  bondYield: {
+    title: '10年国债利率是什么？',
+    body: '中国政府发行的10年期债券的年利率。可以近似理解为"无风险收益"——你什么都不用做，买国债每年稳拿这个利息。<br><br>当前是1.74%，这个数字一直在变。如果它涨了，说明钱存银行/买债券更划算；跌了，说明股票相对更有吸引力。'
+  },
+  premium: {
+    title: '股票 vs 国债比什么？',
+    body: '把"盈利收益率"和"10年国债利率"做对比：<br><br>✅ 差额 > 3% → 股票比债券多赚不少，买股票更划算<br>🟡 差额 1.5-3% → 还可以<br>🟠 差额 0-1.5% → 吸引力一般<br>🔴 差额 < 0 → 国债比股票还划算，买债券更好<br><br>这个对比是机构做大类资产配置的重要参考，叫"股债性价比（ERP）"。'
+  },
+  rtPe: {
+    title: '估算回本是什么？',
+    body: '盘中实时估算的PE（回本年限）。<br><br>因为PE只在收盘后才更新，盘中我们用"实时价格÷昨收×昨日PE"来估算当前的回本年限。和收盘后的准确PE可能有偏差。'
+  },
+  rtTemp: {
+    title: '估算温度是什么？',
+    body: '盘中实时估算的温度。<br><br>用估算的PE和历史上的PE数据做对比，算出当前温度。和收盘后的准确温度可能有偏差，仅供盘中参考。'
+  }
+};
+function showInfo(key){
+  var i=INFO[key];if(!i)return;
+  document.getElementById('infoTitle').innerHTML=i.title;
+  document.getElementById('infoBody').innerHTML=i.body;
+  document.getElementById('infoModal').className='modal-overlay show';
+}
+function hideInfo(){
+  document.getElementById('infoModal').className='modal-overlay';
+}
+
 // ── Real-time ──
 (function(){
   var c=document.getElementById('rtCard'),dt=document.getElementById('rtDot'),
@@ -355,5 +408,14 @@ body{
   },500);
 })();
 </script>
+<!-- Info modal -->
+<div class="modal-overlay" id="infoModal" onclick="if(event.target===this)hideInfo()">
+  <div class="modal-box">
+    <span class="close" onclick="hideInfo()">×</span>
+    <div class="title" id="infoTitle"></div>
+    <div class="body" id="infoBody"></div>
+  </div>
+</div>
+
 </body>
 </html>
