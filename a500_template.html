@@ -88,22 +88,32 @@ body{
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── Reference guide ── */
-.ref{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,0.03);margin-bottom:8px;overflow:hidden}
-.ref summary{font-size:13px;font-weight:600;padding:12px;cursor:pointer;color:#666;user-select:none}
-.ref summary::-webkit-details-marker{color:#ccc}
-.ref-body{padding:0 12px 12px;font-size:12px;line-height:1.6;color:#555}
-.r-sec{margin-top:10px;padding-top:10px;border-top:1px solid #f0f0f0}
-.r-sec:first-child{margin-top:0;padding-top:0;border-top:0}
-.r-h{font-weight:600;font-size:13px;color:#333;margin-bottom:4px}
-.r-sec p{margin:2px 0}
-.r-sec table{width:100%;border-collapse:collapse;margin:2px 0}
-.r-sec td{padding:2px 6px;border-bottom:1px solid #f5f5f5}
-.r-sec td:first-child{font-weight:600;width:80px}
-.r-sec .g{color:#27ae60}
-.r-sec .y{color:#e67e22}
-.r-sec .r{color:#e74c3c}
-.r-rel{padding-left:16px;margin:4px 0}
-.r-rel li{margin:2px 0}
+.ref{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,0.03);margin-bottom:8px;overflow:hidden;font-size:13px}
+.ref summary{padding:14px 14px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px;color:#555;font-weight:600;font-size:13px;background:#fafbfc;border-bottom:1px solid transparent}
+.ref[open] summary{border-bottom-color:#f0f0f0}
+.ref summary::before{content:"▶";font-size:10px;transition:transform .2s;color:#bbb}
+.ref[open] summary::before{content:"▶";transform:rotate(90deg)}
+.ref summary::-webkit-details-marker{display:none}
+.ref-body{padding:4px 14px 14px}
+.r-grp{padding:10px 0;border-bottom:1px solid #f0f0f0}
+.r-grp:last-child{border-bottom:0}
+.r-h{font-weight:700;font-size:13px;color:#333;margin-bottom:6px}
+.r-tbl{width:100%;border-collapse:collapse;margin:4px 0}
+.r-tbl td{padding:5px 8px;font-size:12px;line-height:1.4}
+.r-tbl tr:nth-child(odd) td{background:#f8f9fa;border-radius:4px}
+.r-tbl tr:first-child td{border-radius:4px 4px 0 0}
+.r-tbl tr:last-child td{border-radius:0 0 4px 4px}
+.r-tbl td:first-child{font-weight:600;width:90px;white-space:nowrap}
+.r-tbl td:last-child{text-align:right}
+.r-tbl .g{color:#1e8449;font-weight:600}
+.r-tbl .y{color:#d35400;font-weight:600}
+.r-tbl .r{color:#c0392b;font-weight:600}
+.r-lbl{color:#666;margin:2px 0;font-size:12px;line-height:1.6}
+.r-lbl b{color:#222;font-weight:700}
+.r-lbl .cur{display:inline-block;background:#eaf2f8;color:#2980b9;padding:1px 8px;border-radius:4px;font-weight:700;font-size:13px}
+.r-rel{padding:0;margin:4px 0;list-style:none}
+.r-rel li{padding:5px 8px;margin:3px 0;background:#f8f9fa;border-radius:6px;font-size:12px;line-height:1.5;color:#555}
+.r-rel li b{color:#333}
 
 /* ── Info buttons & modal ── */
 .info-btn{display:inline-block;width:16px;height:16px;line-height:16px;border-radius:50%;background:#ddd;color:#fff;font-size:10px;font-weight:700;text-align:center;cursor:pointer;vertical-align:middle;margin-left:3px;user-select:none}
@@ -322,7 +332,8 @@ body{
     document.getElementById('content').style.display='block';
 
     // ── Reference guide: fill current values ──
-    var sy=document.getElementById('refStockYield');if(sy)sy.textContent=d.stockYield+'%';
+    var s1=document.getElementById('refStockYield');if(s1)s1.textContent=d.pe+' 年';
+    var s2=document.getElementById('refStockYield2');if(s2)s2.textContent=d.stockYield+'%';
     var by=document.getElementById('refBondYield');if(by)by.textContent=d.bondYield+'%';
     var dy=document.getElementById('refDivYield');if(dy)dy.textContent=d.dividendYield>0?d.dividendYield+'%':'--';
     var rp=document.getElementById('refPremium');
@@ -466,62 +477,73 @@ function hideInfo(){
 <details class="ref">
   <summary>📖 指标参考指南</summary>
   <div class="ref-body">
-    <div class="r-sec">
-      <div class="r-h">🌡️ 温度怎么看？</div>
-      <table>
+
+    <div class="r-grp">
+      <div class="r-h">🌡️ 温度</div>
+      <table class="r-tbl">
         <tr><td>❄️ &lt; 30°C</td><td>偏冷</td><td class="g">可以买入</td></tr>
-        <tr><td>🌤️ 30-60°C</td><td>适中</td><td>持有不动</td></tr>
-        <tr><td>🌡️ 60-80°C</td><td>偏暖</td><td class="y">关注，可减仓</td></tr>
+        <tr><td>🌤️ 30–60°C</td><td>适中</td><td>持有不动</td></tr>
+        <tr><td>🌡️ 60–80°C</td><td>偏暖</td><td class="y">关注，可减仓</td></tr>
         <tr><td>🔥 &gt; 80°C</td><td>过热</td><td class="r">停止买入</td></tr>
       </table>
     </div>
-    <div class="r-sec">
-      <div class="r-h">💰 回本年限（PE）多贵算贵？</div>
-      <table>
+
+    <div class="r-grp">
+      <div class="r-h">💰 回本年限（PE）</div>
+      <table class="r-tbl">
         <tr><td>&lt; 13 年</td><td>便宜</td><td class="g">可买入</td></tr>
-        <tr><td>13-15 年</td><td>合理</td><td>持有</td></tr>
+        <tr><td>13–15 年</td><td>合理</td><td>持有不动</td></tr>
         <tr><td>&gt; 15 年</td><td>偏贵</td><td class="y">谨慎</td></tr>
         <tr><td>&gt; 17 年</td><td>很贵</td><td class="r">避免买入</td></tr>
       </table>
+      <div class="r-lbl">当前 <span class="cur" id="refStockYield">--</span></div>
     </div>
-    <div class="r-sec">
-      <div class="r-h">📊 盈利收益率（1/PE）</div>
-      <p>假设500家公司利润不变且全部分红，你每年能拿回投入的百分之多少。<br>当前 <b id="refStockYield">--</b>。这个数字主要用来和国债利率对比。</p>
+
+    <div class="r-grp">
+      <div class="r-h">📊 盈利收益率（1÷PE）</div>
+      <div class="r-lbl">假设500家公司利润不变且全部分红，你每年能拿回投入的百分比。主要用来和国债利率对比。</div>
+      <div class="r-lbl">当前 <span class="cur" id="refStockYield2">--</span></div>
     </div>
-    <div class="r-sec">
+
+    <div class="r-grp">
       <div class="r-h">🏦 10年国债利率</div>
-      <p>中国政府债券的年利率，近似"无风险收益"基准。<br>当前 <b id="refBondYield">--</b>。越低，股票的相对吸引力越高。</p>
+      <div class="r-lbl">中国政府债券的年利率，近似"无风险收益"基准。它越低，股票的相对吸引力越高。</div>
+      <div class="r-lbl">当前 <span class="cur" id="refBondYield">--</span></div>
     </div>
-    <div class="r-sec">
+
+    <div class="r-grp">
       <div class="r-h">💜 股息率</div>
-      <table>
+      <table class="r-tbl">
         <tr><td>&gt; 3%</td><td>分红不错，有安全垫</td></tr>
-        <tr><td>2-3%</td><td>中等，一般</td></tr>
+        <tr><td>2–3%</td><td>中等，一般</td></tr>
         <tr><td>&lt; 2%</td><td>偏低，分红吸引力不足</td></tr>
       </table>
-      <p>当前 <b id="refDivYield">--</b>。即使股价不涨，每年也有现金分红进账。</p>
+      <div class="r-lbl">当前 <span class="cur" id="refDivYield">--</span>。即使股价不涨，每年也有现金分红进账。</div>
     </div>
-    <div class="r-sec">
-      <div class="r-h">⚖️ 股票 vs 国债（溢价差值 ERP）</div>
-      <table>
+
+    <div class="r-grp">
+      <div class="r-h">⚖️ 股票 vs 国债（溢价 ERP）</div>
+      <table class="r-tbl">
         <tr><td>✅ &gt; 3%</td><td>股票明显更划算</td></tr>
-        <tr><td>🟡 1.5-3%</td><td>还可以，中等</td></tr>
-        <tr><td>🟠 0-1.5%</td><td>吸引力一般</td></tr>
+        <tr><td>🟡 1.5–3%</td><td>还可以，中等</td></tr>
+        <tr><td>🟠 0–1.5%</td><td>吸引力一般</td></tr>
         <tr><td>🔴 &lt; 0</td><td>买债券比股票好</td></tr>
       </table>
-      <p>当前 <b id="refPremium">--</b>，<span id="refPremiumDesc">说明相比国债，股票仍有明显优势</span></p>
+      <div class="r-lbl">当前 <span class="cur" id="refPremium">--</span>，<span id="refPremiumDesc">说明相比国债，买股票更划算</span></div>
     </div>
-    <div class="r-sec">
+
+    <div class="r-grp">
       <div class="r-h">🔗 指标之间的关系</div>
       <ul class="r-rel">
-        <li><b>温度</b> = PE分位×60% + 价格分位×40% → 核心决策指标</li>
+        <li><b>温度</b> = PE分位 × 60% + 价格分位 × 40%，是核心决策指标</li>
         <li><b>回本年限（PE）</b>就是估值本身，温度和它高度相关</li>
         <li><b>盈利收益率</b> = 1 ÷ PE，用来和国债利率做对比</li>
-        <li><b>股债溢价</b> = 盈利收益率 − 国债利率，衡量股票vs债券谁更划算</li>
+        <li><b>股债溢价</b> = 盈利收益率 − 国债利率，衡量股票 vs 债券谁更划算</li>
         <li><b>股息率</b> = 成分股分红 ÷ 指数价格，高股息率是持有期间的安全垫</li>
         <li><b>一句话：</b>温度决定"买不买"，股息率决定"拿不拿得住"</li>
       </ul>
     </div>
+
   </div>
 </details>
 
