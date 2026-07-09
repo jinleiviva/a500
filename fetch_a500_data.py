@@ -193,6 +193,10 @@ def update():
         # 数据新鲜度
         "priceStale":        price_stale,
         "peLastCalibrated":  PE_LAST_CALIBRATED,
+        # 实时相关
+        "pageCreatedAt":     datetime.now().strftime('%Y-%m-%d %H:%M'),
+        "pricePercentile":   price_pctl,
+        "peHistory":         [{"d": r["date"][5:], "pe": r["pe"]} for r in pe_history],
     }
 
     _render(data)
@@ -246,6 +250,8 @@ def _render(data: dict):
         "'dcaLabel': '--'":         f"'dcaLabel': '{data['dcaLabel']}'",
         "'priceStale': --":         f"'priceStale': {str(data['priceStale']).lower()}",
         "'peLastCalibrated': '--'": f"'peLastCalibrated': '{data['peLastCalibrated']}'",
+        "'pageCreatedAt': '--'":     f"'pageCreatedAt': '{data['pageCreatedAt']}'",
+        "'pricePercentile': --":      f"'pricePercentile': {data['pricePercentile']}",
     }
     for key, val in replacements.items():
         html = html.replace(key, val)
@@ -257,6 +263,10 @@ def _render(data: dict):
     # 替换温度历史数组
     temp_items = ",\\n      ".join(f'{{d:"{r["d"]}",t:{r["t"]}}}' for r in data['tempHistory'])
     html = re.sub(r"'tempHistory': \[[^]]*\]", f"'tempHistory': [\\n      {temp_items}\\n    ]", html)
+
+    # 替换 PE 历史数组
+    pe_items = ",\\n      ".join(f'{{d:"{r["d"]}",pe:{r["pe"]}}}' for r in data['peHistory'])
+    html = re.sub(r"'peHistory': \[[^]]*\]", f"'peHistory': [\\n      {pe_items}\\n    ]", html)
 
     with open(OUTPUT, 'w', encoding='utf-8') as f:
         f.write(html)
