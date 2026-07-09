@@ -311,10 +311,10 @@ body{
   }
   function compRT(rtD){
     if(!rtD||!rtD.price)return null;
-    var rPe=D.pe*rtD.price/D.price,cnt=0,h=D.peHistory||[];
+    var wd=window.__D,rPe=wd.pe*rtD.price/wd.price,cnt=0,h=wd.peHistory||[];
     for(var i=0;i<h.length;i++){if(h[i].pe<=rPe)cnt++}
-    var rPct=h.length>0?cnt/h.length*100:D.pePercentile;
-    var rT=Math.round((rPct*0.6+D.pricePercentile*0.4)*10)/10;
+    var rPct=h.length>0?cnt/h.length*100:wd.pePercentile;
+    var rT=Math.round((rPct*0.6+wd.pricePercentile*0.4)*10)/10;
     return{pe:rPe,temp:rT};
   }
   function upUI(rd,cp){
