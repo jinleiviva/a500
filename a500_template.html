@@ -47,6 +47,7 @@ body{
 .g-cell .g-lbl{font-size:10px;color:#999;margin-bottom:1px}
 .g-cell .g-val{font-size:18px;font-weight:700}
 .g-cell .g-sub{font-size:11px;margin-top:0}
+.g-wide{grid-column:1/-1;text-align:center}
 
 /* ── Compare line ── */
 .comp{background:#fff;border-radius:10px;padding:10px 12px;box-shadow:0 1px 4px rgba(0,0,0,0.03);margin-bottom:8px;text-align:center}
@@ -146,6 +147,10 @@ body{
         <div class="g-lbl">10年国债利率<span class="info-btn" onclick="showInfo('bondYield')">?</span></div>
         <div class="g-val" id="bondVal" style="color:#999">--</div>
       </div>
+      <div class="g-cell g-wide">
+        <div class="g-lbl">股息率<span class="info-btn" onclick="showInfo('divYield')">?</span></div>
+        <div class="g-val" id="divYieldVal" style="color:#8e44ad">--</div>
+      </div>
     </div>
 
     <!-- Compare: stock vs bond -->
@@ -201,6 +206,7 @@ body{
     'premium': --, 'temperature': --, 'dcaPct': --, 'dcaLabel': '--',
     'recentCloses': [5000], 'tempHistory': [{d:"01-01",t:50}],
     'priceStale': false, 'peLastCalibrated': '--',
+    'dividendYield': --,
     'peHistory': [{d:"01-01",pe:16}], 'pageCreatedAt': '--', 'pricePercentile': --,
   };
   window.__D = D;
@@ -254,6 +260,7 @@ body{
 
     document.getElementById('stockVal').textContent=d.stockYield+'%';
     document.getElementById('bondVal').textContent=d.bondYield+'%';
+    document.getElementById('divYieldVal').textContent=d.dividendYield>0?d.dividendYield+'%':'--';
 
     // Compare
     var cv=document.getElementById('compVal');
@@ -316,6 +323,10 @@ var INFO = {
   bondYield: {
     title: '10年国债利率是什么？',
     body: '中国政府发行的10年期债券的年利率。可以近似理解为"无风险收益"——你什么都不用做，买国债每年稳拿这个利息。<br><br>当前是1.74%，这个数字一直在变。如果它涨了，说明钱存银行/买债券更划算；跌了，说明股票相对更有吸引力。'
+  },
+  divYield: {
+    title: '股息率是什么？',
+    body: '股息率 = A500成分股的分红总额 ÷ 指数总市值。<br><br>当前是2.32%，意思是：如果你按当前价格买入A500，假设成分股的分红不变，你每年能拿到约2.32%的现金分红。<br><br>⚠️ 分红不固定，公司可能减少或取消分红。但A500里的公司总体分红比较稳定，股息率是衡量"持有回报"的重要参考。数据来源：中证指数公司。'
   },
   premium: {
     title: '股票 vs 国债比什么？',

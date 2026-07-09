@@ -61,6 +61,16 @@ def fetch_bond_yield() -> float:
         return 1.74
 
 
+def fetch_dividend_yield() -> float | None:
+    """获取中证A500股息率（中证指数官方数据）"""
+    try:
+        df = ak.stock_zh_index_value_csindex(symbol="000510")
+        return round(float(df.iloc[0]['股息率1']), 2)
+    except Exception as e:
+        print(f"   ⚠️ 股息率获取失败: {e}")
+        return None
+
+
 # ══════════════════════════════════════════════════════
 # 核心逻辑
 # ══════════════════════════════════════════════════════
@@ -107,6 +117,14 @@ def update():
     # ── 2. 拉国债收益率 ──
     bond_yield = fetch_bond_yield()
     print(f"🏦 国债: 10Y = {bond_yield}%")
+
+    # ── 2b. 拉股息率 ──
+    dividend_yield = fetch_dividend_yield()
+    if dividend_yield:
+        print(f"💵 股息率: {dividend_yield}%")
+    else:
+        print("   ⚠️ 股息率获取失败")
+        dividend_yield = 0
 
     # ── 3. 加载并更新 PE ──
     pe_history = load_json(PE_HIST)
@@ -184,6 +202,7 @@ def update():
         "pePercentilePrev":  pe_pctl_1m,
         "stockYield":        stock_yield,
         "bondYield":         bond_yield,
+        "dividendYield":     dividend_yield,
         "premium":           premium,
         "temperature":       temp,
         "dcaPct":            dca_pct,
@@ -243,6 +262,7 @@ def _render(data: dict):
         "'pePercentile': --":       f"'pePercentile': {data['pePercentile']}",
         "'pePercentilePrev': --":   f"'pePercentilePrev': {data['pePercentilePrev']}",
         "'stockYield': --":         f"'stockYield': {data['stockYield']}",
+        "'dividendYield': --":      f"'dividendYield': {data['dividendYield']}",
         "'bondYield': --":          f"'bondYield': {data['bondYield']}",
         "'premium': --":            f"'premium': {data['premium']}",
         "'temperature': --":        f"'temperature': {data['temperature']}",
