@@ -14,135 +14,94 @@
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    padding: 20px 12px;
+    padding: 16px 12px;
   }
   .container { max-width: 480px; width: 100%; }
 
-  .header { text-align: center; margin-bottom: 16px; }
-  .header h1 { font-size: 20px; font-weight: 700; }
-  .header .date { font-size: 13px; color: #888; margin-top: 2px; }
-  .header .sub { font-size: 11px; color: #bbb; margin-top: 1px; }
-  .header .gen-time { font-size: 11px; color: #ccc; margin-top: 0; }
+  /* ── Header ── */
+  .header { text-align: center; margin-bottom: 10px; }
+  .header h1 { font-size: 18px; font-weight: 700; }
+  .header .meta { font-size: 11px; color: #999; margin-top: 1px; }
+  .header .meta .sep { color: #ddd; margin: 0 4px; }
 
-  /* === 盘中实时卡片 === */
+  /* ── Real-time ── */
   .rt-card {
-    background: #fff; border-radius: 16px; padding: 14px 16px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 12px;
+    background: #fff; border-radius: 12px; padding: 12px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.05); margin-bottom: 8px;
     text-align: center;
   }
   .rt-dot { font-size: 10px; vertical-align: middle; }
   .rt-dot.active { color: #27ae60; animation: pulse 2s infinite; }
   .rt-dot.inactive { color: #bbb; }
-  .rt-label { font-size: 13px; color: #888; }
-  .rt-price { font-size: 26px; font-weight: 700; margin: 4px 0 2px; }
-  .rt-change { font-size: 15px; margin-bottom: 8px; }
-  .rt-meta { display: flex; justify-content: center; gap: 24px; }
+  .rt-label { font-size: 12px; color: #888; }
+  .rt-price { font-size: 24px; font-weight: 700; margin: 2px 0; }
+  .rt-change { font-size: 14px; margin-bottom: 4px; }
+  .rt-meta { display: flex; justify-content: center; gap: 20px; }
   .rt-meta-item { text-align: center; }
-  .rt-meta-label { font-size: 11px; color: #888; }
-  .rt-meta-value { font-size: 14px; font-weight: 600; }
-  .rt-footer { font-size: 11px; color: #ccc; margin-top: 8px; }
-  .rt-error { font-size: 12px; color: #e74c3c; margin-top: 4px; }
+  .rt-meta-label { font-size: 10px; color: #888; }
+  .rt-meta-value { font-size: 13px; font-weight: 600; }
+  .rt-footer { font-size: 10px; color: #ccc; margin-top: 4px; }
+  .rt-error { font-size: 11px; color: #e74c3c; margin-top: 2px; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-  /* === 关键信号卡片 === */
-  .signal-card {
-    background: #fff; border-radius: 16px; padding: 18px 16px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 12px;
+  /* ── Core strip (4 metrics in one row) ── */
+  .strip {
+    background: #fff; border-radius: 12px; padding: 10px 6px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.05); margin-bottom: 8px;
+    display: flex; align-items: center;
   }
-  .signal-title { font-size: 12px; font-weight: 700; color: #888; margin-bottom: 10px; letter-spacing: 0.5px; }
-  .signal-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-  .signal-item { text-align: center; padding: 8px 4px; border-radius: 10px; }
-  .signal-value { font-size: 22px; font-weight: 800; line-height: 1.2; }
-  .signal-label { font-size: 11px; color: #666; margin-top: 2px; }
-  .signal-sub { font-size: 10px; margin-top: 1px; font-weight: 600; }
+  .strip-item { flex: 1; text-align: center; border-right: 1px solid #f0f0f0; padding: 0 2px; }
+  .strip-item:last-child { border-right: none; }
+  .strip-val { font-size: 16px; font-weight: 700; line-height: 1.3; }
+  .strip-lbl { font-size: 9px; color: #999; display: block; }
+  .strip-tag { font-size: 9px; font-weight: 600; padding: 1px 5px; border-radius: 4px; display: inline-block; }
+  .strip-temp { display: inline-flex; align-items: center; gap: 2px; }
+  .strip-temp .gauge { width: 18px; height: 18px; flex-shrink: 0; }
+  .strip-temp .gauge svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .strip-temp .gauge .bg { fill: none; stroke: #eee; stroke-width: 8; }
+  .strip-temp .gauge .arc { fill: none; stroke-width: 8; stroke-linecap: round; }
 
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-  .stat-card { background: #fff; border-radius: 12px; padding: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
-  .stat-card .stat-label { font-size: 11px; color: #999; margin-bottom: 1px; }
-  .stat-card .stat-value { font-size: 18px; font-weight: 700; }
-  .stat-card .stat-sub { font-size: 11px; margin-top: 1px; }
-
-  .color-green { color: #27ae60; } .color-yellow { color: #f39c12; } .color-orange { color: #e67e22; } .color-red { color: #e74c3c; }
-  .bg-green  { background: #e8f8f0; } .bg-yellow { background: #fef9e7; } .bg-orange { background: #fff3e0; } .bg-red    { background: #fdedec; }
-
-  .trend-badge { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 8px; margin-left: 2px; }
-  .trend-up { background: #fdedec; color: #e74c3c; }
-  .trend-down { background: #e8f8f0; color: #27ae60; }
-  .trend-flat { background: #f5f5f5; color: #999; }
-
-  /* === 溢价对比条 === */
-  .premium-card {
-    background: #fff; border-radius: 12px; padding: 14px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04); margin-bottom: 12px;
+  /* ── Detail grid (2x2, minimal) ── */
+  .dgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+  .dcell {
+    background: #fff; border-radius: 10px; padding: 8px 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
   }
-  .premium-card .premium-title { font-size: 12px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
-  .premium-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; }
-  .premium-row .left, .premium-row .right { font-size: 12px; color: #666; }
-  .premium-row .left strong, .premium-row .right strong { color: #1a1a2e; font-size: 16px; }
-  .premium-bar-wrap { position: relative; height: 24px; margin: 4px 0; }
-  .premium-bar { display: flex; height: 100%; border-radius: 12px; overflow: hidden; }
-  .premium-bar .seg-bond { background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #666; font-weight: 600; transition: width 0.8s ease; }
-  .premium-bar .seg-extra { background: #27ae60; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #fff; font-weight: 600; transition: width 0.8s ease; }
-  .premium-verdict { margin-top: 6px; padding: 6px 10px; border-radius: 8px; font-size: 12px; line-height: 1.5; text-align: center; font-weight: 600; }
+  .dcell .drow { display: flex; align-items: baseline; gap: 6px; }
+  .dcell .dnum { font-size: 17px; font-weight: 700; }
+  .dcell .dsub { font-size: 11px; }
+  .dcell .dlbl { font-size: 10px; color: #999; }
 
-  /* === 温度（小型化） === */
-  .temp-mini {
-    background: #fff; border-radius: 12px; padding: 12px 16px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04); margin-bottom: 12px;
-    display: flex; align-items: center; gap: 14px;
+  /* ── Premium bar ── */
+  .pbar {
+    background: #fff; border-radius: 10px; padding: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03); margin-bottom: 8px;
   }
-  .temp-mini .gauge-svg { width: 48px; height: 48px; flex-shrink: 0; }
-  .temp-mini .gauge-svg svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-  .temp-mini .gauge-svg .bg { fill: none; stroke: #eee; stroke-width: 8; }
-  .temp-mini .gauge-svg .arc { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
-  .temp-mini .temp-info { flex: 1; }
-  .temp-mini .temp-info .temp-row { display: flex; align-items: baseline; gap: 6px; }
-  .temp-mini .temp-info .temp-num { font-size: 28px; font-weight: 800; line-height: 1; }
-  .temp-mini .temp-info .temp-unit { font-size: 12px; color: #888; }
-  .temp-mini .temp-info .temp-tag { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
-  .temp-mini .temp-note { font-size: 10px; color: #bbb; margin-top: 2px; }
+  .pbar .bar-wrap { height: 20px; margin-bottom: 4px; }
+  .pbar .bar { display: flex; height: 100%; border-radius: 10px; overflow: hidden; }
+  .pbar .bar .seg-bond { background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #666; font-weight: 600; transition: width 0.8s ease; }
+  .pbar .bar .seg-extra { background: #27ae60; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #fff; font-weight: 600; transition: width 0.8s ease; }
+  .pbar .verdict { text-align: center; font-size: 11px; font-weight: 600; }
 
-  .action-box {
-    background: #fff; border-radius: 12px; padding: 14px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04); margin-bottom: 12px;
-  }
-  .action-box .action-title { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
-  .action-box .action-item { font-size: 12px; padding: 5px 0; border-bottom: 1px solid #f0f0f0; display: flex; align-items: flex-start; gap: 6px; line-height: 1.5; }
-  .action-box .action-item:last-child { border-bottom: none; }
-  .action-box .action-item .dot { flex-shrink: 0; width: 5px; height: 5px; border-radius: 50%; margin-top: 7px; }
+  /* ── Advice ── */
+  .advice { text-align: center; font-size: 11px; color: #666; margin-bottom: 8px; padding: 4px 0; }
 
+  /* ── Charts ── */
   .chart-card {
-    background: #fff; border-radius: 12px; padding: 14px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04); margin-bottom: 12px;
+    background: #fff; border-radius: 10px; padding: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03); margin-bottom: 8px;
   }
-  .chart-card .chart-title { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
-  .chart-card .mini-chart { height: 48px; display: flex; align-items: flex-end; gap: 2px; }
+  .chart-card .chart-title { font-size: 11px; font-weight: 700; margin-bottom: 4px; color: #888; }
+  .chart-card .mini-chart { height: 36px; display: flex; align-items: flex-end; gap: 2px; }
   .chart-card .mini-chart .bar { flex: 1; border-radius: 2px 2px 0 0; transition: height 0.3s; min-height: 2px; }
-  .chart-card .chart-labels { display: flex; justify-content: space-between; font-size: 10px; color: #bbb; margin-top: 3px; }
-  .chart-card canvas { width: 100% !important; height: 100px !important; }
+  .chart-card .chart-labels { display: flex; justify-content: space-between; font-size: 9px; color: #ccc; margin-top: 2px; }
+  .chart-card canvas { width: 100% !important; height: 80px !important; }
 
-  .footer { font-size: 10px; color: #bbb; text-align: center; padding: 10px; line-height: 1.6; }
-  .footer .tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-weight: 600; font-size: 10px; }
+  /* ── Footer ── */
+  .ft { text-align: center; font-size: 9px; color: #ccc; padding: 6px 0 12px; }
+  .ft .tag { display: inline-block; padding: 1px 5px; border-radius: 3px; font-weight: 600; font-size: 9px; margin: 0 1px; }
 
-  /* === 新鲜度标签 === */
-  .fresh-tag { display: inline-block; font-size: 9px; padding: 1px 6px; border-radius: 4px; font-weight: 600; margin-left: 4px; }
-  .fresh-live { background: #e8f8f0; color: #1e8449; }
-  .fresh-stale { background: #fef9e7; color: #b7950b; }
-  .fresh-est { background: #fff3e0; color: #d35400; }
-
-  .stat-footer { font-size: 9px; color: #bbb; margin-top: 2px; display: flex; align-items: center; gap: 3px; flex-wrap: wrap; }
-  .stat-footer.warn { color: #e67e22; }
-
-  /* === 指标说明弹窗 === */
-  .info-btn {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 16px; height: 16px; border-radius: 50%;
-    background: #ddd; color: #fff; font-size: 10px; font-weight: 700;
-    cursor: pointer; flex-shrink: 0; transition: background 0.2s;
-    vertical-align: middle; margin-left: 2px;
-  }
-  .info-btn:hover { background: #bbb; }
-
+  /* ── Modal ── */
   .modal-overlay {
     display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0,0,0,0.4); z-index: 1000;
@@ -151,25 +110,29 @@
   .modal-overlay.active { display: flex; }
   .modal-sheet {
     background: #fff; border-radius: 20px 20px 0 0; width: 100%; max-width: 480px;
-    padding: 20px 20px 32px; max-height: 70vh; overflow-y: auto;
+    padding: 16px 20px 28px; max-height: 70vh; overflow-y: auto;
     animation: slideUp 0.3s ease;
   }
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
-  }
-  .modal-sheet .modal-handle {
-    width: 36px; height: 4px; border-radius: 2px; background: #ddd;
-    margin: 0 auto 16px;
-  }
-  .modal-sheet .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-  .modal-sheet .modal-val { font-size: 14px; color: #666; margin-bottom: 14px; }
-  .modal-sheet .modal-section { margin-bottom: 14px; }
-  .modal-sheet .modal-label { font-size: 12px; font-weight: 700; color: #888; margin-bottom: 3px; }
-  .modal-sheet .modal-text { font-size: 14px; line-height: 1.7; color: #333; }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-sheet .modal-handle { width: 36px; height: 4px; border-radius: 2px; background: #ddd; margin: 0 auto 12px; }
+  .modal-sheet .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .modal-sheet .modal-val { font-size: 13px; color: #666; margin-bottom: 10px; }
+  .modal-sheet .modal-section { margin-bottom: 10px; }
+  .modal-sheet .modal-label { font-size: 11px; font-weight: 700; color: #888; margin-bottom: 2px; }
+  .modal-sheet .modal-text { font-size: 13px; line-height: 1.6; color: #333; }
 
+  .info-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 13px; height: 13px; border-radius: 50%;
+    background: #ddd; color: #fff; font-size: 8px; font-weight: 700;
+    cursor: pointer; flex-shrink: 0; transition: background 0.2s;
+    vertical-align: middle; margin-left: 1px;
+  }
+  .info-btn:hover { background: #bbb; }
+
+  .color-green { color: #27ae60; } .color-yellow { color: #f39c12; } .color-red { color: #e74c3c; }
   .loading { text-align: center; padding: 60px 0; color: #999; }
-  .loading .spinner { width: 28px; height: 28px; margin: 0 auto 10px; border: 3px solid #eee; border-top-color: #e74c3c; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  .loading .spinner { width: 24px; height: 24px; margin: 0 auto 8px; border: 3px solid #eee; border-top-color: #e74c3c; border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
@@ -185,9 +148,7 @@
     <!-- ===== 头部 ===== -->
     <div class="header">
       <h1>📊 A500 · 数据仪表盘</h1>
-      <div class="date" id="todayDate">—</div>
-      <div class="sub" id="genTime"></div>
-      <div class="sub">核心数据优先，温度仅供参考</div>
+      <div class="meta"><span id="todayDate">—</span><span class="sep">·</span><span id="genTime"></span></div>
     </div>
 
     <!-- ===== 盘中实时 ===== -->
@@ -208,130 +169,89 @@
           <div class="rt-meta-value" id="rtTemp">--°C</div>
         </div>
       </div>
-      <div class="rt-footer">
-        <span id="rtTime">等待数据…</span>
-        <span id="rtCountdown"></span>
-      </div>
+      <div class="rt-footer"><span id="rtTime">等待数据…</span><span id="rtCountdown"></span></div>
       <div class="rt-error" id="rtError"></div>
     </div>
 
-    <!-- ===== 关键信号（3 大指标） ===== -->
-    <div class="signal-card">
-      <div class="signal-title">📌 核心信号 <span class="info-btn" onclick="showInfo('pePctl')">?</span></div>
-      <div class="signal-grid">
-        <div class="signal-item" id="sigPe" style="background:#fef9e7;">
-          <div class="signal-value" id="sigPeVal">--</div>
-          <div class="signal-label">PE 分位</div>
-          <div class="signal-sub" id="sigPeLabel">加载中…</div>
+    <!-- ===== 核心指标条（4 合一） ===== -->
+    <div class="strip">
+      <div class="strip-item">
+        <div class="strip-lbl">PE分位</div>
+        <div class="strip-val" id="sigPeVal" style="color:#f39c12">--</div>
+        <span class="strip-tag" id="sigPeLabel" style="background:#f5f5f5;color:#999;">--</span>
+      </div>
+      <div class="strip-item">
+        <div class="strip-lbl">净溢价</div>
+        <div class="strip-val" id="sigPremVal" style="color:#27ae60">--</div>
+        <span class="strip-tag" id="sigPremLabel" style="background:#e8f8f0;color:#1e8449;">--</span>
+      </div>
+      <div class="strip-item">
+        <div class="strip-lbl">趋势</div>
+        <div class="strip-val" id="sigTrendVal" style="color:#999">--</div>
+        <span class="strip-tag" id="sigTrendLabel" style="background:#f5f5f5;color:#999;">--</span>
+      </div>
+      <div class="strip-item">
+        <div class="strip-lbl">温度</div>
+        <div class="strip-temp">
+          <div class="gauge"><svg viewBox="0 0 22 22"><circle class="bg" cx="11" cy="11" r="8"/><circle class="arc" id="miniArc" cx="11" cy="11" r="8" stroke-dasharray="50.27" stroke-dashoffset="13" stroke="#27ae60"/></svg></div>
+          <span class="strip-val" id="tempNum" style="font-size:15px">--</span>
         </div>
-        <div class="signal-item" id="sigPremium" style="background:#e8f8f0;">
-          <div class="signal-value" id="sigPremVal">--</div>
-          <div class="signal-label">股债净溢价</div>
-          <div class="signal-sub" id="sigPremLabel">加载中…</div>
-        </div>
-        <div class="signal-item" id="sigTrend" style="background:#e8f8f0;">
-          <div class="signal-value" id="sigTrendVal">--</div>
-          <div class="signal-label">趋势</div>
-          <div class="signal-sub" id="sigTrendLabel">加载中…</div>
-        </div>
+        <span class="strip-tag" id="tempTag" style="background:#e8f8f0;color:#1e8449;">--</span>
       </div>
     </div>
 
-    <!-- ===== 详细数据 ===== -->
-    <div class="grid-2">
-      <div class="stat-card">
-        <div class="stat-label">当前点位 <span id="priceFresh" class="fresh-tag fresh-live" style="display:none">实时</span></div>
-        <div class="stat-value" id="priceValue">--</div>
-        <div class="stat-sub" id="priceChange">--</div>
-        <div class="stat-footer" id="priceFooter">更新于 --</div>
+    <!-- ===== 详情数据（2×2） ===== -->
+    <div class="dgrid">
+      <div class="dcell">
+        <div class="dlbl">当前点位 <span class="info-btn" onclick="showInfo('pe')">?</span></div>
+        <div class="drow"><span class="dnum" id="priceValue">--</span><span class="dsub" id="priceChange" style="color:#27ae60">--</span></div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">市盈率 PE <span style="font-size:9px;color:#e74c3c;font-weight:400;">估算</span> <span class="info-btn" onclick="showInfo('pe')">?</span></div>
-        <div class="stat-value" id="peValue">-- <span id="peTrend" class="trend-badge trend-flat">—</span></div>
-        <div class="stat-sub" id="pePercentile">--</div>
-        <div class="stat-footer" id="peFooter">估算值 · 最后校准于 --</div>
+      <div class="dcell">
+        <div class="dlbl">市盈率 PE <span class="info-btn" onclick="showInfo('pe')">?</span></div>
+        <div class="drow"><span class="dnum" id="peValue">--</span><span class="dsub" id="pePercentile" style="color:#f39c12">--</span></div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">盈利收益率 (E/P) <span class="info-btn" onclick="showInfo('ep')">?</span></div>
-        <div class="stat-value" id="stockYieldVal">--</div>
-        <div class="stat-sub">PE 倒数，越高越划算</div>
-        <div class="stat-footer">基于 PE 估算值</div>
+      <div class="dcell">
+        <div class="dlbl">盈利收益率 <span class="info-btn" onclick="showInfo('ep')">?</span></div>
+        <div class="drow"><span class="dnum" id="stockYieldVal">--</span></div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">10 年期国债 <span class="info-btn" onclick="showInfo('bond')">?</span> <span id="bondFresh" class="fresh-tag fresh-live" style="display:none">实时</span></div>
-        <div class="stat-value" id="bondYieldVal">--</div>
-        <div class="stat-sub">无风险利率基准</div>
-        <div class="stat-footer" id="bondFooter">更新于 --</div>
+      <div class="dcell">
+        <div class="dlbl">10 年期国债 <span class="info-btn" onclick="showInfo('bond')">?</span></div>
+        <div class="drow"><span class="dnum" id="bondYieldVal">--</span></div>
       </div>
     </div>
 
-    <!-- ===== 风险溢价对比条 ===== -->
-    <div class="premium-card">
-      <div class="premium-title">⚖️ 股债性价比 <span class="info-btn" onclick="showInfo('premium')">?</span></div>
-      <div class="premium-row">
-        <span class="left">盈利收益率 <strong id="stockYield">--</strong></span>
-        <span class="right">国债收益 <strong id="bondYield">--</strong></span>
-      </div>
-      <div class="premium-bar-wrap">
-        <div class="premium-bar">
+    <!-- ===== 溢价条 ===== -->
+    <div class="pbar">
+      <div class="bar-wrap">
+        <div class="bar">
           <div class="seg-bond" id="segBond" style="width:50%">国债</div>
           <div class="seg-extra" id="segExtra" style="width:30%">溢价</div>
         </div>
       </div>
-      <div class="premium-verdict" id="premiumVerdict">—</div>
-    </div>
-
-    <!-- ===== 温度（小型化） ===== -->
-    <div class="temp-mini">
-      <div class="gauge-svg">
-        <svg viewBox="0 0 48 48">
-          <circle class="bg" cx="24" cy="24" r="18"/>
-          <circle class="arc" id="miniArc" cx="24" cy="24" r="18" stroke-dashoffset="113" stroke="#27ae60"/>
-        </svg>
-      </div>
-      <div class="temp-info">
-        <div class="temp-row">
-          <span class="temp-num" id="tempNum">--</span>
-          <span class="temp-unit">°C</span>
-          <span class="temp-tag" id="tempTag">加载中…</span>
-        </div>
-        <div class="temp-note">综合参考 <span class="info-btn" onclick="showInfo('temp')">?</span>（PE分位×60% + 价格分位×40%），仅供方向参考</div>
-      </div>
+      <div class="verdict" id="premiumVerdict">—</div>
     </div>
 
     <!-- ===== 行动建议 ===== -->
-    <div class="action-box">
-      <div class="action-title">📋 行动参考</div>
-      <div class="action-item" id="action1"><span class="dot" style="background:#27ae60"></span><span>加载中…</span></div>
-      <div class="action-item" id="action2"><span class="dot" style="background:#f39c12"></span><span>加载中…</span></div>
-      <div class="action-item" id="action3"><span class="dot" style="background:#e74c3c"></span><span>加载中…</span></div>
-    </div>
+    <div class="advice" id="actionText">加载中…</div>
 
     <!-- ===== 走势图 ===== -->
     <div class="chart-card">
-      <div class="chart-title">📈 近 30 个交易日走势</div>
+      <div class="chart-title">📈 走势 <span id="chartStart" style="float:right;font-weight:400;color:#ccc;">--</span> <span id="chartEnd" style="float:right;font-weight:400;color:#ccc;margin-right:6px;">--</span></div>
       <div class="mini-chart" id="miniChart"></div>
-      <div class="chart-labels">
-        <span id="chartStart">--</span>
-        <span id="chartEnd">--</span>
-      </div>
     </div>
 
     <!-- ===== 温度趋势 ===== -->
     <div class="chart-card">
-      <div class="chart-title">🌡️ 温度趋势（近 90 天，仅供参考）</div>
+      <div class="chart-title">🌡️ 温度趋势</div>
       <canvas id="tempChart"></canvas>
     </div>
 
-    <!-- ===== 数据可信度 ===== -->
-    <div class="premium-card" style="text-align:center;">
-      <div style="font-size:11px;color:#999;line-height:1.8;">
-        <span class="tag" style="background:#e8f8f0;color:#1e8449;margin-right:4px;">✅ 点位/国债实时</span>
-        <span class="tag" style="background:#fff3e0;color:#d35400;margin-right:4px;">⚠️ PE 为估算值</span>
-        <span class="tag" style="background:#f5f5f5;color:#888;">🌡️ 温度仅供参考</span><br>
-        数据源：中证指数 · 东方财富 · 中国债券信息网<br>
-        每日 9:30 更新 · 不构成投资建议
-      </div>
+    <!-- ===== 页脚 ===== -->
+    <div class="ft">
+      <span class="tag" style="background:#e8f8f0;color:#1e8449;">点位/国债实时</span>
+      <span class="tag" style="background:#fff3e0;color:#d35400;">PE为估算值</span>
+      <span class="tag" style="background:#f5f5f5;color:#888;">温度仅供参考</span>
+      &nbsp;·&nbsp; 每日 9:30 更新 · 不构成投资建议
     </div>
 
   </div>
@@ -384,53 +304,18 @@
 
   window.__DATA = DATA;
 
-  function pctlClass(v) {
-    if (v > 70) return 'color-red';
-    if (v > 50) return 'color-yellow';
-    return 'color-green';
-  }
-
   function tempInfo(t) {
-    if (t < 30) return { color:'#27ae60', label:'🟢 低估', cls:'bg-green', icon:'🟢' };
-    if (t < 60) return { color:'#f39c12', label:'🟡 合理', cls:'bg-yellow', icon:'🟡' };
-    if (t < 80) return { color:'#e67e22', label:'🟠 偏高', cls:'bg-orange', icon:'🟠' };
-    return { color:'#e74c3c', label:'🔴 过热', cls:'bg-red', icon:'🔴' };
+    if (t < 30) return { color:'#27ae60', label:'🟢 低估', bg:'#e8f8f0' };
+    if (t < 60) return { color:'#f39c12', label:'🟡 合理', bg:'#fef9e7' };
+    if (t < 80) return { color:'#e67e22', label:'🟠 偏高', bg:'#fff3e0' };
+    return { color:'#e74c3c', label:'🔴 过热', bg:'#fdedec' };
   }
 
-  function getAdvice(temp, pePctl) {
-    if (temp < 30) return [
-      '✅ 市场偏冷，适合逐步买入',
-      '📅 按计划定投，不用怕下跌',
-      '💪 别人恐惧时贪婪，坚持住'
-    ];
-    if (temp < 60) return [
-      '✅ 估值正常，按计划定投就行',
-      '📊 不用频繁看盘，该干嘛干嘛',
-      '📖 趁这段时间多学习，充实自己'
-    ];
-    if (temp < 80) return [
-      '⚠️ PE分位 ' + pePctl + '%，已偏贵，暂停买入',
-      '💰 已经持有的继续拿着，别卖',
-      '📝 资金暂时放债基/货基'
-    ];
-    return [
-      '🔴 PE分位 ' + pePctl + '%，过热，考虑分批卖出',
-      '📉 不要追高',
-      '💵 卖出后放货币基金，等跌回来'
-    ];
-  }
-
-  function getConclusion(d) {
-    const prem = (d.stockYield - d.bondYield).toFixed(1);
-    const diff = d.pePercentile - d.pePercentilePrev;
-    let trendWord = '持平';
-    if (diff > 3) trendWord = '在变贵';
-    else if (diff < -3) trendWord = '在降温';
-
-    if (d.temperature < 30) return `PE 分位 <strong>${d.pePercentile}%</strong>，趋势${trendWord}。E/P ${d.stockYield}% 高于国债 ${d.bondield}%，净溢价 <strong>${prem}%</strong>。<b>适合逐步买入</b>。`;
-    if (d.temperature < 60) return `PE 分位 <strong>${d.pePercentile}%</strong>，趋势${trendWord}。净溢价 ${prem}%。<b>按计划定投</b>。`;
-    if (d.temperature < 80) return `PE 分位 <strong>${d.pePercentile}%</strong>，趋势${trendWord}。净溢价 ${prem}%。<b>暂停买入</b>，持有不动。`;
-    return `PE 分位 <strong>${d.pePercentile}%</strong>，趋势${trendWord}。<b>考虑分批止盈</b>。`;
+  function getAdvice(temp) {
+    if (temp < 30) return '✅ 市场偏冷，适合逐步买入 · 按计划定投，不用怕下跌';
+    if (temp < 60) return '✅ 估值正常，按计划定投就行 · 不用频繁看盘';
+    if (temp < 80) return '⚠️ 已偏贵，暂停买入 · 持有不动 · 资金暂放债基/货基';
+    return '🔴 过热，考虑分批卖出 · 不要追高 · 卖出后放货币基金';
   }
 
   function render() {
@@ -440,67 +325,62 @@
     document.getElementById('todayDate').textContent = '数据截至 ' + d.date + ' 收盘';
     document.getElementById('genTime').textContent = '页面生成于 ' + d.pageCreatedAt;
 
-    // ── 关键信号 ──
-    const sigPe = document.getElementById('sigPe');
-    sigPe.style.background = d.pePercentile > 70 ? '#fdedec' : d.pePercentile > 50 ? '#fef9e7' : '#e8f8f0';
+    // ── 核心指标条 ──
+    const peC = d.pePercentile > 70 ? '#e74c3c' : d.pePercentile > 50 ? '#f39c12' : '#27ae60';
+    const peBg = d.pePercentile > 70 ? '#fdedec' : d.pePercentile > 50 ? '#fef9e7' : '#e8f8f0';
     document.getElementById('sigPeVal').textContent = d.pePercentile + '%';
-    document.getElementById('sigPeVal').style.color = d.pePercentile > 70 ? '#e74c3c' : d.pePercentile > 50 ? '#f39c12' : '#27ae60';
-    document.getElementById('sigPeLabel').textContent = '比 ' + d.pePercentile + '% 的时间贵';
+    document.getElementById('sigPeVal').style.color = peC;
+    document.getElementById('sigPeLabel').textContent = peC === '#e74c3c' ? '偏高' : peC === '#f39c12' ? '中等' : '偏低';
+    document.getElementById('sigPeLabel').style.background = peBg;
+    document.getElementById('sigPeLabel').style.color = peC;
 
-    const sigPrem = document.getElementById('sigPremium');
-    const premText = d.premium > 3 ? '✅ 性价比高' : d.premium > 1.5 ? '🟡 尚可' : d.premium > 0 ? '🟠 一般' : '🔴 不划算';
-    sigPrem.style.background = d.premium > 3 ? '#e8f8f0' : d.premium > 0 ? '#fef9e7' : '#fdedec';
+    const pmCls = d.premium > 3 ? '#27ae60' : d.premium > 0 ? '#f39c12' : '#e74c3c';
+    const pmBg = d.premium > 3 ? '#e8f8f0' : d.premium > 0 ? '#fef9e7' : '#fdedec';
+    const pmLbl = d.premium > 3 ? '高' : d.premium > 1.5 ? '尚可' : d.premium > 0 ? '一般' : '低';
     document.getElementById('sigPremVal').textContent = d.premium + '%';
-    document.getElementById('sigPremVal').style.color = d.premium > 3 ? '#27ae60' : d.premium > 0 ? '#f39c12' : '#e74c3c';
-    document.getElementById('sigPremLabel').textContent = 'E/P ' + d.stockYield + '% - 国债 ' + d.bondYield + '%';
+    document.getElementById('sigPremVal').style.color = pmCls;
+    document.getElementById('sigPremLabel').textContent = pmLbl;
+    document.getElementById('sigPremLabel').style.background = pmBg;
+    document.getElementById('sigPremLabel').style.color = pmCls;
 
     const diff = d.pePercentile - d.pePercentilePrev;
-    const sigTrend = document.getElementById('sigTrend');
-    let trendVal, trendLabel, trendBg;
-    if (diff > 3) { trendVal = '↑'; trendLabel = '变贵中'; trendBg = '#fdedec'; }
-    else if (diff < -3) { trendVal = '↓'; trendLabel = '降温中'; trendBg = '#e8f8f0'; }
-    else { trendVal = '→'; trendLabel = '持平'; trendBg = '#f5f5f5'; }
-    sigTrend.style.background = trendBg;
-    document.getElementById('sigTrendVal').textContent = trendVal;
-    document.getElementById('sigTrendVal').style.color = diff > 3 ? '#e74c3c' : diff < -3 ? '#27ae60' : '#999';
-    document.getElementById('sigTrendLabel').textContent = trendLabel;
+    let tVal, tLbl, tC, tBg;
+    if (diff > 3) { tVal = '↑'; tLbl = '变贵中'; tC = '#e74c3c'; tBg = '#fdedec'; }
+    else if (diff < -3) { tVal = '↓'; tLbl = '降温中'; tC = '#27ae60'; tBg = '#e8f8f0'; }
+    else { tVal = '→'; tLbl = '持平'; tC = '#999'; tBg = '#f5f5f5'; }
+    document.getElementById('sigTrendVal').textContent = tVal;
+    document.getElementById('sigTrendVal').style.color = tC;
+    document.getElementById('sigTrendLabel').textContent = tLbl;
+    document.getElementById('sigTrendLabel').style.background = tBg;
+    document.getElementById('sigTrendLabel').style.color = tC;
 
-    // ── 详细数据 ──
+    // ── 温度 ──
+    const R = 8, C = 2 * Math.PI * R;
+    const arc = document.getElementById('miniArc');
+    arc.style.strokeDasharray = C;
+    arc.style.strokeDashoffset = C * (1 - d.temperature / 100);
+    arc.style.stroke = info.color;
+    document.getElementById('tempNum').textContent = d.temperature;
+    document.getElementById('tempNum').style.color = info.color;
+    document.getElementById('tempTag').textContent = info.label;
+    document.getElementById('tempTag').style.background = info.bg;
+    document.getElementById('tempTag').style.color = info.color;
+
+    // ── 详情数据 ──
     document.getElementById('priceValue').textContent = d.price.toLocaleString();
     const pcEl = document.getElementById('priceChange');
     pcEl.textContent = (d.priceChange > 0 ? '+' : '') + d.priceChange.toFixed(2) + '%';
-    pcEl.className = 'stat-sub ' + (d.priceChange >= 0 ? 'color-green' : 'color-red');
+    pcEl.style.color = d.priceChange >= 0 ? '#e74c3c' : '#27ae60';
 
-    // 新鲜度：价格
-    document.getElementById('priceFooter').textContent = '更新于 ' + d.date + (d.priceStale ? ' ⚠️ 过时数据' : '');
-    if (d.priceStale) {
-      document.getElementById('priceFooter').className = 'stat-footer warn';
-      document.getElementById('priceFresh').textContent = '⚠️ 过时';
-      document.getElementById('priceFresh').className = 'fresh-tag fresh-stale';
-      document.getElementById('priceFresh').style.display = 'inline';
-    }
-
-    document.getElementById('peValue').innerHTML = d.pe + ' <span class="trend-badge trend-flat">—</span>';
-    let tCls = 'trend-flat', tTxt = '→ 持平';
-    if (diff > 3) { tCls = 'trend-up'; tTxt = '↑ 变贵中'; }
-    else if (diff < -3) { tCls = 'trend-down'; tTxt = '↓ 降温中'; }
-    const peT = document.getElementById('peValue').querySelector('.trend-badge');
-    peT.className = 'trend-badge ' + tCls;
-    peT.textContent = tTxt;
-
-    document.getElementById('pePercentile').textContent = '分位 ' + d.pePercentile + '%';
-    document.getElementById('pePercentile').className = 'stat-sub ' + (d.pePercentile > 70 ? 'color-red' : d.pePercentile > 50 ? 'color-yellow' : 'color-green');
-    // 新鲜度：PE
-    document.getElementById('peFooter').textContent = '估算值 · 最后校准于 ' + d.peLastCalibrated;
+    document.getElementById('peValue').textContent = d.pe;
+    const pctlEl = document.getElementById('pePercentile');
+    pctlEl.textContent = '分位 ' + d.pePercentile + '%';
+    pctlEl.style.color = peC;
 
     document.getElementById('stockYieldVal').textContent = d.stockYield + '%';
     document.getElementById('bondYieldVal').textContent = d.bondYield + '%';
-    // 新鲜度：国债
-    document.getElementById('bondFooter').textContent = '更新于 ' + d.date;
 
-    // ── 溢价对比条 ──
-    document.getElementById('stockYield').textContent = d.stockYield + '%';
-    document.getElementById('bondYield').textContent = d.bondYield + '%';
+    // ── 溢价条 ──
     const total = d.stockYield + d.bondYield;
     const bondPct = Math.max(20, Math.min(60, d.bondYield / total * 100));
     const premPct = Math.max(10, Math.min(50, d.premium / total * 100));
@@ -509,35 +389,22 @@
     const segEx = document.getElementById('segExtra');
     segEx.style.width = Math.min(premPct, 100 - bondPct) + '%';
     segEx.textContent = '溢价 ' + d.premium + '%';
+
     const ve = document.getElementById('premiumVerdict');
-    if (d.premium > 3) { ve.textContent = '✅ 股债溢价 ' + d.premium + '%，中长期股票性价比高'; ve.style.background='#e8f8f0'; ve.style.color='#1e8449'; }
-    else if (d.premium > 1.5) { ve.textContent = '🟡 溢价 ' + d.premium + '%，尚可'; ve.style.background='#fef9e7'; ve.style.color='#b7950b'; }
-    else if (d.premium > 0) { ve.textContent = '🟠 溢价仅 ' + d.premium + '%，吸引力一般'; ve.style.background='#fff3e0'; ve.style.color='#d35400'; }
-    else { ve.textContent = '🔴 盈利收益率低于国债，债券更划算'; ve.style.background='#fdedec'; ve.style.color='#c0392b'; }
+    if (d.premium > 3) { ve.textContent = '✅ 股债溢价 ' + d.premium + '%，中长期股票性价比高'; ve.style.color = '#1e8449'; }
+    else if (d.premium > 1.5) { ve.textContent = '🟡 溢价 ' + d.premium + '%，尚可'; ve.style.color = '#b7950b'; }
+    else if (d.premium > 0) { ve.textContent = '🟠 溢价仅 ' + d.premium + '%，吸引力一般'; ve.style.color = '#d35400'; }
+    else { ve.textContent = '🔴 盈利收益率低于国债，债券更划算'; ve.style.color = '#c0392b'; }
 
-    // ── 温度（小型化） ──
-    const R = 18, C = 2 * Math.PI * R;
-    const arc = document.getElementById('miniArc');
-    arc.style.strokeDasharray = C;
-    arc.style.strokeDashoffset = C * (1 - d.temperature / 100);
-    arc.style.stroke = info.color;
-    document.getElementById('tempNum').textContent = d.temperature;
-    document.getElementById('tempNum').style.color = info.color;
-    document.getElementById('tempTag').textContent = info.label;
-    document.getElementById('tempTag').style.background = info.cls.replace('bg-', '') === 'green' ? '#e8f8f0' : info.cls.replace('bg-', '') === 'yellow' ? '#fef9e7' : info.cls.replace('bg-', '') === 'orange' ? '#fff3e0' : '#fdedec';
-    document.getElementById('tempTag').style.color = info.color;
-
-    // ── 行动建议 ──
-    const advice = getAdvice(d.temperature, d.pePercentile);
-    const actions = ['action1','action2','action3'].map(id => document.getElementById(id).querySelector('span:last-child'));
-    actions.forEach((el, i) => el.textContent = advice[i]);
+    // ── 建议 ──
+    document.getElementById('actionText').textContent = getAdvice(d.temperature);
 
     // ── 迷你走势 ──
     const chart = document.getElementById('miniChart');
     const closes = d.recentCloses;
     const mn = Math.min(...closes), mx = Math.max(...closes), rng = mx - mn || 1;
     chart.innerHTML = closes.map((c, i) => {
-      const h = ((c - mn) / rng) * 36 + 2;
+      const h = ((c - mn) / rng) * 28 + 2;
       const prev = i > 0 ? closes[i-1] : c;
       return '<div class="bar" style="height:' + h + 'px;background:' + (c >= prev ? '#27ae60' : '#e74c3c') + '"></div>';
     }).join('');
@@ -685,7 +552,7 @@
   }, 500);
 })();
 
-// ── 指标说明（全局，供 onclick 调用） ──
+// ── 指标说明 ──
 var INFO = {
   pePctl: {
     name: 'PE 分位',
