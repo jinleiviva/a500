@@ -8,7 +8,7 @@
 
 ## 访问地址
 
-`https://<你的GitHub用户名>.github.io/a500/`
+`https://jinleiviva.github.io/a500/`
 
 ## 颜色含义
 
