@@ -89,12 +89,12 @@ body{
 
 /* ── Reference guide ── */
 .ref{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,0.03);margin-bottom:8px;overflow:hidden;font-size:13px}
-.ref summary{padding:14px 14px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px;color:#555;font-weight:600;font-size:13px;background:#fafbfc;border-bottom:1px solid transparent}
-.ref[open] summary{border-bottom-color:#f0f0f0}
-.ref summary::before{content:"▶";font-size:10px;transition:transform .2s;color:#bbb}
-.ref[open] summary::before{content:"▶";transform:rotate(90deg)}
-.ref summary::-webkit-details-marker{display:none}
-.ref-body{padding:4px 14px 14px}
+.ref-bar{padding:14px;cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between;color:#555;font-weight:600;font-size:13px;background:#fafbfc}
+.ref-bar:active{background:#f0f0f0}
+.ref-bar span{font-size:10px;color:#bbb;transition:transform .2s}
+.ref-bar.open span{transform:rotate(90deg)}
+.ref-body{padding:4px 14px 14px;display:none}
+.ref-body.show{display:block}
 .r-grp{padding:10px 0;border-bottom:1px solid #f0f0f0}
 .r-grp:last-child{border-bottom:0}
 .r-h{font-weight:700;font-size:13px;color:#333;margin-bottom:6px}
@@ -224,9 +224,9 @@ body{
     </div>
 
     <!-- ── Reference guide (collapsible) ── -->
-    <details class="ref">
-      <summary>📖 指标参考指南</summary>
-      <div class="ref-body">
+    <div class="ref" id="refGuide">
+      <div class="ref-bar" onclick="toggleRef()">📖 指标参考指南 <span id="refArrow">▶</span></div>
+      <div class="ref-body" id="refBody">
 
         <div class="r-grp">
           <div class="r-h">🌡️ 温度</div>
@@ -295,7 +295,7 @@ body{
         </div>
 
       </div>
-    </details>
+    </div>
 
   </div>
 </div>
@@ -468,6 +468,11 @@ function showInfo(key){
 }
 function hideInfo(){
   document.getElementById('infoModal').className='modal-overlay';
+}
+function toggleRef(){
+  var b=document.getElementById('refBody'),a=document.getElementById('refArrow'),ba=document.getElementById('refGuide').querySelector('.ref-bar');
+  if(b.className.indexOf('show')>=0){b.className='ref-body';ba.className='ref-bar';a.textContent='▶';}
+  else{b.className='ref-body show';ba.className='ref-bar open';a.textContent='▶';}
 }
 
 // ── Real-time ──
