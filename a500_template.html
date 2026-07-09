@@ -22,6 +22,27 @@
   .header h1 { font-size: 20px; font-weight: 700; }
   .header .date { font-size: 13px; color: #888; margin-top: 2px; }
   .header .sub { font-size: 11px; color: #bbb; margin-top: 1px; }
+  .header .gen-time { font-size: 11px; color: #ccc; margin-top: 0; }
+
+  /* === 盘中实时卡片 === */
+  .rt-card {
+    background: #fff; border-radius: 16px; padding: 14px 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 12px;
+    text-align: center;
+  }
+  .rt-dot { font-size: 10px; vertical-align: middle; }
+  .rt-dot.active { color: #27ae60; animation: pulse 2s infinite; }
+  .rt-dot.inactive { color: #bbb; }
+  .rt-label { font-size: 13px; color: #888; }
+  .rt-price { font-size: 26px; font-weight: 700; margin: 4px 0 2px; }
+  .rt-change { font-size: 15px; margin-bottom: 8px; }
+  .rt-meta { display: flex; justify-content: center; gap: 24px; }
+  .rt-meta-item { text-align: center; }
+  .rt-meta-label { font-size: 11px; color: #888; }
+  .rt-meta-value { font-size: 14px; font-weight: 600; }
+  .rt-footer { font-size: 11px; color: #ccc; margin-top: 8px; }
+  .rt-error { font-size: 12px; color: #e74c3c; margin-top: 4px; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
   /* === 关键信号卡片 === */
   .signal-card {
@@ -165,7 +186,33 @@
     <div class="header">
       <h1>📊 A500 · 数据仪表盘</h1>
       <div class="date" id="todayDate">—</div>
+      <div class="sub" id="genTime"></div>
       <div class="sub">核心数据优先，温度仅供参考</div>
+    </div>
+
+    <!-- ===== 盘中实时 ===== -->
+    <div class="rt-card" id="rtCard" style="display:none">
+      <div>
+        <span class="rt-dot" id="rtDot">●</span>
+        <span class="rt-label" id="rtLabel">盘中实时</span>
+      </div>
+      <div class="rt-price" id="rtPrice">--</div>
+      <div class="rt-change" id="rtChange">--</div>
+      <div class="rt-meta">
+        <div class="rt-meta-item">
+          <div class="rt-meta-label">估算PE</div>
+          <div class="rt-meta-value" id="rtPe">--</div>
+        </div>
+        <div class="rt-meta-item">
+          <div class="rt-meta-label">估算温度</div>
+          <div class="rt-meta-value" id="rtTemp">--°C</div>
+        </div>
+      </div>
+      <div class="rt-footer">
+        <span id="rtTime">等待数据…</span>
+        <span id="rtCountdown"></span>
+      </div>
+      <div class="rt-error" id="rtError"></div>
     </div>
 
     <!-- ===== 关键信号（3 大指标） ===== -->
@@ -330,6 +377,9 @@
     'tempHistory': [{d:"01-01",t:50}],
     'priceStale': false,
     'peLastCalibrated': '--',
+    'peHistory': [{d:"01-01",pe:16}],
+    'pageCreatedAt': '--',
+    'pricePercentile': --,
   };
 
   window.__DATA = DATA;
@@ -387,7 +437,8 @@
     const d = DATA;
     const info = tempInfo(d.temperature);
 
-    document.getElementById('todayDate').textContent = d.date + ' · 收盘后';
+    document.getElementById('todayDate').textContent = '数据截至 ' + d.date + ' 收盘';
+    document.getElementById('genTime').textContent = '页面生成于 ' + d.pageCreatedAt;
 
     // ── 关键信号 ──
     const sigPe = document.getElementById('sigPe');
@@ -528,6 +579,110 @@
   }
 
   setTimeout(render, 300);
+})();
+
+// ══════════════════════════════════════════════════
+// 盘中实时数据（腾讯行情接口）
+// ══════════════════════════════════════════════════
+(function() {
+  var card = document.getElementById('rtCard');
+  var dot = document.getElementById('rtDot');
+  var lb = document.getElementById('rtLabel');
+  var pr = document.getElementById('rtPrice');
+  var ch = document.getElementById('rtChange');
+  var pe = document.getElementById('rtPe');
+  var tp = document.getElementById('rtTemp');
+  var ti = document.getElementById('rtTime');
+  var ct = document.getElementById('rtCountdown');
+  var er = document.getElementById('rtError');
+
+  var refreshTimer = null, countdownTimer = null, countdown = 0;
+
+  function isMarketHours() {
+    var now = new Date();
+    if (now.getDay() === 0 || now.getDay() === 6) return false;
+    var t = now.getHours() * 100 + now.getMinutes();
+    return (t >= 930 && t <= 1130) || (t >= 1300 && t <= 1500);
+  }
+
+  function parseTencent(text) {
+    var m = text.match(/v_sh000510="([^"]+)"/);
+    if (!m) return null;
+    var f = m[1].split('~');
+    if (f.length < 35) return null;
+    return {
+      price: parseFloat(f[3]), yc: parseFloat(f[4]),
+      change: parseFloat(f[31]) || 0, pct: parseFloat(f[32]) || 0,
+      high: parseFloat(f[33]) || 0, low: parseFloat(f[34]) || 0,
+      ts: f[30] || ''
+    };
+  }
+
+  function computeRT(d, rt) {
+    if (!d || !rt || !d.price) return null;
+    var rPe = d.pe * rt.price / d.price;
+    var hist = d.peHistory || [], cnt = 0;
+    for (var i = 0; i < hist.length; i++) { if (hist[i].pe <= rPe) cnt++; }
+    var rPeP = hist.length > 0 ? (cnt / hist.length * 100) : d.pePercentile;
+    var rTmp = Math.round((rPeP * 0.6 + d.pricePercentile * 0.4) * 10) / 10;
+    return { pe: rPe, pctl: rPeP, temp: rTmp };
+  }
+
+  function rtTempColor(t) {
+    if (t < 30) return '#27ae60'; if (t < 60) return '#f39c12';
+    if (t < 80) return '#e67e22'; return '#e74c3c';
+  }
+
+  function updateUI(rtData, comp) {
+    if (!rtData) return;
+    var inH = isMarketHours();
+    dot.className = 'rt-dot ' + (inH ? 'active' : 'inactive');
+    lb.textContent = inH ? '盘中实时' : '盘后';
+    var up = rtData.change >= 0;
+    var c = up ? '#e74c3c' : '#27ae60';
+    pr.textContent = rtData.price.toLocaleString(); pr.style.color = c;
+    ch.textContent = (up ? '+' : '') + rtData.pct.toFixed(2) + '%'; ch.style.color = c;
+    if (comp) {
+      pe.textContent = comp.pe.toFixed(2);
+      tp.innerHTML = comp.temp + '°C'; tp.style.color = rtTempColor(comp.temp);
+    }
+    if (rtData.ts && rtData.ts.length >= 14) {
+      ti.textContent = '更新于 ' + rtData.ts.substring(8,10) + ':' + rtData.ts.substring(10,12) + ':' + rtData.ts.substring(12,14);
+    }
+    er.textContent = '';
+  }
+
+  function fetchRT() {
+    fetch('https://qt.gtimg.cn/q=sh000510&_=' + Date.now())
+      .then(function(r) { return r.arrayBuffer(); })
+      .then(function(buf) {
+        var text = new TextDecoder('gbk').decode(buf);
+        var d = parseTencent(text);
+        if (!d || isNaN(d.price)) { er.textContent = '数据解析失败'; return; }
+        updateUI(d, computeRT(window.__DATA, d));
+      })
+      .catch(function() { er.textContent = '数据获取失败'; });
+  }
+
+  function resetCD(n) {
+    countdown = n; ct.textContent = ' · ' + n + 's';
+    if (countdownTimer) clearInterval(countdownTimer);
+    countdownTimer = setInterval(function() {
+      countdown--; ct.textContent = countdown > 0 ? ' · ' + countdown + 's' : ' · 刷新中…';
+    }, 1000);
+  }
+
+  setTimeout(function() {
+    if (!window.__DATA) { card.style.display = 'none'; return; }
+    card.style.display = 'block';
+    fetchRT(); resetCD(60);
+    refreshTimer = setInterval(function() { fetchRT(); resetCD(60); }, 60000);
+    setInterval(function() {
+      var inH = isMarketHours();
+      lb.textContent = inH ? '盘中实时' : '盘后';
+      dot.className = 'rt-dot ' + (inH ? 'active' : 'inactive');
+    }, 30000);
+  }, 500);
 })();
 
 // ── 指标说明（全局，供 onclick 调用） ──
