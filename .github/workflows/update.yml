@@ -4,6 +4,8 @@ on:
   schedule:
     # 每天北京时间 16:00 执行（UTC 08:00），A 股 15:00 收盘
     - cron: '0 8 * * 1-5'
+    # 备用：16:30 再跑一次，GitHub 的定时是 best-effort，偶发跳过时兜底
+    - cron: '30 8 * * 1-5'
   # 支持手动触发（GitHub 网页上点按钮就能跑）
   workflow_dispatch:
 
