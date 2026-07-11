@@ -583,6 +583,26 @@ function showInfo(key){
 function hideInfo(){
   document.getElementById('infoModal').className='modal-overlay';
 }
+var TRANS_INFO={
+  cpi:{title:'CPI同比（居民消费价格）',body:'衡量居民消费品和服务价格的总水平变化。<br><br><b>参考区间：</b>0.5-3%为温和通胀，偏高说明消费过热，偏低说明需求不足。<br><br><b>和转型的关系：</b>CPI温和正增长说明内需在驱动经济，是转型成功的标志之一。当前接近零，说明内需偏弱。'},
+  ppi:{title:'PPI同比（工业生产者出厂价格）',body:'衡量工业企业产品出厂价格的变化。<br><br><b>参考区间：</b>-1%到3%为正常。低于-2%说明工业需求不足，高于3%说明上游成本压力大。<br><br><b>和转型的关系：</b>PPI从通缩回升说明工业需求在修复，新动能带动了上游。当前-3.6%，仍在通缩。'},
+  pmi:{title:'制造业PMI（采购经理人指数）',body:'反映制造业景气度的综合指数。<br><br><b>参考区间：</b>50为荣枯线，>50=扩张，<50=收缩。>52说明景气向好。<br><br><b>和转型的关系：</b>PMI在扩张区间意味着制造业整体在向好，为转型提供了基本盘。当前50.5，刚过荣枯线。'},
+  bond_yield:{title:'10年国债收益率',body:'中国政府10年期债券的年利率，被视为"无风险利率"基准。<br><br><b>参考区间：</b>1.8-3%为正常。过低说明经济偏弱、避险情绪高；过高说明资金紧张。<br><br><b>和转型的关系：</b>低利率环境降低企业融资成本，有利于转型投资。但过低也反映经济信心不足。当前1.74%偏低。'},
+  m2:{title:'M2同比（广义货币供应量）',body:'衡量全社会货币供应量增速。<br><br><b>参考区间：</b>8-10%为适度宽松。过低说明信用偏紧，过高说明可能通胀。<br><br><b>和转型的关系：</b>适度宽松的货币环境为新动能企业提供融资支持。当前7.3%偏紧。'},
+  a500_pe_percentile:{title:'A500估值分位（PE）',body:'A500指数当前市盈率在历史中的相对位置。<br><br><b>参考区间：</b>0-100%。越低说明越便宜，越高说明越贵。<br><br><b>和转型的关系（反向）：</b>估值分位低意味着旧经济出清充分、新经济有估值空间。当前75.5%偏高，说明市场偏贵，转型还没完全消化。'},
+  a500_price_percentile:{title:'A500价格位置',body:'A500指数当前价格在近5年中的相对位置。<br><br><b>参考区间：</b>0-100%。<br><br><b>和转型的关系（反向）：</b>价格低位说明市场在出清过程中，为新经济腾出空间。当前93.2%高位，说明市场情绪亢奋，需保持谨慎。'},
+  ai_market_share:{title:'中国AI模型海外调用份额',body:'在OpenRouter平台上，中国AI模型（DeepSeek、小米、腾讯等）的周调用量占全球总量的比例。<br><br><b>参考区间：</b>越高越好。当前中国模型占比35-45%，已连续数周超过美国。<br><br><b>和转型的关系：</b>这是新动能最直接的成果指标——中国AI模型的国际竞争力反映了科技转型的真实进度。'},
+  export:{title:'出口同比增速',body:'以人民币计价的出口总额同比增长率。<br><br><b>参考区间：</b>3-10%为正常增速。低于-3%说明外需明显走弱。<br><br><b>和转型的关系：</b>转型不是不要出口，而是要高质量出口。出口增速稳定说明制造业竞争力在维持，但还需配套看出口结构升级。'},
+  currency_index:{title:'人民币CFETS汇率指数',body:'中国外汇交易中心发布的人民币对一篮子货币的汇率指数，反映人民币整体强弱。<br><br><b>参考区间：</b>95-102为稳定区间。低于95偏弱，高于105偏强。<br><br><b>和转型的关系：</b>汇率稳定有利于进口高端设备和技术，促进产业升级。当前97.5，处于稳定区间。'},
+  electricity:{title:'全社会用电量同比',body:'全国全社会用电量的同比增长率。<br><br><b>参考区间：</b>2-8%为正常。低于2%说明经济活力不足，高于8%说明经济偏热。<br><br><b>和转型的关系：</b>用电量是最真实的经济活力指标——不管GDP统计如何调整，电力数据骗不了人。当前5.7%，处于稳健区间。'},
+  a500_turnover:{title:'A500周成交额变化',body:'A500指数最近一周日均成交额相比前一周的变化百分比。<br><br><b>参考区间：</b>±10%为平稳。高于30%说明放量，低于-30%说明明显缩量。<br><br><b>和转型的关系：</b>成交额反映资本市场活跃度。成交活跃有利于新经济企业融资和估值发现。当前-11.5%缩量，市场活跃度下降。'},
+};
+function transInfo(key){
+  var i=TRANS_INFO[key];if(!i)return;
+  document.getElementById('infoTitle').innerHTML=i.title;
+  document.getElementById('infoBody').innerHTML=i.body;
+  document.getElementById('infoModal').className='modal-overlay show';
+}
 function toggleRef(){
   var b=document.getElementById('refBody'),a=document.getElementById('refArrow'),ba=document.getElementById('refGuide').querySelector('.ref-bar');
   if(b.className.indexOf('show')>=0){b.className='ref-body';ba.className='ref-bar';a.textContent='▶';}
@@ -742,19 +762,25 @@ function renderTrans(d){
     var html='<div class="t-gh'+(gi===0?' t-gh-first':'')+'"><div class="gh-bar" style="background:'+g.color+'"></div><span class="gh-name">'+g.name+'</span><span class="gh-w">'+g.w+'</span><div class="gh-line"></div></div>';
     html+='<div class="t-grid">';
     items.forEach(function(item){
-      var ind=item.data,sc=ind.score,c='';
+      var ind=item.data,sc=ind.score,c='',key=item.key;
       if(sc<40)c='#97C459';else if(sc<70)c='#EF9F27';else c='#E24B4A';
       var fresh='';if(ind.date&&ind.date.indexOf('2025')>=0)fresh='📅';else fresh='🆕';
       var tag=ind.auto?'<span class="tc-tag t-tag-auto" style="font-size:8px">✅</span>':'<span class="tc-tag t-tag-manual" style="font-size:8px">⚠️</span>';
-      html+='<div class="t-card">'+
+      // Unit map
+      var um={'cpi':'%','ppi':'%','pmi':'点','bond_yield':'%','m2':'%','a500_pe_percentile':'%','a500_price_percentile':'%','ai_market_share':'%','export':'%','currency_index':'点','electricity':'%','a500_turnover':'%'};
+      var unit=um[key]||'';
+      // Reference range map
+      var refs={'cpi':'正常 0.5-3%','ppi':'正常 -1~3%','pmi':'荣枯线 50','bond_yield':'正常 1.8-3%','m2':'正常 8-10%','a500_pe_percentile':'越低越便宜','a500_price_percentile':'越低越安全','ai_market_share':'越高越好','export':'正常 3-10%','currency_index':'稳定 95-102','electricity':'正常 2-8%','a500_turnover':'平稳 ±10%'};
+      var ref=refs[key]||'';
+      html+='<div class="t-card" onclick="transInfo(\''+key+'\')" style="cursor:pointer">'+
         '<div class="tc-hdr"><span class="tc-name">'+fresh+' '+ind.name+'</span>'+tag+'</div>'+
-        '<div class="tc-val" style="color:'+c+'">'+ind.value+'</div>'+
+        '<div class="tc-val" style="color:'+c+'">'+ind.value+'<span style="font-size:12px;color:#bbb;font-weight:400;margin-left:2px">'+unit+'</span></div>'+
         '<div style="display:flex;justify-content:space-between;align-items:center;margin:2px 0">'+
           '<span class="tc-label" style="color:'+c+'">'+ind.label+'</span>'+
           '<span class="tc-score" style="color:'+c+'">'+Math.round(sc)+'分</span>'+
         '</div>'+
         '<div class="tc-bar"><div class="tc-fill" style="width:'+sc+'%;background:'+c+'"></div></div>'+
-        '<div class="tc-foot"><span>'+ind.source.substring(0,12)+'</span><span>'+ind.date+'</span></div>'+
+        '<div class="tc-foot"><span>参考 '+ref+'</span><span>'+ind.date+'</span></div>'+
       '</div>';
     });
     html+='</div>';
