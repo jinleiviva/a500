@@ -1,6 +1,6 @@
 {
-  "_comment": "中国经济「转型体温计」配置 - 指标权重、阈值、手动数据",
-  "version": "0.1",
+  "_comment": "中国经济「转型体温计」配置 v0.2 - 所有手动回退值已更新至2026年最新数据",
+  "version": "0.2",
   "last_updated": "2026-07-11",
   
   "weights": {
@@ -13,7 +13,7 @@
     "cpi": {
       "name": "CPI同比",
       "line": 1, "weight": 0.10,
-      "data_source": "akshare | 国家统计局",
+      "data_source": "国家统计局 | 东方财富数据页",
       "frequency": "月",
       "auto_fetch": true,
       "thresholds": [
@@ -24,14 +24,14 @@
         {"min": 3.0, "max": 5.0, "score": 60, "label": "偏高"},
         {"min": 5.0, "max": 999, "score": 20, "label": "过热"}
       ],
-      "manual_fallback": 0.1,
-      "last_known_value": 0.1,
-      "last_known_date": "2025-09-10"
+      "manual_fallback": 1.2,
+      "last_known_value": 1.2,
+      "last_known_date": "2026-05-31"
     },
     "ppi": {
       "name": "PPI同比",
       "line": 1, "weight": 0.10,
-      "data_source": "akshare | 国家统计局",
+      "data_source": "国家统计局 | 东方财富数据页",
       "frequency": "月",
       "auto_fetch": true,
       "thresholds": [
@@ -42,14 +42,14 @@
         {"min": 1.0, "max": 3.0, "score": 85, "label": "复苏"},
         {"min": 3.0, "max": 999, "score": 100, "label": "扩张"}
       ],
-      "manual_fallback": -3.6,
-      "last_known_value": -3.6,
-      "last_known_date": "2025-08-15"
+      "manual_fallback": 4.1,
+      "last_known_value": 4.1,
+      "last_known_date": "2026-06-30"
     },
     "pmi": {
       "name": "制造业PMI",
       "line": 1, "weight": 0.10,
-      "data_source": "akshare | 国家统计局",
+      "data_source": "国家统计局 | 东方财富数据页",
       "frequency": "月",
       "auto_fetch": true,
       "thresholds": [
@@ -60,9 +60,9 @@
         {"min": 52, "max": 55, "score": 85, "label": "向好"},
         {"min": 55, "max": 999, "score": 100, "label": "强劲"}
       ],
-      "manual_fallback": 50.5,
-      "last_known_value": 50.5,
-      "last_known_date": "2025-09-30"
+      "manual_fallback": 50.3,
+      "last_known_value": 50.3,
+      "last_known_date": "2026-06-30"
     },
     "bond_yield": {
       "name": "10年国债收益率",
@@ -81,7 +81,7 @@
     "m2": {
       "name": "M2同比",
       "line": 2, "weight": 0.08,
-      "data_source": "akshare | 中国人民银行",
+      "data_source": "中国人民银行 | 东方财富数据页",
       "frequency": "月",
       "auto_fetch": true,
       "thresholds": [
@@ -91,9 +91,9 @@
         {"min": 10, "max": 13, "score": 85, "label": "宽松"},
         {"min": 13, "max": 999, "score": 60, "label": "过度"}
       ],
-      "manual_fallback": 7.3,
-      "last_known_value": 7.3,
-      "last_known_date": "2025-08-31"
+      "manual_fallback": 8.6,
+      "last_known_value": 8.6,
+      "last_known_date": "2026-05-31"
     },
     "a500_pe_percentile": {
       "name": "A500估值分位（PE）",
@@ -101,7 +101,7 @@
       "data_source": "A500温度计 | 中证指数",
       "frequency": "日",
       "auto_fetch": true,
-      "_note": "从A500已有数据读取，PE分位越低=市场越冷（转型承压），越高=越热（泡沫风险）。转型体温计取反向：分位低=高分（估值低有空间），分位高=低分（估值高有风险）",
+      "_note": "从A500已有数据读取。PE分位低=市场冷(转型承压)，高=泡沫风险。转型体温计取反向",
       "thresholds": [
         {"min": -999, "max": 20, "score": 100, "label": "低估值"},
         {"min": 20, "max": 40, "score": 70, "label": "偏低"},
@@ -123,9 +123,9 @@
         {"min": 30, "max": 40, "score": 75, "label": "较高"},
         {"min": 40, "max": 999, "score": 100, "label": "领先"}
       ],
-      "manual_fallback": 35,
-      "last_known_value": 35,
-      "last_known_date": "2026-06-28"
+      "manual_fallback": 42,
+      "last_known_value": 42,
+      "last_known_date": "2026-07-04"
     },
     "a500_price_percentile": {
       "name": "A500价格位置",
@@ -133,7 +133,7 @@
       "data_source": "A500温度计 | akshare",
       "frequency": "日",
       "auto_fetch": true,
-      "_note": "价格分位低=底部区域(回暖希望)，价格分位过高=过热。转型体温计中反向打分：分位低=高分",
+      "_note": "价格分位低=底部区域，高=过热。转型体温计取反向",
       "thresholds": [
         {"min": -999, "max": 20, "score": 100, "label": "低位"},
         {"min": 20, "max": 40, "score": 65, "label": "偏低"},
@@ -147,7 +147,7 @@
       "line": 3, "weight": 0.08,
       "data_source": "海关总署",
       "frequency": "月",
-      "auto_fetch": false,
+      "auto_fetch": true,
       "thresholds": [
         {"min": -999, "max": -10, "score": 0, "label": "大跌"},
         {"min": -10, "max": -3, "score": 15, "label": "下滑"},
@@ -155,16 +155,16 @@
         {"min": 3, "max": 10, "score": 70, "label": "增长"},
         {"min": 10, "max": 999, "score": 100, "label": "强劲"}
       ],
-      "manual_fallback": 5.0,
-      "last_known_value": 5.0,
+      "manual_fallback": 13.8,
+      "last_known_value": 13.8,
       "last_known_date": "2026-05-31"
     },
     "currency_index": {
       "name": "人民币CFETS汇率指数",
       "line": 3, "weight": 0.05,
-      "data_source": "外汇交易中心 | Web抓取",
+      "data_source": "中国外汇交易中心 | chl.cn自动抓取",
       "frequency": "周",
-      "auto_fetch": false,
+      "auto_fetch": true,
       "thresholds": [
         {"min": -999, "max": 90, "score": 10, "label": "偏弱"},
         {"min": 90, "max": 95, "score": 30, "label": "较弱"},
@@ -172,9 +172,9 @@
         {"min": 102, "max": 110, "score": 90, "label": "偏强"},
         {"min": 110, "max": 999, "score": 60, "label": "过强"}
       ],
-      "manual_fallback": 97.5,
-      "last_known_value": 97.5,
-      "last_known_date": "2026-06-30"
+      "manual_fallback": 102.65,
+      "last_known_value": 102.65,
+      "last_known_date": "2026-07-03"
     },
     "electricity": {
       "name": "全社会用电量同比",
@@ -197,7 +197,6 @@
       "data_source": "A500温度计 | akshare",
       "frequency": "周",
       "auto_fetch": true,
-      "_note": "从A500日线计算最近一周 vs 前一周成交额变化",
       "thresholds": [
         {"min": -999, "max": -30, "score": 0, "label": "骤降"},
         {"min": -30, "max": -10, "score": 20, "label": "缩量"},
