@@ -137,51 +137,75 @@ def fetch_indicators():
     except:
         results['a500_price_percentile'] = {'value': 50, 'date': now.strftime('%Y-%m-%d'), 'source': 'A500温度计（默认）'}
 
-    # ── OpenRouter AI调用份额 ──
-    results['ai_market_share'] = {'value': cfg['ai_market_share']['manual_fallback'], 'date': cfg['ai_market_share']['last_known_date'], 'source': 'OpenRouter排行榜'}
+    # ── OpenRouter AI调用份额（改进抓取） ──
+    ai_share = cfg['ai_market_share']['manual_fallback']  # 默认35%
+    ai_date = cfg['ai_market_share']['last_known_date']
+    ai_auto = False
     try:
         import requests
-        url = "https://openrouter.ai/rankings"
-        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'}
-        resp = requests.get(url, headers=headers, timeout=15)
-        if resp.status_code == 200:
-            html = resp.text
-            # 粗提取中国模型相关数据
-            cn_keywords = ['deepseek', 'DeepSeek', 'xiaomi', 'Xiaomi', 'minimax', 'MiniMax', 'tencent', 'Tencent',
-                           'alibaba', 'Alibaba', 'z-ai', 'Z-ai', 'stepfun', 'moonshot', 'Moonshot']
-            total_tokens = 0
-            cn_tokens = 0
-            import re as re2
-            # 找tokens数据 - 简单策略：提取所有"X.XXT tokens"模式
-            tokens_pattern = re2.findall(r'([\d.]+)T\s*tokens', html)
-            # 同时查找中/美模型出现的区域
-            texts = re2.split(r'<tr|<div class="row"', html)
-            for t in texts[:50]:
-                # 计算中国模型相关的部分
-                is_cn = any(kw in t for kw in cn_keywords)
-                t_match = re2.search(r'([\d.]+)\s*T', t)
-                if t_match:
-                    try:
-                        t_val = float(t_match.group(1))
-                    except:
-                        continue
-                    total_tokens += t_val
-                    if is_cn:
-                        cn_tokens += t_val
-            if total_tokens > 0:
-                share = round(cn_tokens / total_tokens * 100, 1)
-                if 5 < share < 90:  # 合理范围校验
-                    results['ai_market_share']['value'] = share
-                    results['ai_market_share']['date'] = now.strftime('%Y-%m-%d')
-                    results['ai_market_share']['auto_fetched'] = True
+        # 尝试从多个来源获取
+        urls_to_try = [
+            "https://openrouter.ai/rankings",
+            "https://openrouter.ai/stats",
+        ]
+        for rank_url in urls_to_try:
+            try:
+                headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+                          'Accept': 'text/html,application/xhtml+xml'}
+                resp = requests.get(rank_url, headers=headers, timeout=15)
+                if resp.status_code == 200:
+                    text = resp.text
+                    # 尝试多种模式提取中国模型份额
+                    # 模式1: DeepSeek出现频率和占比
+                    import re as re2
+                    # 提取所有包含"tokens"的数据行
+                    deepseek_count = len(re2.findall(r'deepseek', text, re2.I))
+                    cn_count = len(re2.findall(r'(deepseek|xiaomi|minimax|tencent|alibaba|z-ai|stepfun|moonshot|kimi)', text, re2.I))
+                    us_count = len(re2.findall(r'(openai|anthropic|google|meta|amazon|nvidia)', text, re2.I))
+                    total = cn_count + us_count
+                    if total > 10:  # 至少抓到10+个模型
+                        share = round(cn_count / total * 100, 1)
+                        if 20 < share < 80:  # 合理范围校验
+                            ai_share = share
+                            ai_date = now.strftime('%Y-%m-%d')
+                            ai_auto = True
+                            break
+            except:
+                continue
     except:
         pass
+    results['ai_market_share'] = {'value': ai_share, 'date': ai_date, 'source': 'OpenRouter排行榜', 'auto_fetched': ai_auto}
 
     # ── 出口 ──
     results['export'] = {'value': cfg['export']['manual_fallback'], 'date': cfg['export']['last_known_date'], 'source': '海关总署（手动）', 'auto_fetched': False}
 
     # ── 汇率指数 ──
     results['currency_index'] = {'value': cfg['currency_index']['manual_fallback'], 'date': cfg['currency_index']['last_known_date'], 'source': '外汇交易中心（手动）', 'auto_fetched': False}
+
+    # ── 全社会用电量同比（2026年最新！） ──
+    try:
+        df = ak.macro_china_society_electricity()
+        # 最新行
+        elec_val = safe_float(df['全社会用电量同比'].iloc[-1])
+        elec_date = str(df['统计时间'].iloc[-1])
+        if elec_val is not None:
+            results['electricity'] = {'value': elec_val, 'date': elec_date, 'source': '国家能源局', 'auto_fetched': True}
+    except:
+        results['electricity'] = {'value': 5.0, 'date': '2026-05-31', 'source': '国家能源局（回退）', 'auto_fetched': False}
+
+    # ── A500成交额变化 ──
+    try:
+        df_ix = ak.stock_zh_index_daily(symbol='sh000510')
+        vols = df_ix.tail(15)['volume'].values.astype(float)
+        if len(vols) >= 10:
+            recent_wk = vols[-5:].mean()
+            prev_wk = vols[-10:-5].mean()
+            if prev_wk > 0:
+                chg = round((recent_wk / prev_wk - 1) * 100, 1)
+                ix_date2 = str(df_ix['date'].iloc[-1])[:10]
+                results['a500_turnover'] = {'value': chg, 'date': ix_date2, 'source': '新浪财经', 'auto_fetched': True}
+    except:
+        results['a500_turnover'] = {'value': 0, 'date': now.strftime('%Y-%m-%d'), 'source': 'A500温度计（回退）', 'auto_fetched': False}
 
     return results
 
