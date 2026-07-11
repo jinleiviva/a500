@@ -14,6 +14,14 @@ body{
 }
 .container{max-width:480px;width:100%}
 
+/* ── TAB nav ── */
+.tabs{display:flex;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.04);margin-bottom:12px}
+.tab{flex:1;padding:10px;text-align:center;font-size:12px;font-weight:600;cursor:pointer;color:#bbb;transition:all 0.2s;user-select:none;position:relative}
+.tab:first-child{border-right:1px solid #f0f0f0}
+.tab.act{color:#1a1a2e;background:#fff}
+.tab.act::after{content:'';position:absolute;bottom:0;left:20%;width:60%;height:2px;background:#333;border-radius:2px}
+.tab .tab-icon{font-size:14px;margin-right:3px}
+
 /* ── Header ── */
 .hd{text-align:center;margin-bottom:10px}
 .hd h1{font-size:18px;font-weight:700}
@@ -115,6 +123,22 @@ body{
 .r-rel li{padding:5px 8px;margin:3px 0;background:#f8f9fa;border-radius:6px;font-size:12px;line-height:1.5;color:#555}
 .r-rel li b{color:#333}
 
+/* ── Transition thermometer ── */
+.t-trans{display:none}
+.t-trans.show{display:block}
+.t-line-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:8px 0}
+.t-line{background:#fff;border-radius:10px;padding:10px 8px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.03)}
+.t-line .l-name{font-size:9px;color:#999;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t-line .l-bar{height:4px;border-radius:2px;background:#eee;margin:4px 0;overflow:hidden}
+.t-line .l-fill{height:100%;border-radius:2px;transition:width 0.5s}
+.t-line .l-score{font-size:22px;font-weight:700}
+.t-line .l-pct{font-size:10px;color:#bbb}
+.t-desc{text-align:center;font-size:13px;color:#666;padding:6px 0 10px;line-height:1.5}
+.t-tag{display:inline-block;padding:1px 5px;border-radius:3px;font-weight:600;font-size:9px;margin:1px}
+.t-tag-auto{background:#e8f8f0;color:#1e8449}
+.t-tag-manual{background:#fff3e0;color:#d35400}
+.t-tag-stale{background:#fdedec;color:#c0392b}
+
 /* ── Info buttons & modal ── */
 .info-btn{display:inline-block;width:16px;height:16px;line-height:16px;border-radius:50%;background:#ddd;color:#fff;font-size:10px;font-weight:700;text-align:center;cursor:pointer;vertical-align:middle;margin-left:3px;user-select:none}
 .info-btn:hover{background:#bbb}
@@ -138,6 +162,15 @@ body{
       <h1>📊 A500 温度计</h1>
       <div class="meta"><span id="todayDate">—</span> · <span id="genTime"></span></div>
     </div>
+
+    <!-- TAB nav -->
+    <div class="tabs">
+      <div class="tab act" id="tabBtnA500" onclick="switchTab('a500')"><span class="tab-icon">📈</span>A500温度</div>
+      <div class="tab" id="tabBtnTrans" onclick="switchTab('transition')"><span class="tab-icon">🌡️</span>转型体温</div>
+    </div>
+
+    <!-- ── A500 Tab ── -->
+    <div id="tabA500">
 
     <!-- Temperature -->
     <div class="temp-wrap" style="position:relative">
@@ -297,8 +330,63 @@ body{
       </div>
     </div>
 
-  </div>
-</div>
+  </div><!-- end tabA500 -->
+
+    <!-- ── Transition Tab ── -->
+    <div class="t-trans" id="tabTransition">
+      <div class="temp-wrap" style="position:relative">
+        <div class="temp-ring">
+          <svg viewBox="0 0 160 160">
+            <circle class="bg" cx="80" cy="80" r="68"/>
+            <circle class="arc" id="transArc" cx="80" cy="80" r="68" stroke-dasharray="427.26" stroke-dashoffset="200" stroke="#EF9F27"/>
+          </svg>
+          <div class="num" id="transTemp" style="color:#EF9F27">--</div>
+          <div class="lbl" id="transLbl" style="color:#EF9F27">--</div>
+        </div>
+      </div>
+      <div class="t-desc" id="transDesc">加载中…</div>
+
+      <!-- 三条主线 -->
+      <div class="t-line-grid" id="transLines"></div>
+
+      <!-- 数据预警 -->
+      <div id="transWarn" style="display:none"></div>
+
+      <!-- 参考指南 -->
+      <div class="ref" id="transRefGuide">
+        <div class="ref-bar" onclick="toggleRefTrans()">📖 转型指南 · 权重与解读 <span id="transRefArrow">▶</span></div>
+        <div class="ref-body" id="transRefBody">
+          <div class="r-grp">
+            <div class="r-h">🌡️ 转型温度怎么算？</div>
+            <div class="r-lbl">综合温度 = 各指标得分 × 权重的加权总和。</div>
+            <div class="r-lbl">三条主线：<b>内需与物价（40%）</b> + <b>债务与政策（25%）</b> + <b>新动能（35%）</b>。</div>
+            <div class="r-lbl">每个指标按当前值 vs 阈值映射到 0–100 分，越高=越向好。</div>
+          </div>
+          <div class="r-grp">
+            <div class="r-h">📊 三条主线解读</div>
+            <table class="r-tbl">
+              <tr><td>❄️ &lt; 40</td><td>低温区</td><td style="color:#97C459">转型承压</td></tr>
+              <tr><td>🌤️ 40–69</td><td>温和区</td><td style="color:#EF9F27">新旧交替</td></tr>
+              <tr><td>🔥 ≥ 70</td><td>升温区</td><td style="color:#E24B4A">向好加快</td></tr>
+            </table>
+          </div>
+          <div class="r-grp" id="transIndicatorsGuide">
+            <div class="r-h">📈 各指标详情</div>
+            <div class="r-lbl" id="transIndicatorsList">加载中…</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ft">
+        <span class="t-tag t-tag-auto">✅ 自动</span>
+        <span class="t-tag t-tag-manual">⚠️ 手动</span>
+        <span class="t-tag t-tag-stale">⚠️ 数据滞后</span>
+         · 月频更新 · 仅供研究参考
+      </div>
+      <div class="ft" style="padding-top:0;color:#bbb">数据来源：国家统计局 / 央行 / 中证指数 / OpenRouter · 不构成投资建议</div>
+    </div>
+
+  </div><!-- end #content -->
 
 <script>
 (function(){
@@ -542,6 +630,120 @@ function toggleRef(){
     },30000);
   },500);
 })();
+
+// ── TAB ──
+function switchTab(t){
+  var a5=document.getElementById('tabA500'),tr=document.getElementById('tabTransition'),
+      ba=document.getElementById('tabBtnA500'),bt=document.getElementById('tabBtnTrans');
+  if(t==='a500'){
+    a5.style.display='block';tr.style.display='none';
+    ba.className='tab act';bt.className='tab';
+  }else{
+    a5.style.display='none';tr.style.display='block';
+    ba.className='tab';bt.className='tab act';
+    if(!window._transLoaded)loadTransition();
+  }
+}
+function toggleRefTrans(){
+  var b=document.getElementById('transRefBody'),a=document.getElementById('transRefArrow'),
+      ba=document.getElementById('transRefGuide').querySelector('.ref-bar');
+  if(b.className.indexOf('show')>=0){b.className='ref-body';ba.className='ref-bar';a.textContent='▶';}
+  else{b.className='ref-body show';ba.className='ref-bar open';a.textContent='▶';}
+}
+
+// ── Transition ──
+function loadTransition(){
+  window._transLoaded=true;
+  if(window._transData){renderTrans(window._transData);return;}
+  var T=null;
+  try{
+    var x=new XMLHttpRequest();
+    x.open('GET','transition_data.json?_='+Date.now(),true);
+    x.onload=function(){
+      if(x.status===200){
+        try{T=JSON.parse(x.responseText);renderTrans(T);}
+        catch(e){transFail();}
+      }else{transFail();}
+    };
+    x.onerror=transFail;
+    x.send();
+  }catch(e){transFail();}
+}
+function transFail(){
+  document.getElementById('transDesc').textContent='⚠️ 数据加载失败，请稍后重试';
+}
+function renderTrans(d){
+  // Temperature ring
+  var C=2*Math.PI*68,arc=document.getElementById('transArc');
+  arc.style.strokeDasharray=C;
+  arc.style.strokeDashoffset=C*(1-d.temperature/100);
+  arc.style.stroke=d.color||'#EF9F27';
+  document.getElementById('transTemp').textContent=d.temperature;
+  document.getElementById('transTemp').style.color=d.color||'#EF9F27';
+  document.getElementById('transLbl').textContent=d.emoji+' '+d.band;
+  document.getElementById('transLbl').style.color=d.color||'#EF9F27';
+  document.getElementById('transDesc').textContent=d.description;
+
+  // Lines grid
+  var grid=document.getElementById('transLines'),html='';
+  var lines=[d.lineScores.line1,d.lineScores.line2,d.lineScores.line3];
+  var lnames={1:'内需与物价',2:'债务与政策',3:'新动能'};
+  var colors=['#97C459','#EF9F27','#E24B4A'];
+  var keys=['line1','line2','line3'];
+  keys.forEach(function(k,i){
+    var l=d.lineScores[k];if(!l)return;
+    var sc=l.score,c='';
+    if(sc<40)c='#97C459';else if(sc<70)c='#EF9F27';else c='#E24B4A';
+    html+='<div class="t-line">'+
+      '<div class="l-name">'+l.name+' <span class="l-pct">'+Math.round(l.weight)+'%</span></div>'+
+      '<div class="l-score" style="color:'+c+'">'+Math.round(sc)+'</div>'+
+      '<div class="l-bar"><div class="l-fill" style="width:'+sc+'%;background:'+c+'"></div></div>'+
+    '</div>';
+  });
+  grid.innerHTML=html;
+
+  // Warn stale data
+  var warnDiv=document.getElementById('transWarn');
+  var stale=[],manual=[];
+  var ik=Object.keys(d.indicators||{});
+  ik.forEach(function(k){
+    var ind=d.indicators[k];
+    if(!ind.auto)manual.push(ind.name);
+  });
+  if(manual.length>0){
+    warnDiv.style.display='block';
+    warnDiv.className='adv adv-ok';
+    warnDiv.style.fontSize='11px';
+    warnDiv.style.padding='8px';
+    warnDiv.innerHTML='⚠️ 部分数据为手动录入：'+manual.join('、')+'。自动数据源恢复后将切换。';
+  }
+
+  // Fill guide
+  var listEl=document.getElementById('transIndicatorsList');
+  if(listEl){
+    var lhtml='';
+    ik.forEach(function(k){
+      var ind=d.indicators[k];
+      var tag=ind.auto?'<span class="t-tag t-tag-auto">✅ 自动</span>':'<span class="t-tag t-tag-manual">⚠️ 手动</span>';
+      var c='';if(ind.score<40)c='#97C459';else if(ind.score<70)c='#EF9F27';else c='#E24B4A';
+      lhtml+='<div style="padding:6px 0;border-bottom:1px solid #f5f5f5">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">'+
+        '<b style="font-size:13px;color:#333">'+ind.name+'</b>'+tag+'</div>'+
+        '<div style="font-size:12px;color:#666">当前 <span style="color:'+c+';font-weight:700">'+ind.value+'</span> → <b>'+Math.round(ind.score)+'分</b>（'+ind.label+'）· 权重'+Math.round(ind.weight*100)+'%</div>'+
+        '<div style="font-size:10px;color:#bbb">'+ind.source+' · 截至 '+ind.date+'</div>'+
+      '</div>';
+    });
+    listEl.innerHTML=lhtml;
+  }
+}
+
+// Also init transition tab data on page load (prefetch for seamless switch)
+setTimeout(function(){
+  var x=new XMLHttpRequest();
+  x.open('GET','transition_data.json?_='+Date.now(),true);
+  x.onload=function(){if(x.status===200){try{var T=JSON.parse(x.responseText);window._transData=T;}catch(e){}}};
+  x.send();
+},1000);
 </script>
 <!-- Info modal -->
 <div class="modal-overlay" id="infoModal" onclick="if(event.target===this)hideInfo()">
