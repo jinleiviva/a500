@@ -127,20 +127,12 @@ body{
 .t-trans{display:none}
 .t-trans.show{display:block}
 .t-line-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
-.t-line{background:#fff;border-radius:10px;padding:10px 8px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.03);position:relative}
+.t-line{background:#fff;border-radius:10px;padding:10px 8px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.03)}
 .t-line .l-name{font-size:9px;color:#999;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.t-line .l-sub{font-size:8px;color:#ccc;margin-bottom:4px;line-height:1.3}
 .t-line .l-bar{height:4px;border-radius:2px;background:#eee;margin:4px 0;overflow:hidden}
 .t-line .l-fill{height:100%;border-radius:2px;transition:width 0.5s}
 .t-line .l-score{font-size:22px;font-weight:700}
 .t-line .l-pct{font-size:10px;color:#bbb}
-.t-line .l-drivers{display:flex;justify-content:space-between;font-size:8px;margin-top:4px;padding-top:4px;border-top:1px solid #f5f5f5}
-.t-line .l-drv-item{text-align:center}
-.t-line .l-drv-name{color:#bbb}
-.t-line .l-drv-score{font-weight:600}
-.t-line .l-drv-up{color:#27AE60}
-.t-line .l-drv-down{color:#E24B4A}
-.t-line .l-takeaway{font-size:10px;color:#888;margin-top:4px;line-height:1.4;font-weight:500}
 .t-desc{text-align:center;font-size:13px;color:#666;padding:6px 0 10px;line-height:1.5}
 .t-tag{display:inline-block;padding:1px 5px;border-radius:3px;font-weight:600;font-size:9px;margin:1px}
 .t-tag-auto{background:#e8f8f0;color:#1e8449}
@@ -178,6 +170,7 @@ body{
 .modal-box .close:hover{color:#888}
 .modal-box .title{font-size:15px;font-weight:700;margin-bottom:8px}
 .modal-box .body{font-size:13px;color:#555;line-height:1.7}
+.modal-box .info-foot{display:flex;justify-content:space-between;font-size:10px;color:#aaa;margin-top:12px;padding-top:8px;border-top:1px solid #f0f0f0}
 </style>
 </head>
 <body>
@@ -562,7 +555,7 @@ body{
       {d:"07-08",pe:16.16},
       {d:"07-09",pe:16.62},
       {d:"07-10",pe:16.31}
-    ], 'pageCreatedAt': '2026-07-11 19:07', 'pricePercentile': 93.2,
+    ], 'pageCreatedAt': '2026-07-11 19:11', 'pricePercentile': 93.2,
   };
   window.__D = D;
 
@@ -743,7 +736,15 @@ var TRANS_INFO={
 function transInfo(key){
   var i=TRANS_INFO[key];if(!i)return;
   document.getElementById('infoTitle').innerHTML=i.title;
-  document.getElementById('infoBody').innerHTML=i.body;
+  // Append data source & update date from live data
+  var live = window._transData && window._transData.indicators && window._transData.indicators[key];
+  var foot = '';
+  if(live && live.source){
+    foot += '<div class="info-foot"><span class="if-src">📡 '+live.source+'</span>';
+    if(live.date) foot += '<span class="if-date">📅 '+live.date+'</span>';
+    foot += '</div>';
+  }
+  document.getElementById('infoBody').innerHTML = i.body + foot;
   document.getElementById('infoModal').className='modal-overlay show';
 }
 function toggleRef(){
@@ -878,9 +879,10 @@ function renderTrans(d){
      d.temperature>=40?'结论：内需偏弱但货币宽松，整体温和运行':
      '结论：内需收缩、就业承压，整体偏冷')+'</div>';
 
-  // Lines grid (4 lines => 2x2) with explanations
+  // Lines grid (4 lines => 2x2)
   var grid=document.getElementById('transLines'),html='';
   var keys=['line1','line2','line3','line4'];
+  // 每条线的判断文案（4线）
   var lineJudgments={
     line1:{high:'✅ 内需正常',mid:'🌤️ 内需偏弱',low:'❄️ 需求不振'},
     line2:{high:'✅ 就业良好',mid:'🌤️ 就业正常',low:'⚠️ 就业承压'},
@@ -888,52 +890,17 @@ function renderTrans(d){
     line4:{high:'🔥 转型加速',mid:'🌤️ 转型推进',low:'❄️ 动力不足'},
   };
   var lineColors={line1:'#27AE60',line2:'#2980B9',line3:'#8E44AD',line4:'#E67E22'};
-  var lineSubs={
-    line1:'CPI·PPI·PMI·用电量·社零',
-    line2:'失业率·居民收入',
-    line3:'M2·人民币贷款·国债·LPR',
-    line4:'工业增加值·出口·汇率·AI·新能源',
-  };
-  var lineTakeaways={
-    line1:{high:'消费与物价同步走强',mid:'CPI温和但社零负增长，消费是主要拖累',low:'物价低迷叠加消费收缩，内需承压'},
-    line2:{high:'就业市场稳健，收入支撑消费',mid:'就业和收入处于正常区间，但需关注消费端',low:'失业率上升压制消费信心'},
-    line3:{high:'信用传导顺畅，企业融资活跃',mid:'货币宽松但贷款增速偏低，信用传导有待畅通',low:'信用扩张偏慢，实体经济融资需求不足'},
-    line4:{high:'新动能强劲，对外开放竞争力强',mid:'转型有进展，新能源和AI是亮点',low:'转型动力不足，需加大新兴产业投入'},
-  };
-  // Pre-compute per-line indicator breakdowns
-  var lineIndData = {1:[],2:[],3:[],4:[]};
-  Object.keys(d.indicators||{}).forEach(function(k){
-    var ind = d.indicators[k];
-    if(ind && lineIndData[ind.line]) lineIndData[ind.line].push(ind);
-  });
   keys.forEach(function(k,i){
     var l=d.lineScores[k];if(!l)return;
-    var sc=l.score,c=lineColors[k],judge='',tk='';
-    if(sc<40){judge=lineJudgments[k].low;tk=lineTakeaways[k].low;}
-    else if(sc<70){judge=lineJudgments[k].mid;tk=lineTakeaways[k].mid;}
-    else{judge=lineJudgments[k].high;tk=lineTakeaways[k].high;}
-    // Find best & worst indicator in this line
-    var lineNum = i+1, bestInd=null, worstInd=null;
-    var items = lineIndData[lineNum]||[];
-    items.forEach(function(ind){
-      if(!bestInd || ind.score > bestInd.score) bestInd = ind;
-      if(!worstInd || ind.score < worstInd.score) worstInd = ind;
-    });
-    var drvHtml = '';
-    if(bestInd && worstInd && bestInd.key !== worstInd.key){
-      drvHtml = '<div class="l-drivers">'+
-        '<div class="l-drv-item"><span class="l-drv-name">▲ </span><span class="l-drv-score l-drv-up">'+bestInd.name+' '+Math.round(bestInd.score)+'</span></div>'+
-        '<div class="l-drv-item"><span class="l-drv-name">▼ </span><span class="l-drv-score l-drv-down">'+worstInd.name+' '+Math.round(worstInd.score)+'</span></div>'+
-      '</div>';
-    }
+    var sc=l.score,c=lineColors[k],judge='';
+    if(sc<40){judge=lineJudgments[k].low;}
+    else if(sc<70){judge=lineJudgments[k].mid;}
+    else{judge=lineJudgments[k].high;}
     html+='<div class="t-line" style="border-top:3px solid '+c+'">'+
       '<div class="l-name">'+l.name+' <span class="l-pct">'+Math.round(l.weight)+'%</span></div>'+
-      '<div class="l-sub">'+lineSubs[k]+'</div>'+
       '<div class="l-score" style="color:'+c+'">'+Math.round(sc)+'</div>'+
-      '<div style="font-size:11px;color:'+c+';font-weight:500;margin:1px 0">'+judge+'</div>'+
+      '<div style="font-size:11px;color:'+c+';font-weight:500;margin:2px 0">'+judge+'</div>'+
       '<div class="l-bar"><div class="l-fill" style="width:'+sc+'%;background:'+c+'"></div></div>'+
-      drvHtml+
-      '<div class="l-takeaway">'+tk+'</div>'+
     '</div>';
   });
   grid.innerHTML=html;
