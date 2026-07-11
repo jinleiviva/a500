@@ -64,6 +64,10 @@ body{
 .ml-row .ml-desc.r{color:#EF4444;font-weight:500}
 .ml-row .ml-desc.y{color:#F59E0B;font-weight:500}
 .ml-div{height:1px;background:#F1F5F9}
+.ml-expand{overflow:hidden;max-height:0;transition:max-height 0.25s ease;font-size:12px;color:#475569;line-height:1.6}
+.ml-expand.show{max-height:200px}
+.ml-expand .ml-exp-inner{padding:0 0 10px 0}
+.ml-expand .ml-exp-source{font-size:10px;color:#94A3B8;margin-top:4px}
 
 /* ── Section header ── */
 .sec-h{font-size:12px;font-weight:600;color:#64748B;margin-bottom:8px}
@@ -161,7 +165,7 @@ body{
 .t-gh .gh-line{flex:1;height:1px;background:#E2E8F0}
 .t-gh-first{margin-top:2px}
 
-/* ── Bottom Sheet ── */
+/* ── Bottom Sheet (仅温度说明) ── */
 .sheet-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.3);z-index:999;justify-content:center;align-items:flex-end;opacity:0;transition:opacity 0.2s}
 .sheet-overlay.show{display:flex;opacity:1}
 .sheet-box{background:#fff;border-radius:16px 16px 0 0;padding:24px 20px 32px;max-width:480px;width:100%;max-height:70vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,0.1);transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);position:relative}
@@ -216,29 +220,33 @@ body{
 
       <!-- Metrics list -->
       <div class="ml">
-        <div class="ml-row" onclick="showSheet('pe')" style="cursor:pointer;transition:background 0.15s" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background=''">
+        <div class="ml-row" onclick="toggleExpand('pe')" style="cursor:pointer;transition:background 0.15s" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background=''">
           <span class="ml-lbl">回本年限</span>
           <span class="ml-val" id="peVal">--</span>
           <span class="ml-desc" id="peRank">--</span>
         </div>
+        <div class="ml-expand" id="expandPe"><div class="ml-exp-inner"></div></div>
         <div class="ml-div"></div>
-        <div class="ml-row" onclick="showSheet('stockYield')" style="cursor:pointer;transition:background 0.15s" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background=''">
+        <div class="ml-row" onclick="toggleExpand('stockYield')" style="cursor:pointer;transition:background 0.15s" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background=''">
           <span class="ml-lbl">盈利收益率</span>
           <span class="ml-val" id="stockVal">--</span>
           <span class="ml-desc g" id="stockDesc">✅ 划算</span>
         </div>
+        <div class="ml-expand" id="expandStockYield"><div class="ml-exp-inner"></div></div>
         <div class="ml-div"></div>
-        <div class="ml-row" onclick="showSheet('bondYield')" style="cursor:pointer;transition:background 0.15s" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background=''">
+        <div class="ml-row" onclick="toggleExpand('bondYield')" style="cursor:pointer;transition:background 0.15s" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background=''">
           <span class="ml-lbl">10年国债</span>
           <span class="ml-val" id="bondVal">--</span>
           <span class="ml-desc" id="premiumDesc">股债差 --</span>
         </div>
+        <div class="ml-expand" id="expandBondYield"><div class="ml-exp-inner"></div></div>
         <div class="ml-div"></div>
-        <div class="ml-row" onclick="showSheet('divYield')" style="cursor:pointer;transition:background 0.15s" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background=''">
+        <div class="ml-row" onclick="toggleExpand('divYield')" style="cursor:pointer;transition:background 0.15s" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background=''">
           <span class="ml-lbl">股息率</span>
           <span class="ml-val" id="divYieldVal">--</span>
           <span class="ml-desc" id="divDesc">中性</span>
         </div>
+        <div class="ml-expand" id="expandDivYield"><div class="ml-exp-inner"></div></div>
       </div>
 
       <div class="s-div"></div>
@@ -566,7 +574,7 @@ var INFO = {
   rtTemp:{title:'估算温度是什么？',body:'盘中实时估算的温度。<br><br>用估算的PE和历史上的PE数据做对比，算出当前温度。'},
 };
 function showSheet(key){
-  var info = INFO[key] || TRANS_INFO[key];
+  var info = INFO[key];
   if(!info)return;
   document.getElementById('sTitle').innerHTML=info.title;
   document.getElementById('sBody').innerHTML=info.body;
@@ -575,6 +583,27 @@ function showSheet(key){
 }
 function hideSheet(){
   document.getElementById('sheetModal').className='sheet-overlay';
+}
+
+// ── Inline expand for metric rows ──
+var expandOpen = null;
+function toggleExpand(key){
+  var info = INFO[key];
+  if(!info)return;
+  var el = document.getElementById('expand' + key.charAt(0).toUpperCase() + key.slice(1));
+  if(!el)return;
+  // Close previous
+  if(expandOpen && expandOpen !== el){
+    expandOpen.className = 'ml-expand';
+  }
+  if(el.className.indexOf('show') >= 0){
+    el.className = 'ml-expand';
+    expandOpen = null;
+    return;
+  }
+  el.querySelector('.ml-exp-inner').innerHTML = info.body;
+  el.className = 'ml-expand show';
+  expandOpen = el;
 }
 function transInfo(key){
   var i=TRANS_INFO[key];if(!i)return;
