@@ -10,176 +10,164 @@
 body{
   font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;
   background:#F1F5F9;color:#0F172A;
-  display:flex;justify-content:center;padding:16px 12px
+  display:flex;justify-content:center;padding:0
 }
-.container{max-width:480px;width:100%}
+.container{max-width:480px;width:100%;min-height:100vh;position:relative;padding:16px 12px 68px}
 
-/* ── TAB nav ── */
-.tabs{display:flex;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.05);margin-bottom:12px}
-.tab{flex:1;padding:12px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;color:#94A3B8;transition:all 0.2s;user-select:none;position:relative}
-.tab:first-child{border-right:1px solid #E2E8F0}
-.tab.act{color:#0F172A;background:#fff}
-.tab.act::after{content:'';position:absolute;bottom:0;left:20%;width:60%;height:3px;background:#6366F1;border-radius:2px}
-.tab .tab-icon{font-size:14px;margin-right:4px}
+/* ── Top bar ── */
+.top-bar{display:flex;justify-content:space-between;align-items:center;padding:0 0 12px}
+.top-bar .tb-title{font-size:15px;font-weight:600;color:#0F172A}
+.top-bar .tb-meta{font-size:11px;color:#94A3B8}
 
-/* ── Header ── */
-.hd{text-align:center;margin-bottom:12px}
-.hd h1{font-size:18px;font-weight:700;color:#0F172A}
-.hd .meta{font-size:11px;color:#94A3B8;margin-top:4px}
-
-/* ── Temperature (big) ── */
-.temp-wrap{text-align:center;margin-bottom:12px}
-.temp-ring{width:170px;height:170px;margin:0 auto;position:relative}
+/* ── Top row: mini ring + price ── */
+.top-row{display:flex;align-items:center;gap:16px;margin-bottom:14px}
+.temp-ring{width:100px;height:100px;flex-shrink:0;position:relative}
 .temp-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
-.temp-ring .bg{fill:none;stroke:#E2E8F0;stroke-width:12}
-.temp-ring .arc{fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset 0.5s}
+.temp-ring .bg{fill:none;stroke:#E2E8F0;stroke-width:10}
+.temp-ring .arc{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 0.5s}
 .temp-ring .num{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  font-size:48px;font-weight:800;line-height:1
+  font-size:28px;font-weight:800;line-height:1
 }
 .temp-ring .lbl{
-  position:absolute;top:calc(50% + 34px);left:50%;transform:translateX(-50%);
-  font-size:18px;font-weight:700
+  position:absolute;top:calc(50% + 20px);left:50%;transform:translateX(-50%);
+  font-size:11px;font-weight:600
 }
+.pr-box{flex:1;min-width:0}
+.pr-box .pr-price{font-size:22px;font-weight:700;line-height:1.2}
+.pr-box .pr-chg{font-size:13px;margin-top:1px}
+.pr-box .pr-status{display:flex;align-items:center;gap:4px;margin-top:4px;font-size:11px;color:#64748B}
+.pr-box .pr-dot{width:6px;height:6px;border-radius:50%}
+.pr-box .pr-dot.on{background:#059669}
+.pr-box .pr-dot.off{background:#94A3B8}
 
-/* ── Advice ── */
-.adv{text-align:center;padding:12px;border-radius:12px;margin-bottom:12px;font-weight:600;font-size:14px;line-height:1.5}
-.adv-hot{background:#FEF2F2;color:#DC2626}
-.adv-warn{background:#FFFBEB;color:#D97706}
-.adv-ok{background:#ECFDF5;color:#059669}
-.adv-cold{background:#EFF6FF;color:#2563EB}
+/* ── Advice chip ── */
+.adv-chip{display:inline-block;padding:4px 12px;border-radius:20px;font-weight:600;font-size:11px;margin-top:6px}
+.adv-chip-hot{background:#FEF2F2;color:#DC2626}
+.adv-chip-warn{background:#FFFBEB;color:#D97706}
+.adv-chip-ok{background:#ECFDF5;color:#059669}
+.adv-chip-cold{background:#EFF6FF;color:#2563EB}
 
-/* ── Numbers grid ── */
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-.g-cell{background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.05)}
-.g-cell .g-lbl{font-size:10px;color:#64748B;margin-bottom:2px}
-.g-cell .g-val{font-size:20px;font-weight:700}
-.g-cell .g-sub{font-size:12px;margin-top:2px}
-.g-wide{grid-column:1/-1;text-align:center}
+/* ── Divider ── */
+.s-div{height:1px;background:#E2E8F0;margin-bottom:10px}
 
-/* ── Compare line ── */
-.comp{background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.05);margin-bottom:10px;text-align:center}
-.comp .c-title{font-size:11px;color:#64748B;margin-bottom:4px}
-.comp .c-val{font-size:14px;font-weight:600}
+/* ── Metrics list ── */
+.ml{}
+.ml-row{display:flex;align-items:center;padding:8px 0}
+.ml-row .ml-lbl{font-size:11px;color:#64748B;width:80px;flex-shrink:0}
+.ml-row .ml-val{font-size:14px;font-weight:600;color:#0F172A;flex:1}
+.ml-row .ml-desc{font-size:11px;color:#64748B;text-align:right}
+.ml-row .ml-desc.g{color:#059669}
+.ml-row .ml-desc.r{color:#EF4444}
+.ml-row .ml-desc.y{color:#F59E0B}
+.ml-div{height:1px;background:#F1F5F9}
 
-/* ── RT card ── */
-.rt{background:#fff;border-radius:12px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.05);margin-bottom:10px;text-align:center}
-.rt .hdr{margin-bottom:3px}
-.rt .hdr .dot{font-size:10px;vertical-align:middle}
-.rt .hdr .dot.on{color:#059669;animation:pulse 2s infinite}
-.rt .hdr .dot.off{color:#94A3B8}
-.rt .hdr .lab{font-size:13px;color:#64748B}
-.rt .price{font-size:26px;font-weight:700;margin:3px 0}
-.rt .chg{font-size:15px;margin-bottom:6px}
-.rt .meta{display:flex;justify-content:center;gap:24px}
-.rt .meta .it{text-align:center}
-.rt .meta .lab{font-size:10px;color:#64748B}
-.rt .meta .num{font-size:14px;font-weight:600}
-.rt .foot{font-size:11px;color:#94A3B8;margin-top:6px}
-.rt .err{font-size:11px;color:#EF4444}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+/* ── Section header ── */
+.sec-h{font-size:12px;font-weight:600;color:#64748B;margin-bottom:8px}
+.sec-h .sec-right{float:right;font-weight:400;color:#94A3B8;font-size:11px}
 
-/* ── Charts ── */
-.c-card{background:#fff;border-radius:12px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.05);margin-bottom:10px}
-.c-card .c-title{font-size:12px;font-weight:600;margin-bottom:4px;color:#64748B}
-.c-card .mini{height:36px;display:flex;align-items:flex-end;gap:2px}
-.c-card .mini .bar{flex:1;border-radius:2px 2px 0 0;transition:height 0.3s;min-height:2px}
-.c-card .rng{display:flex;justify-content:space-between;font-size:9px;color:#94A3B8;margin-top:2px}
-.c-card canvas{width:100%!important;height:80px!important}
+/* ── Trend chart ── */
+.trend-box{background:#fff;border-radius:10px;padding:10px;margin-bottom:10px}
+.trend-box canvas{width:100%!important;height:70px!important}
 
-/* ── Footer ── */
-.ft{text-align:center;font-size:10px;color:#94A3B8;padding:8px 0 14px}
-.ft .tag{display:inline-block;padding:2px 6px;border-radius:4px;font-weight:600;font-size:9px;margin:0 2px}
+/* ── Collapsible rows ── */
+.cr{display:flex;justify-content:space-between;align-items:center;padding:12px 0;cursor:pointer;user-select:none}
+.cr .cr-lbl{font-size:13px;color:#475569;font-weight:500}
+.cr .cr-arr{font-size:10px;color:#94A3B8;transition:transform .2s}
+.cr.open .cr-arr{transform:rotate(90deg)}
+.cr-body{display:none;padding:0 0 8px}
+.cr-body.show{display:block}
+.cr-div{height:1px;background:#F1F5F9}
 
-.loading{text-align:center;padding:60px 0;color:#94A3B8}
-.loading .sp{width:24px;height:24px;margin:0 auto 8px;border:3px solid #E2E8F0;border-top-color:#EF4444;border-radius:50%;animation:spin 0.8s linear infinite}
+/* ── Bottom meta ── */
+.bm{display:flex;align-items:center;gap:6px;padding:10px 0;font-size:10px;color:#94A3B8}
+.bm .tag{display:inline-block;padding:1px 5px;border-radius:3px;font-weight:500;font-size:9px;margin:0 2px}
+
+/* ── Bottom nav ── */
+.bnv{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:480px;max-width:100%;display:flex;background:#fff;border-top:1px solid #E2E8F0;padding:8px 0 12px;justify-content:center;gap:0}
+.bnv .bn-item{flex:1;text-align:center;font-size:12px;font-weight:500;color:#94A3B8;cursor:pointer;padding:4px 0;transition:color 0.15s;user-select:none}
+.bnv .bn-item.act{color:#6366F1;font-weight:600}
+.bnv .bn-item .bn-icon{display:block;font-size:16px;margin-bottom:2px}
+
+/* ── Loading ── */
+.loading{text-align:center;padding:80px 0;color:#94A3B8}
+.loading .sp{width:22px;height:22px;margin:0 auto 8px;border:3px solid #E2E8F0;border-top-color:#6366F1;border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── Reference guide ── */
-.ref{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.05);margin-bottom:10px;overflow:hidden;font-size:13px}
-.ref-bar{padding:14px;cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between;color:#475569;font-weight:600;font-size:13px;background:#F8FAFC}
-.ref-bar:active{background:#F1F5F9}
-.ref-bar span{font-size:10px;color:#94A3B8;transition:transform .2s}
-.ref-bar.open span{transform:rotate(90deg)}
-.ref-body{padding:4px 14px 14px;display:none}
-.ref-body.show{display:block}
-.r-grp{padding:12px 0;border-bottom:1px solid #E2E8F0}
+.ref{overflow:hidden;font-size:13px;margin-bottom:10px}
+.r-grp{padding:10px 0;border-bottom:1px solid #F1F5F9}
 .r-grp:last-child{border-bottom:0}
-.r-h{font-weight:700;font-size:14px;color:#0F172A;margin-bottom:8px}
+.r-h{font-weight:600;font-size:13px;color:#0F172A;margin-bottom:6px}
 .r-tbl{width:100%;border-collapse:collapse;margin:4px 0}
-.r-tbl td{padding:6px 8px;font-size:12px;line-height:1.5}
-.r-tbl tr:nth-child(odd) td{background:#F8FAFC;border-radius:6px}
-.r-tbl tr:first-child td{border-radius:6px 6px 0 0}
-.r-tbl tr:last-child td{border-radius:0 0 6px 6px}
+.r-tbl td{padding:5px 8px;font-size:12px;line-height:1.5}
+.r-tbl tr:nth-child(odd) td{background:#F8FAFC;border-radius:5px}
 .r-tbl td:first-child{font-weight:600;width:90px;white-space:nowrap}
 .r-tbl td:last-child{text-align:right}
 .r-tbl .g{color:#059669;font-weight:600}
 .r-tbl .y{color:#D97706;font-weight:600}
 .r-tbl .r{color:#DC2626;font-weight:600}
-.r-lbl{color:#475569;margin:4px 0;font-size:13px;line-height:1.6}
-.r-lbl b{color:#0F172A;font-weight:700}
-.r-lbl .cur{display:inline-block;background:#EFF6FF;color:#2563EB;padding:2px 10px;border-radius:6px;font-weight:700;font-size:14px}
-.r-rel{padding:0;margin:6px 0;list-style:none}
-.r-rel li{padding:6px 10px;margin:4px 0;background:#F8FAFC;border-radius:8px;font-size:13px;line-height:1.5;color:#475569}
+.r-lbl{color:#475569;margin:3px 0;font-size:12px;line-height:1.6}
+.r-lbl b{color:#0F172A}
+.r-lbl .cur{display:inline-block;background:#EFF6FF;color:#2563EB;padding:1px 8px;border-radius:5px;font-weight:700;font-size:13px}
+.r-rel{padding:0;margin:4px 0;list-style:none}
+.r-rel li{padding:5px 8px;margin:3px 0;background:#F8FAFC;border-radius:6px;font-size:12px;line-height:1.5;color:#475569}
 .r-rel li b{color:#0F172A}
 
-/* ── Transition thermometer ── */
-.t-trans{display:none}
+/* ── Transition (经济健康) ── */
+.t-trans{display:none;padding-top:4px}
 .t-trans.show{display:block}
-.t-line-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
-.t-line{background:#fff;border-radius:14px;padding:14px 12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.05)}
-.t-line .l-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;padding:0 2px}
-.t-line .l-name{font-size:13px;font-weight:700;color:#334155}
-.t-line .l-pct{font-size:10px;color:#94A3B8;background:#F1F5F9;padding:1px 7px;border-radius:5px;font-weight:500}
-.t-line .l-score{font-size:32px;font-weight:800;line-height:1;margin:4px 0}
-.t-line .l-status{font-size:13px;font-weight:600;margin-bottom:6px}
-.t-line .l-bar{height:6px;border-radius:3px;background:#E2E8F0;margin:0 0 8px;overflow:hidden}
-.t-line .l-fill{height:100%;border-radius:3px;transition:width 0.5s}
-.t-line .l-meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px;padding-top:8px;border-top:1px solid #E2E8F0}
-.t-line .l-badge{font-size:9px;padding:2px 7px;border-radius:5px;white-space:nowrap;font-weight:600}
+.t-top{text-align:center;margin-bottom:10px}
+.t-top .tt-title{font-size:10px;color:#94A3B8}
+.t-line-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.t-line{background:#fff;border-radius:12px;padding:12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.05)}
+.t-line .l-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.t-line .l-name{font-size:12px;font-weight:600;color:#334155}
+.t-line .l-pct{font-size:9px;color:#94A3B8;background:#F1F5F9;padding:0 6px;border-radius:4px}
+.t-line .l-score{font-size:28px;font-weight:800;line-height:1;margin:3px 0}
+.t-line .l-status{font-size:12px;font-weight:600;margin-bottom:4px}
+.t-line .l-bar{height:4px;border-radius:2px;background:#E2E8F0;margin:0 0 6px;overflow:hidden}
+.t-line .l-fill{height:100%;border-radius:2px;transition:width 0.5s}
+.t-line .l-meta{display:flex;flex-wrap:wrap;align-items:center;gap:3px;padding-top:6px;border-top:1px solid #F1F5F9}
+.t-line .l-badge{font-size:8px;padding:1px 5px;border-radius:4px;font-weight:600}
 .t-line .l-badge-up{background:#ECFDF5;color:#059669}
 .t-line .l-badge-down{background:#FEF2F2;color:#DC2626}
-.t-line .l-tkw{font-size:10px;color:#64748B;line-height:1.3;margin-left:auto;text-align:right;max-width:60%}
-.t-desc{text-align:center;font-size:14px;color:#475569;padding:8px 0 10px;line-height:1.6}
-.t-tag{display:inline-block;padding:2px 6px;border-radius:4px;font-weight:600;font-size:9px;margin:1px}
+.t-line .l-tkw{font-size:9px;color:#64748B;line-height:1.3;margin-left:auto;text-align:right;max-width:60%}
+.t-tag{display:inline-block;padding:1px 5px;border-radius:3px;font-weight:600;font-size:8px;margin:0 1px}
 .t-tag-auto{background:#ECFDF5;color:#059669}
 .t-tag-manual{background:#FFFBEB;color:#D97706}
 .t-tag-stale{background:#FEF2F2;color:#DC2626}
-
-/* ── 经济健康 指标卡片 ── */
-.t-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-.t-card{background:#fff;border-radius:12px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.05);transition:all 0.15s}
-.t-card:active{transform:scale(0.98)}
-.t-card .tc-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;gap:4px}
-.t-card .tc-name{font-size:12px;font-weight:600;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.t-card .tc-tag{font-size:8px;padding:1px 5px;border-radius:4px;flex-shrink:0;font-weight:600}
-.t-card .tc-val{font-size:24px;font-weight:700;line-height:1.2;margin:2px 0}
+.t-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.t-card{background:#fff;border-radius:10px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 10px rgba(0,0,0,0.04)}
+.t-card:active{transform:scale(0.97)}
+.t-card .tc-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;gap:3px}
+.t-card .tc-name{font-size:11px;font-weight:600;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t-card .tc-tag{font-size:7px;padding:0 4px;border-radius:3px;font-weight:600}
+.t-card .tc-val{font-size:20px;font-weight:700;line-height:1.2}
 .t-card .tc-mid{display:flex;justify-content:space-between;align-items:center;margin:2px 0}
-.t-card .tc-label{font-size:12px;font-weight:500}
-.t-card .tc-score{font-size:13px;font-weight:700}
-.t-card .tc-bar{height:4px;border-radius:2px;background:#E2E8F0;margin:6px 0;overflow:hidden}
+.t-card .tc-label{font-size:11px;font-weight:500}
+.t-card .tc-score{font-size:12px;font-weight:700}
+.t-card .tc-bar{height:3px;border-radius:2px;background:#E2E8F0;margin:4px 0;overflow:hidden}
 .t-card .tc-fill{height:100%;border-radius:2px}
-.t-card .tc-foot{display:flex;justify-content:space-between;font-size:10px;color:#94A3B8}
-
-/* ── 经济健康 分组标题 ── */
-.t-gh{margin:8px 0 6px;display:flex;align-items:center;gap:8px}
-.t-gh .gh-bar{width:4px;height:18px;border-radius:3px;flex-shrink:0}
-.t-gh .gh-name{font-size:14px;font-weight:700;color:#0F172A}
-.t-gh .gh-w{font-size:10px;font-weight:500;color:#94A3B8;background:#F1F5F9;padding:1px 7px;border-radius:5px}
+.t-card .tc-foot{display:flex;justify-content:space-between;font-size:9px;color:#94A3B8}
+.t-gh{margin:6px 0 4px;display:flex;align-items:center;gap:6px}
+.t-gh .gh-bar{width:4px;height:16px;border-radius:2px}
+.t-gh .gh-name{font-size:13px;font-weight:600;color:#0F172A}
+.t-gh .gh-w{font-size:9px;color:#94A3B8;background:#F1F5F9;padding:0 6px;border-radius:4px}
 .t-gh .gh-line{flex:1;height:1px;background:#E2E8F0}
-.t-gh-first{margin-top:4px}
+.t-gh-first{margin-top:2px}
 
-/* ── Info buttons & modal ── */
-.info-btn{display:inline-block;width:16px;height:16px;line-height:16px;border-radius:50%;background:#CBD5E1;color:#fff;font-size:10px;font-weight:700;text-align:center;cursor:pointer;vertical-align:middle;margin-left:3px;user-select:none}
+/* ── Modal ── */
+.info-btn{display:inline-block;width:14px;height:14px;line-height:14px;border-radius:50%;background:#CBD5E1;color:#fff;font-size:9px;font-weight:700;text-align:center;cursor:pointer;vertical-align:middle;margin-left:2px;user-select:none}
 .info-btn:hover{background:#94A3B8}
 .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.35);z-index:999;justify-content:center;align-items:center}
 .modal-overlay.show{display:flex}
-.modal-box{background:#fff;border-radius:16px;padding:24px 20px;max-width:340px;width:88%;box-shadow:0 8px 32px rgba(0,0,0,0.15);position:relative}
-.modal-box .close{position:absolute;top:10px;right:14px;font-size:20px;color:#94A3B8;cursor:pointer;line-height:1}
+.modal-box{background:#fff;border-radius:14px;padding:20px 18px;max-width:340px;width:88%;box-shadow:0 8px 32px rgba(0,0,0,0.15);position:relative}
+.modal-box .close{position:absolute;top:8px;right:12px;font-size:18px;color:#94A3B8;cursor:pointer;line-height:1}
 .modal-box .close:hover{color:#475569}
-.modal-box .title{font-size:16px;font-weight:700;margin-bottom:10px;color:#0F172A}
+.modal-box .title{font-size:15px;font-weight:700;margin-bottom:8px;color:#0F172A}
 .modal-box .body{font-size:13px;color:#475569;line-height:1.7}
-.modal-box .info-foot{display:flex;justify-content:space-between;font-size:11px;color:#94A3B8;margin-top:12px;padding-top:8px;border-top:1px solid #E2E8F0}
+.modal-box .info-foot{display:flex;justify-content:space-between;font-size:10px;color:#94A3B8;margin-top:10px;padding-top:6px;border-top:1px solid #E2E8F0}
 </style>
 </head>
 <body>
@@ -188,112 +176,82 @@ body{
 
   <div id="content" style="display:none">
 
-    <!-- Header -->
-    <div class="hd">
-      <h1>📊 A500 温度计</h1>
-      <div class="meta"><span id="todayDate">—</span> · <span id="genTime"></span></div>
+    <!-- Top bar -->
+    <div class="top-bar">
+      <span class="tb-title">A500 温度计</span>
+      <span class="tb-meta"><span id="todayDate">--</span></span>
     </div>
 
-    <!-- TAB nav -->
-    <div class="tabs">
-      <div class="tab act" id="tabBtnA500" onclick="switchTab('a500')"><span class="tab-icon">📈</span>A500温度</div>
-      <div class="tab" id="tabBtnTrans" onclick="switchTab('transition')"><span class="tab-icon">📊</span>经济健康</div>
-    </div>
-
-    <!-- ── A500 Tab ── -->
+    <!-- ── Tab: A500 温度 ── -->
     <div id="tabA500">
 
-    <!-- Temperature -->
-    <div class="temp-wrap" style="position:relative">
-      <div class="temp-ring">
-        <svg viewBox="0 0 160 160">
-          <circle class="bg" cx="80" cy="80" r="68"/>
-          <circle class="arc" id="mainArc" cx="80" cy="80" r="68" stroke-dasharray="427.26" stroke-dashoffset="100" stroke="#EF4444"/>
-        </svg>
-        <div class="num" id="tempNum">--</div>
-        <div class="lbl" id="tempLbl">--</div>
+      <!-- Top row: mini ring + price + advice -->
+      <div class="top-row">
+        <div class="temp-ring">
+          <svg viewBox="0 0 120 120">
+            <circle class="bg" cx="60" cy="60" r="50"/>
+            <circle class="arc" id="mainArc" cx="60" cy="60" r="50" stroke-dasharray="314.16" stroke-dashoffset="50" stroke="#EF4444"/>
+          </svg>
+          <div class="num" id="tempNum">--</div>
+          <div class="lbl" id="tempLbl">--</div>
+        </div>
+        <div class="pr-box">
+          <div class="pr-price" id="rtPrice">--</div>
+          <div class="pr-chg" id="rtChg">--</div>
+          <div class="pr-status">
+            <span class="pr-dot" id="rtDot">●</span>
+            <span id="rtLbl">--</span>
+            <span style="margin-left:auto;font-size:10px;color:#94A3B8" id="rtTime"></span>
+          </div>
+          <div id="advice" class="adv-chip adv-chip-ok" style="display:none">--</div>
+        </div>
       </div>
-      <div id="tempStatus" style="text-align:center;font-size:11px;color:#64748B;margin-top:2px">--</div>
-      <span class="info-btn" onclick="showInfo('temp')" style="position:absolute;top:-2px;right:-2px">?</span>
-    </div>
 
-    <!-- Advice -->
-    <div class="adv" id="advice">加载中…</div>
+      <div class="s-div"></div>
 
-    <!-- Quick numbers -->
-    <div class="grid">
-      <div class="g-cell">
-        <div class="g-lbl">当前点位</div>
-        <div class="g-val" id="priceVal">--</div>
-        <div class="g-sub" id="priceChg" style="color:#EF4444">--</div>
+      <!-- Metrics list -->
+      <div class="ml">
+        <div class="ml-row">
+          <span class="ml-lbl">回本年限</span>
+          <span class="ml-val" id="peVal">--</span>
+          <span class="ml-desc" id="peRank">--</span>
+        </div>
+        <div class="ml-div"></div>
+        <div class="ml-row">
+          <span class="ml-lbl">盈利收益率</span>
+          <span class="ml-val" id="stockVal">--</span>
+          <span class="ml-desc g">✅ 划算</span>
+        </div>
+        <div class="ml-div"></div>
+        <div class="ml-row">
+          <span class="ml-lbl">10年国债</span>
+          <span class="ml-val" id="bondVal">--</span>
+          <span class="ml-desc" id="premiumDesc">股债差 --</span>
+        </div>
+        <div class="ml-div"></div>
+        <div class="ml-row">
+          <span class="ml-lbl">股息率</span>
+          <span class="ml-val" id="divYieldVal">--</span>
+          <span class="ml-desc" id="divDesc">中性</span>
+        </div>
       </div>
-      <div class="g-cell">
-        <div class="g-lbl">回本年限（PE）<span class="info-btn" onclick="showInfo('pe')">?</span></div>
-        <div class="g-val" id="peVal">--</div>
-        <div class="g-sub" id="peRank" style="color:#EF4444">贵不贵：--</div>
+
+      <div class="s-div"></div>
+
+      <!-- Trend chart -->
+      <div class="sec-h">温度走势</div>
+      <div class="trend-box">
+        <canvas id="tempChart"></canvas>
       </div>
-      <div class="g-cell">
-        <div class="g-lbl">盈利收益率<span class="info-btn" onclick="showInfo('stockYield')">?</span></div>
-        <div class="g-val" id="stockVal" style="color:#059669">--</div>
+
+      <div class="s-div"></div>
+
+      <!-- Collapsible: 参考指南 -->
+      <div class="cr" onclick="toggleRef()">
+        <span class="cr-lbl">指标参考指南</span>
+        <span class="cr-arr" id="refArrow">▶</span>
       </div>
-      <div class="g-cell">
-        <div class="g-lbl">10年国债利率<span class="info-btn" onclick="showInfo('bondYield')">?</span></div>
-        <div class="g-val" id="bondVal" style="color:#64748B">--</div>
-      </div>
-      <div class="g-cell g-wide">
-        <div class="g-lbl">股息率<span class="info-btn" onclick="showInfo('divYield')">?</span></div>
-        <div class="g-val" id="divYieldVal" style="color:#8B5CF6">--</div>
-      </div>
-    </div>
-
-    <!-- Compare: stock vs bond -->
-    <div class="comp">
-      <div class="c-title">股票 vs 国债 <span class="info-btn" onclick="showInfo('premium')" style="width:14px;height:14px;line-height:14px">?</span></div>
-      <div class="c-val" id="compVal" style="color:#059669">--</div>
-    </div>
-
-    <!-- Real-time -->
-    <div class="rt" id="rtCard" style="display:none">
-      <div class="hdr">
-        <span class="dot" id="rtDot">●</span>
-        <span class="lab" id="rtLbl">盘中实时</span>
-      </div>
-      <div class="price" id="rtPrice">--</div>
-      <div class="chg" id="rtChg">--</div>
-      <div class="meta">
-        <div class="it"><div class="lab">估算回本 <span class="info-btn" onclick="showInfo('rtPe')" style="width:13px;height:13px;line-height:13px;font-size:9px">?</span></div><div class="num" id="rtPe">--</div></div>
-        <div class="it"><div class="lab">估算温度 <span class="info-btn" onclick="showInfo('rtTemp')" style="width:13px;height:13px;line-height:13px;font-size:9px">?</span></div><div class="num" id="rtTemp">--°C</div></div>
-      </div>
-      <div class="foot"><span id="rtTime"></span><span id="rtCD"></span></div>
-      <div id="rtStatus" style="font-size:10px;margin-top:4px;text-align:center">--</div>
-      <div class="err" id="rtErr"></div>
-    </div>
-
-    <!-- Mini chart -->
-    <div class="c-card">
-      <div class="c-title">走势 <span id="chStart" style="float:right;font-weight:400;color:#94A3B8">--</span> <span id="chEnd" style="float:right;font-weight:400;color:#94A3B8;margin-right:6px">--</span></div>
-      <div class="mini" id="miniChart"></div>
-    </div>
-
-    <!-- Temp trend -->
-    <div class="c-card">
-      <div class="c-title">温度变化</div>
-      <canvas id="tempChart"></canvas>
-    </div>
-
-    <!-- Footer -->
-    <div class="ft">
-      <span class="tag" style="background:#ECFDF5;color:#059669">点位/国债实时</span>
-      <span class="tag" style="background:#FFFBEB;color:#D97706">回本年限为估值</span>
-      <span class="tag" style="background:#F1F5F9;color:#64748B">温度仅供参考</span>
-       · 每日更新 · 不构成投资建议
-    </div>
-
-    <!-- ── Reference guide (collapsible) ── -->
-    <div class="ref" id="refGuide">
-      <div class="ref-bar" onclick="toggleRef()">📖 指标参考指南 <span id="refArrow">▶</span></div>
-      <div class="ref-body" id="refBody">
-
+      <div class="cr-body" id="refBody">
         <div class="r-grp">
           <div class="r-h">🌡️ 温度</div>
           <table class="r-tbl">
@@ -303,7 +261,6 @@ body{
             <tr><td>🔥 &gt; 80°C</td><td>过热</td><td class="r">停止买入</td></tr>
           </table>
         </div>
-
         <div class="r-grp">
           <div class="r-h">💰 回本年限（PE）</div>
           <table class="r-tbl">
@@ -314,19 +271,16 @@ body{
           </table>
           <div class="r-lbl">当前 <span class="cur" id="refPeVal">--</span></div>
         </div>
-
         <div class="r-grp">
           <div class="r-h">📊 盈利收益率（1÷PE）</div>
-          <div class="r-lbl">假设500家公司利润不变且全部分红，你每年能拿回投入的百分比。主要用来和国债利率对比。</div>
+          <div class="r-lbl">假设500家公司利润不变且全部分红，每年能拿回投入的百分比。主要用来和国债利率对比。</div>
           <div class="r-lbl">当前 <span class="cur" id="refStockYield">--</span></div>
         </div>
-
         <div class="r-grp">
           <div class="r-h">🏦 10年国债利率</div>
-          <div class="r-lbl">中国政府债券的年利率，近似"无风险收益"基准。它越低，股票的相对吸引力越高。</div>
+          <div class="r-lbl">中国政府债券的年利率，近似"无风险收益"基准。越低，股票的相对吸引力越高。</div>
           <div class="r-lbl">当前 <span class="cur" id="refBondYield">--</span></div>
         </div>
-
         <div class="r-grp">
           <div class="r-h">💜 股息率</div>
           <table class="r-tbl">
@@ -334,99 +288,98 @@ body{
             <tr><td>2–3%</td><td>中等，一般</td></tr>
             <tr><td>&lt; 2%</td><td>偏低，分红吸引力不足</td></tr>
           </table>
-          <div class="r-lbl">当前 <span class="cur" id="refDivYield">--</span>。即使股价不涨，每年也有现金分红进账。</div>
+          <div class="r-lbl">当前 <span class="cur" id="refDivYield">--</span></div>
         </div>
-
         <div class="r-grp">
-          <div class="r-h">⚖️ 股票 vs 国债（溢价 ERP）</div>
+          <div class="r-h">⚖️ 股票 vs 国债（ERP）</div>
           <table class="r-tbl">
             <tr><td>✅ &gt; 3%</td><td>股票明显更划算</td></tr>
             <tr><td>🟡 1.5–3%</td><td>还可以，中等</td></tr>
             <tr><td>🟠 0–1.5%</td><td>吸引力一般</td></tr>
             <tr><td>🔴 &lt; 0</td><td>买债券比股票好</td></tr>
           </table>
-          <div class="r-lbl">当前 <span class="cur" id="refPremium">--</span>，<span id="refPremiumDesc">说明相比国债，买股票更划算</span></div>
+          <div class="r-lbl">当前 <span class="cur" id="refPremium">--</span>，<span id="refPremiumDesc">--</span></div>
         </div>
-
         <div class="r-grp">
           <div class="r-h">🔗 指标之间的关系</div>
           <ul class="r-rel">
-            <li><b>温度</b> = PE分位 × 60% + 价格分位 × 40%，是核心决策指标</li>
-            <li><b>回本年限（PE）</b>就是估值本身，温度和它高度相关</li>
-            <li><b>盈利收益率</b> = 1 ÷ PE，用来和国债利率做对比</li>
-            <li><b>股债溢价</b> = 盈利收益率 − 国债利率，衡量股票 vs 债券谁更划算</li>
-            <li><b>股息率</b> = 成分股分红 ÷ 指数价格，高股息率是持有期间的安全垫</li>
-            <li><b>一句话：</b>温度决定"买不买"，股息率决定"拿不拿得住"</li>
+            <li><b>温度</b> = PE分位 × 60% + 价格分位 × 40%</li>
+            <li><b>回本年限（PE）</b>就是估值本身</li>
+            <li><b>盈利收益率</b> = 1 ÷ PE，用来和国债利率对比</li>
+            <li><b>股债溢价</b> = 盈利收益率 − 国债利率</li>
+            <li><b>股息率</b> = 成分股分红 ÷ 指数价格</li>
           </ul>
         </div>
-
       </div>
-    </div>
 
-  </div><!-- end tabA500 -->
+      <div class="cr-div"></div>
 
-    <!-- ── Transition Tab ── -->
+      <!-- Bottom meta -->
+      <div class="bm">
+        <span class="pr-dot" id="bmDot" style="width:5px;height:5px;background:#059669;display:inline-block;border-radius:50%"></span>
+        <span id="rtStatus">--</span>
+        <span class="tag" style="background:#ECFDF5;color:#059669">实时</span>
+        <span class="tag" style="background:#FFFBEB;color:#D97706">估值</span>
+        <span style="margin-left:auto">不构成投资建议</span>
+      </div>
+
+    </div><!-- end tabA500 -->
+
+    <!-- ── Tab: 经济健康 ── -->
     <div class="t-trans" id="tabTransition">
-      <div class="temp-wrap" style="position:relative">
-        <div class="temp-ring">
-          <svg viewBox="0 0 160 160">
-            <circle class="bg" cx="80" cy="80" r="68"/>
-            <circle class="arc" id="transArc" cx="80" cy="80" r="68" stroke-dasharray="427.26" stroke-dashoffset="200" stroke="#F59E0B"/>
-          </svg>
-          <div class="num" id="transTemp" style="color:#F59E0B">--</div>
-          <div class="lbl" id="transLbl" style="color:#F59E0B">--</div>
-        </div>
+      <div class="t-top">
+        <div class="tt-title">经济健康度</div>
+        <div class="t-desc" id="transDesc" style="font-size:13px;color:#475569;padding:6px 0 8px">加载中…</div>
       </div>
-      <div class="t-desc" id="transDesc">加载中…</div>
 
-      <!-- 三条主线 -->
       <div class="t-line-grid" id="transLines"></div>
-
-      <!-- 指标卡片（按主线分组） -->
       <div id="transGroup1"></div>
       <div id="transGroup2"></div>
       <div id="transGroup3"></div>
       <div id="transGroup4"></div>
+      <div id="transWarn" style="display:none;margin:6px 0"></div>
 
-      <!-- 数据预警 -->
-      <div id="transWarn" style="display:none"></div>
-
-      <!-- 参考指南 -->
-      <div class="ref" id="transRefGuide">
-        <div class="ref-bar" onclick="toggleRefTrans()">📖 经济健康指南 · 权重与解读 <span id="transRefArrow">▶</span></div>
-        <div class="ref-body" id="transRefBody">
-          <div class="r-grp">
-            <div class="r-h">🌡️ 经济健康度怎么算？</div>
-            <div class="r-lbl">综合温度 = 各指标得分 × 权重的加权总和。</div>
-            <div class="r-lbl">四条主线：<b>💚内需与物价（30%）</b> + <b>💙就业与收入（15%）</b> + <b>💜货币与信用（25%）</b> + <b>🧡转型与开放（30%）</b>。</div>
-            <div class="r-lbl">每个指标按当前值 vs 阈值映射到 0–100 分，越高说明该方面状况越好。</div>
-            <div class="r-lbl">注意：这套指标测量的是经济在转型期中的<u>健康程度</u>（环境温度），而不是转型本身的进度快慢。</div>
-          </div>
-          <div class="r-grp">
-            <div class="r-h">📊 温度区间解读</div>
-            <table class="r-tbl">
-              <tr><td>❄️ &lt; 40</td><td>低温区</td><td style="color:#10B981">整体偏冷，内需偏弱、转型环境承压</td></tr>
-              <tr><td>🌤️ 40–69</td><td>温和区</td><td style="color:#F59E0B">正常运转，局部有亮点也有压力</td></tr>
-              <tr><td>🔥 ≥ 70</td><td>升温区</td><td style="color:#EF4444">内需回暖、新动能放量、整体向好</td></tr>
-            </table>
-          </div>
-          <div class="r-grp" id="transIndicatorsGuide">
-            <div class="r-h">📈 各指标详情</div>
-            <div class="r-lbl" id="transIndicatorsList">加载中…</div>
-          </div>
+      <div class="cr" onclick="toggleRefTrans()">
+        <span class="cr-lbl">📖 经济健康指南 · 权重与解读</span>
+        <span class="cr-arr" id="transRefArrow">▶</span>
+      </div>
+      <div class="cr-body" id="transRefBody">
+        <div class="r-grp">
+          <div class="r-h">🌡️ 经济健康度怎么算？</div>
+          <div class="r-lbl">综合温度 = 各指标得分 × 权重的加权总和。四条主线：<b>💚内需与物价（30%）</b> + <b>💙就业与收入（15%）</b> + <b>💜货币与信用（25%）</b> + <b>🧡转型与开放（30%）</b>。</div>
+          <div class="r-lbl">每个指标按当前值 vs 阈值映射到 0–100 分。</div>
+        </div>
+        <div class="r-grp">
+          <div class="r-h">📊 温度区间解读</div>
+          <table class="r-tbl">
+            <tr><td>❄️ &lt; 40</td><td>低温区</td><td style="color:#10B981">整体偏冷</td></tr>
+            <tr><td>🌤️ 40–69</td><td>温和区</td><td style="color:#F59E0B">正常运转</td></tr>
+            <tr><td>🔥 ≥ 70</td><td>升温区</td><td style="color:#EF4444">整体向好</td></tr>
+          </table>
+        </div>
+        <div class="r-grp" id="transIndicatorsGuide">
+          <div class="r-h">📈 各指标详情</div>
+          <div class="r-lbl" id="transIndicatorsList">加载中…</div>
         </div>
       </div>
 
-      <div class="ft">
-        <span class="t-tag t-tag-auto">✅ 自动</span>
-        <span class="t-tag t-tag-manual">⚠️ 手动</span>
-        <span class="t-tag t-tag-stale">⚠️ 数据滞后</span>
-         · 月频更新 · 仅供研究参考
+      <div class="bm" style="border-top:1px solid #F1F5F9;margin-top:6px">
+        <span class="t-tag t-tag-auto">✅</span>
+        <span class="t-tag t-tag-manual">⚠️</span>
+        <span class="t-tag t-tag-stale">⚠️过期</span>
+        <span style="margin-left:auto;font-size:10px">月频更新 · 仅供参考</span>
       </div>
-      <div class="ft" style="padding-top:0;color:#94A3B8">数据来源：国家统计局 / 央行 / 中证指数 / OpenRouter · 不构成投资建议</div>
     </div>
 
   </div><!-- end #content -->
+
+  <!-- Bottom nav -->
+  <div class="bnv" id="bottomNav">
+    <div class="bn-item act" id="tabBtnA500" onclick="switchTab('a500')"><span class="bn-icon">🌡️</span>温度</div>
+    <div class="bn-item" id="tabBtnTrans" onclick="switchTab('transition')"><span class="bn-icon">📊</span>经济健康</div>
+  </div>
+
+</div>
 
 <script>
 (function(){
@@ -448,65 +401,63 @@ body{
     return {c:'#EF4444',l:'🔴 过热',bg:'#FEF2F2'};
   }
   function tAdv(t){
-    if(t<30) return '✅ 市场偏冷，适合逐步买入，不用害怕下跌';
-    if(t<60) return '✅ 估值正常，按计划买入就行，不用天天看盘';
-    if(t<80) return '⚠️ 已经偏贵了，先别买新的，持有就行，钱先放债基或余额宝';
-    return '🔴 太热了，可以考虑卖一部分。不要追高，卖出来的钱先放货币基金';
+    if(t<30) return '可以买入';
+    if(t<60) return '按计划买入';
+    if(t<80) return '偏贵，先持有';
+    return '过热，可考虑卖出';
   }
 
   function render(){
     var d=D,ti=tInfo(d.temperature);
     document.getElementById('todayDate').textContent='数据截至 '+d.date+' 收盘';
-    document.getElementById('genTime').textContent='更新于 '+d.pageCreatedAt;
 
-    // Temperature ring
-    var C=2*Math.PI*68,arc=document.getElementById('mainArc');
-    arc.style.strokeDasharray=C;
-    arc.style.strokeDashoffset=C*(1-d.temperature/100);
-    arc.style.stroke=ti.c;
-    document.getElementById('tempNum').textContent=d.temperature;
-    document.getElementById('tempNum').style.color=ti.c;
-    document.getElementById('tempLbl').textContent=ti.l;
-    document.getElementById('tempLbl').style.color=ti.c;
+    // Temp ring (mini, viewBox 120 → r=50, circumference=2*PI*50=314.16)
+    var C=2*Math.PI*50,arc=document.getElementById('mainArc');
+    if(arc){
+      arc.style.strokeDasharray=C;
+      arc.style.strokeDashoffset=C*(1-d.temperature/100);
+      arc.style.stroke=ti.c;
+    }
+    var numEl=document.getElementById('tempNum');
+    if(numEl){numEl.textContent=d.temperature;numEl.style.color=ti.c;}
+    var lblEl=document.getElementById('tempLbl');
+    if(lblEl){lblEl.textContent=ti.l;lblEl.style.color=ti.c;}
 
-    // Advice
+    // Advice chip
     var adv=document.getElementById('advice');
     adv.textContent=tAdv(d.temperature);
-    if(d.temperature>=80) adv.className='adv adv-hot';
-    else if(d.temperature>=60) adv.className='adv adv-warn';
-    else if(d.temperature>=30) adv.className='adv adv-ok';
-    else adv.className='adv adv-cold';
+    adv.style.display='inline-block';
+    if(d.temperature>=80) adv.className='adv-chip adv-chip-hot';
+    else if(d.temperature>=60) adv.className='adv-chip adv-chip-warn';
+    else if(d.temperature>=30) adv.className='adv-chip adv-chip-ok';
+    else adv.className='adv-chip adv-chip-cold';
 
-    // Numbers
-    document.getElementById('priceVal').textContent=d.price.toLocaleString();
-    var pc=document.getElementById('priceChg');
-    pc.textContent=(d.priceChange>0?'+':'')+d.priceChange.toFixed(2)+'%';
-    pc.style.color=d.priceChange>=0?'#EF4444':'#059669';
-
+    // Metrics list
     document.getElementById('peVal').textContent=d.pe+' 年';
     var pr=document.getElementById('peRank');
-    pr.textContent='贵不贵：'+d.pePercentile+'%';
-    pr.style.color=d.pePercentile>70?'#EF4444':d.pePercentile>50?'#F59E0B':'#059669';
+    pr.textContent='PE分位 '+d.pePercentile+'%';
+    pr.className='ml-desc '+(d.pePercentile>70?'r':d.pePercentile>50?'y':'g');
 
     document.getElementById('stockVal').textContent=d.stockYield+'%';
+
     document.getElementById('bondVal').textContent=d.bondYield+'%';
+    var pd=document.getElementById('premiumDesc');
+    if(d.premium>3){pd.textContent='股债差 +'+d.premium+'%';pd.className='ml-desc g';}
+    else if(d.premium>1.5){pd.textContent='股债差 +'+d.premium+'%';pd.className='ml-desc y';}
+    else if(d.premium>0){pd.textContent='股债差 +'+d.premium+'%';pd.className='ml-desc';}
+    else{pd.textContent='国债更优';pd.className='ml-desc r';}
+
     document.getElementById('divYieldVal').textContent=d.dividendYield>0?d.dividendYield+'%':'--';
+    var dd=document.getElementById('divDesc');
+    if(d.dividendYield>3){dd.textContent='不错';dd.className='ml-desc g';}
+    else if(d.dividendYield>2){dd.textContent='中性';dd.className='ml-desc';}
+    else{dd.textContent='偏低';dd.className='ml-desc y';}
 
-    // Compare
-    var cv=document.getElementById('compVal');
-    if(d.premium>3){cv.textContent='✅ 股票比国债多赚 '+d.premium+'%，买股票更划算';cv.style.color='#059669';}
-    else if(d.premium>1.5){cv.textContent='🟡 股票比国债多赚 '+d.premium+'%，还可以';cv.style.color='#A16207';}
-    else if(d.premium>0){cv.textContent='🟠 股票只比国债多赚 '+d.premium+'%，吸引力一般';cv.style.color='#D97706';}
-    else{cv.textContent='🔴 国债利息比股票回报还高，买债券更划算';cv.style.color='#DC2626';}
-
-    // Mini chart
-    var cls=d.recentCloses,mn=Math.min.apply(null,cls),mx=Math.max.apply(null,cls),rg=mx-mn||1;
-    document.getElementById('miniChart').innerHTML=cls.map(function(c,i){
-      var h=((c-mn)/rg)*28+2,p=i>0?cls[i-1]:c;
-      return '<div class="bar" style="height:'+h+'px;background:'+(c>=p?'#059669':'#EF4444')+'"></div>';
-    }).join('');
-    document.getElementById('chStart').textContent=cls[0].toLocaleString();
-    document.getElementById('chEnd').textContent=cls[cls.length-1].toLocaleString();
+    // Initial RT display
+    document.getElementById('rtPrice').textContent=d.price.toLocaleString();
+    var rc=document.getElementById('rtChg');
+    rc.textContent=(d.priceChange>0?'+':'')+d.priceChange.toFixed(2)+'%';
+    rc.style.color=d.priceChange>=0?'#EF4444':'#059669';
 
     // Temp trend
     if(d.tempHistory&&d.tempHistory.length>0){
@@ -515,7 +466,7 @@ body{
           labels:d.tempHistory.map(function(r){return r.d}),
           datasets:[{
             label:'温度',data:d.tempHistory.map(function(r){return r.t}),
-            borderColor:'#94A3B8',backgroundColor:'rgba(148,163,184,0.08)',
+            borderColor:'#6366F1',backgroundColor:'rgba(99,102,241,0.08)',
             borderWidth:1.5,fill:true,tension:0.4,pointRadius:0,
           }]
         },
@@ -533,7 +484,7 @@ body{
     document.getElementById('loading').style.display='none';
     document.getElementById('content').style.display='block';
 
-    // ── Reference guide: fill current values ──
+    // Reference values
     var pv=document.getElementById('refPeVal');if(pv)pv.textContent=d.pe+' 年';
     var sy=document.getElementById('refStockYield');if(sy)sy.textContent=d.stockYield+'%';
     var by=document.getElementById('refBondYield');if(by)by.textContent=d.bondYield+'%';
@@ -543,7 +494,7 @@ body{
       rp.textContent=d.premium+'%';
       var rd=document.getElementById('refPremiumDesc');
       if(rd){
-        if(d.premium>3)rd.textContent='说明相比国债，买股票更划算';
+        if(d.premium>3)rd.textContent='相比国债，买股票更划算';
         else if(d.premium>1.5)rd.textContent='股票仍有一定优势';
         else if(d.premium>0)rd.textContent='股票优势不明显';
         else rd.textContent='买国债比股票更划算';
@@ -555,38 +506,14 @@ body{
 
 /* ── Info text ── */
 var INFO = {
-  temp: {
-    title: '温度是什么意思？',
-    body: '温度是把当前价格和历史价格做对比，再加上当前股票的贵不贵程度（PE分位），综合算出来的一个参考值。0°C最冷（便宜），100°C最热（贵）。<br><br>⚠️ 温度只是一个参考，不代表一定会涨或跌。温度高不代表马上跌，温度低也不代表马上涨。'
-  },
-  pe: {
-    title: '回本年限（PE）是什么？',
-    body: '回本年限 = A500的总市值 ÷ 500家公司的年总利润。<br><br>比如现在回本年限是16.6年，意思是如果这些公司每年赚的钱不变，16.6年才能赚回你的本金。<br><br>⚠️ 公司的利润每年会变，这个数字只是当前估值水平，不代表真的要16年才能回本。'
-  },
-  stockYield: {
-    title: '盈利收益率是什么？',
-    body: '盈利收益率 = 1 ÷ PE。<br><br>比如PE=16.6，盈利收益率≈6%。意思是：假设A500里的公司每年赚6块钱利润（每100块投入），全部拿出来分给你。<br><br>⚠️ 这只是个理论值，不代表你实际能赚6%。公司利润会波动，也不全部分红。它的主要用途是和国债利率对比，看股票相对债券划不划算。'
-  },
-  bondYield: {
-    title: '10年国债利率是什么？',
-    body: '中国政府发行的10年期债券的年利率。可以近似理解为"无风险收益"——你什么都不用做，买国债每年稳拿这个利息。<br><br>当前是1.74%，这个数字一直在变。如果它涨了，说明钱存银行/买债券更划算；跌了，说明股票相对更有吸引力。'
-  },
-  divYield: {
-    title: '股息率是什么？',
-    body: '股息率 = A500成分股的分红总额 ÷ 指数总市值。<br><br>当前是2.32%，意思是：如果你按当前价格买入A500，假设成分股的分红不变，你每年能拿到约2.32%的现金分红。<br><br>⚠️ 分红不固定，公司可能减少或取消分红。但A500里的公司总体分红比较稳定，股息率是衡量"持有回报"的重要参考。数据来源：中证指数公司。'
-  },
-  premium: {
-    title: '股票 vs 国债比什么？',
-    body: '把"盈利收益率"和"10年国债利率"做对比：<br><br>✅ 差额 > 3% → 股票比债券多赚不少，买股票更划算<br>🟡 差额 1.5-3% → 还可以<br>🟠 差额 0-1.5% → 吸引力一般<br>🔴 差额 < 0 → 国债比股票还划算，买债券更好<br><br>这个对比是机构做大类资产配置的重要参考，叫"股债性价比（ERP）"。'
-  },
-  rtPe: {
-    title: '估算回本是什么？',
-    body: '盘中实时估算的PE（回本年限）。<br><br>因为PE只在收盘后才更新，盘中我们用"实时价格÷昨收×昨日PE"来估算当前的回本年限。和收盘后的准确PE可能有偏差。'
-  },
-  rtTemp: {
-    title: '估算温度是什么？',
-    body: '盘中实时估算的温度。<br><br>用估算的PE和历史上的PE数据做对比，算出当前温度。和收盘后的准确温度可能有偏差，仅供盘中参考。'
-  }
+  temp:{title:'温度是什么意思？',body:'温度是把当前价格和历史价格做对比，再加上当前股票的贵不贵程度（PE分位），综合算出来的一个参考值。0°C最冷（便宜），100°C最热（贵）。<br><br>⚠️ 温度只是一个参考，不代表一定会涨或跌。'},
+  pe:{title:'回本年限（PE）是什么？',body:'回本年限 = A500的总市值 ÷ 500家公司的年总利润。<br><br>比如现在回本年限是16.6年，意思是如果这些公司每年赚的钱不变，16.6年才能赚回你的本金。<br><br>⚠️ 公司的利润每年会变，这个数字只是当前估值水平。'},
+  stockYield:{title:'盈利收益率是什么？',body:'盈利收益率 = 1 ÷ PE。<br><br>比如PE=16.6，盈利收益率≈6%。假设A500里的公司每年赚6块钱利润（每100块投入），全部拿出来分给你。<br><br>⚠️ 这是个理论值，主要用途是和国债利率对比。'},
+  bondYield:{title:'10年国债利率是什么？',body:'中国政府发行的10年期债券的年利率。可以近似理解为"无风险收益"——你什么都不用做，买国债每年稳拿这个利息。'},
+  divYield:{title:'股息率是什么？',body:'股息率 = A500成分股的分红总额 ÷ 指数总市值。<br><br>当前是2.32%，意思是如果你按当前价格买入A500，假设成分股的分红不变，你每年能拿到约2.32%的现金分红。<br><br>⚠️ 分红不固定。数据来源：中证指数公司。'},
+  premium:{title:'股票 vs 国债比什么？',body:'把"盈利收益率"和"10年国债利率"做对比：<br><br>✅ 差额 > 3% → 股票比债券多赚不少，买股票更划算<br>🟡 差额 1.5-3% → 还可以<br>🟠 差额 0-1.5% → 吸引力一般<br>🔴 差额 < 0 → 国债比股票还划算<br><br>这个对比叫"股债性价比（ERP）"。'},
+  rtPe:{title:'估算回本是什么？',body:'盘中实时估算的PE（回本年限）。<br><br>因为PE只在收盘后才更新，盘中我们用"实时价格÷昨收×昨日PE"来估算当前的回本年限。'},
+  rtTemp:{title:'估算温度是什么？',body:'盘中实时估算的温度。<br><br>用估算的PE和历史上的PE数据做对比，算出当前温度。'},
 };
 function showInfo(key){
   var i=INFO[key];if(!i)return;
@@ -598,52 +525,47 @@ function hideInfo(){
   document.getElementById('infoModal').className='modal-overlay';
 }
 var TRANS_INFO={
-  cpi:{title:'CPI同比（居民消费价格）',body:'<b>这是什么：</b>今年这个月买东西比去年同月贵了多少。<br><br><b>怎么算的：</b>国家统计局在全国各地采价，对比今年和去年同期的价格变化。<br><br><b>正常范围：</b>0.5-3%为温和通胀。太低说明没人消费，太高说明钱不值钱。<br><br><b>反映的经济状况：</b>CPI温和正增长说明内需正常，是经济健康运行的标志之一。当前接近零，说明需求偏弱。'},
-  ppi:{title:'PPI同比（工业生产者出厂价格）',body:'<b>这是什么：</b>工厂把货卖给下游时的价格，比去年同月贵/便宜了多少。<br><br><b>怎么算的：</b>国家统计局收集全国工业企业的出厂价，对比去年同月。<br><br><b>正常范围：</b>-1%到3%。低于-2%说明工业需求不足，高于3%说明上游涨价太猛。<br><br><b>反映的经济状况：</b>PPI回升说明工业需求在修复，过高则挤压下游利润。当前值反映工业端供需格局。'},
-  pmi:{title:'制造业PMI（采购经理人指数）',body:'<b>这是什么：</b>每个月对全国采购经理做问卷，问"你这个月生意比上个月好还是差"，汇总成一个指数。<br><br><b>怎么算的：</b>扩散指数。50是荣枯线——>50说明大部分人觉得生意在变好，<50说明在变差。<br><br><b>正常范围：</b>>52说明景气向好，48-50偏弱。<br><br><b>反映的经济状况：</b>PMI在扩张区间意味着制造业整体稳定，经济基本盘健康。'},
-  electricity:{title:'全社会用电量同比',body:'<b>这是什么：</b>今年这个月全国用了多少电，比去年同月多了还是少了。<br><br><b>怎么算的：</b>国家能源局每月抄全国电表。今年5月总用电量 ÷ 去年5月总用电量 - 1。<br><br><b>为什么可靠：</b>电表读数没法作假，是衡量真实经济活力最硬的指标，比GDP统计更可信。<br><br><b>正常范围：</b>2-8%。低于2%说明经济活力不足，高于8%偏热。<br><br><b>反映的经济状况：</b>只要电表在转，经济就在运转。当前处于稳健区间，说明经济在正常运行。'},
-  retail_sales:{title:'社会消费品零售总额同比',body:'<b>这是什么：</b>今年这个月全国卖了多少东西（餐饮+商品零售），比去年同月多还是少。<br><br><b>怎么算的：</b>国家统计局每月统计限额以上和限额以下单位零售额合计。<br><br><b>正常范围：</b>3-10%为正常增长。负增长说明消费收缩。<br><br><b>反映的经济状况：</b>社零是内需最直接的指标。当前负增长，说明居民消费意愿偏弱，这是内需修复的核心挑战。'},
-  bond_yield:{title:'10年国债收益率',body:'<b>这是什么：</b>你买10年期国债，国家每年给你多少利息。<br><br><b>怎么算的：</b>债券市场每天交易撮合出来的利率。<br><br><b>正常范围：</b>1.8-3%。过低说明大家都不敢投钱、避险情绪高。<br><br><b>反映的经济状况：</b>低利率降低企业融资成本，但过低也反映经济信心不足。当前1.74%偏低。'},
-  m2:{title:'M2同比（广义货币供应量）',body:'<b>这是什么：</b>全社会一共有多少钱。包括现金、活期存款、定期存款、理财等。<br><br><b>怎么算的：</b>央行每月统计全社会货币总量，对比去年同月增速。<br><br><b>正常范围：</b>8-10%为适度。太低说明信用偏紧，太高可能带来通胀。<br><br><b>反映的经济状况：</b>适度宽松的货币环境是企业正常经营的前提。同样数据在不同的经济周期含义不同。'},
-  ai_market_share:{title:'中国AI模型海外调用份额',body:'<b>这是什么：</b>全球开发者在OpenRouter平台上调用AI模型时，中国模型（DeepSeek、小米、腾讯等）占了多少比例。<br><br><b>怎么算的：</b>OpenRouter每周公布各模型调用量（Token数）。中国模型总调用量 ÷ 全球总调用量 = 份额。<br><br><b>正常范围：</b>越高越好。当前中国模型已连续数周排名靠前。<br><br><b>反映的经济状况：</b>这是新经济竞争力的直接体现——中国AI被全球开发者用"脚"投票选中。'},
-  export:{title:'出口同比增速',body:'<b>这是什么：</b>今年这个月卖到国外的商品总额，比去年同月多了还是少了。<br><br><b>怎么算的：</b>海关总署统计每个月所有出口货物价值，对比去年同月。<br><br><b>正常范围：</b>3-10%为正常。低于-3%说明外需恶化。<br><br><b>反映的经济状况：</b>出口稳定说明制造业有竞争力。但也需关注出口结构——高技术产品占比是否在提升。'},
-  currency_index:{title:'人民币CFETS汇率指数',body:'<b>这是什么：</b>人民币对一篮子货币（美元、欧元、日元等）的整体强弱。<br><br><b>怎么算的：</b>中国外汇交易中心每周发布。100是基准，高于100说明人民币升值，低于100贬值。<br><br><b>正常范围：</b>95-102为稳定。低于95偏弱，高于105偏强。<br><br><b>反映的经济状况：</b>汇率稳定有利于进出口贸易和跨境资本流动。大幅波动无论升值贬值对经济都不利。'},
-  unemployment:{title:'城镇调查失业率',body:'<b>这是什么：</b>全国城镇劳动力中，正在找工作但没找到的人占多少比例。<br><br><b>怎么算的：</b>国家统计局每月对城镇住户做抽样调查，按国际劳工组织（ILO）标准统计。<br><br><b>正常范围：</b>4.5-5.5%为正常。低于4.5%说明就业好，高于5.5%则压力较大。<br><br><b>反映的经济状况：</b>失业率是民生指标的核心——失业率上升会压制消费和信心，是经济健康度的先行预警。'},
-  disposable_income:{title:'居民可支配收入累计同比',body:'<b>这是什么：</b>居民拿到手可以花的钱，比去年多了还是少了。<br><br><b>怎么算的：</b>国家统计局每季度对全国住户抽样调查，汇总人均可支配收入。<br><br><b>正常范围：</b>4-7%为正常增长。低于3%说明收入增长乏力。<br><br><b>反映的经济状况：</b>收入增长是消费的前提。收入增速跟不上GDP，内需就很难起来。'},
-  rmb_loan:{title:'人民币贷款余额同比',body:'<b>这是什么：</b>银行借出去的所有人民币贷款余额，比去年同月多了多少。<br><br><b>怎么算的：</b>中国人民银行每月统计金融机构人民币信贷收支表。<br><br><b>正常范围：</b>8-14%为正常。低于7%说明信用偏紧，企业融资需求不足。<br><br><b>反映的经济状况：</b>贷款增速是"宽信用"的直接度量。当前增速偏低，说明企业借贷意愿弱、经济内生融资需求不足。'},
-  lpr:{title:'1年期LPR（贷款市场报价利率）',body:'<b>这是什么：</b>银行给最优质客户贷款的基准利率。也是所有贷款利率的锚。<br><br><b>怎么算的：</b>18家报价行每月报价，去掉最高最低后取算术平均。<br><br><b>正常范围：</b>3.0-4.5%。利率越低说明货币政策越宽松。<br><br><b>反映的经济状况：</b>LPR持续下调说明央行在主动宽松来刺激经济。当前3.0%处于历史低位，宽松信号明确。'},
-  industrial_output:{title:'规模以上工业增加值同比',body:'<b>这是什么：</b>全国规模以上工业企业（年收入2000万以上）这个月生产了多少东西，比去年同月多了还是少了。<br><br><b>怎么算的：</b>国家统计局每月统计工业企业总产出，剔除价格因素。<br><br><b>正常范围：</b>5-8%为正常。低于3%说明生产端偏弱。<br><br><b>反映的经济状况：</b>工业增加值是实体经济供给端的核心指标。作为高技术制造业增加值的替代指标，反映制造业整体活力。'},
-  new_energy_penetration:{title:'新能源汽车渗透率',body:'<b>这是什么：</b>全国新卖出的汽车中，新能源车（纯电+插混）占了多少比例。<br><br><b>怎么算的：</b>中国汽车工业协会每月公布。新能源销量 ÷ 总销量。<br><br><b>正常范围：</b>30-50%。越高说明新能源替代越快。<br><br><b>反映的经济状况：</b>这是中国新质生产力最具标志性的指标——从十年前不到5%到如今40%+，体现产业链转型升级的速度。'},
+  cpi:{title:'CPI同比（居民消费价格）',body:'<b>这是什么：</b>今年这个月买东西比去年同月贵了多少。<br><br><b>怎么算的：</b>国家统计局在全国各地采价，对比今年和去年同期的价格变化。<br><br><b>正常范围：</b>0.5-3%为温和通胀。太低说明没人消费，太高说明钱不值钱。<br><br><b>反映的经济状况：</b>CPI温和正增长说明内需正常。'},
+  ppi:{title:'PPI同比（工业生产者出厂价格）',body:'<b>这是什么：</b>工厂把货卖给下游时的价格，比去年同月贵/便宜了多少。<br><br><b>怎么算的：</b>国家统计局收集全国工业企业的出厂价。<br><br><b>正常范围：</b>-1%到3%。低于-2%说明工业需求不足。<br><br><b>反映的经济状况：</b>PPI回升说明工业需求在修复。'},
+  pmi:{title:'制造业PMI',body:'<b>这是什么：</b>每个月对全国采购经理做问卷，问"你这个月生意比上个月好还是差"，汇总成一个指数。<br><br><b>怎么算的：</b>扩散指数。50是荣枯线——>50说明大部分人觉得生意在变好。<br><br><b>正常范围：</b>>52说明景气向好，48-50偏弱。<br><br><b>反映的经济状况：</b>PMI在扩张区间意味着制造业整体稳定。'},
+  electricity:{title:'全社会用电量同比',body:'<b>这是什么：</b>今年这个月全国用了多少电，比去年同月多了还是少了。<br><br><b>为什么可靠：</b>电表读数没法作假，是衡量真实经济活力最硬的指标。<br><br><b>正常范围：</b>2-8%。<br><br><b>反映的经济状况：</b>只要电表在转，经济就在运转。'},
+  retail_sales:{title:'社会消费品零售总额同比',body:'<b>这是什么：</b>今年这个月全国卖了多少东西，比去年同月多还是少。<br><br><b>正常范围：</b>3-10%为正常增长。负增长说明消费收缩。<br><br><b>反映的经济状况：</b>社零是内需最直接的指标。'},
+  bond_yield:{title:'10年国债收益率',body:'<b>这是什么：</b>你买10年期国债，国家每年给你多少利息。<br><br><b>正常范围：</b>1.8-3%。过低说明避险情绪高。<br><br><b>反映的经济状况：</b>低利率降低企业融资成本，但过低也反映经济信心不足。'},
+  m2:{title:'M2同比',body:'<b>这是什么：</b>全社会一共有多少钱。<br><br><b>正常范围：</b>8-10%为适度。<br><br><b>反映的经济状况：</b>适度宽松的货币环境是企业正常经营的前提。'},
+  ai_market_share:{title:'中国AI模型海外调用份额',body:'<b>这是什么：</b>全球开发者在OpenRouter平台上调用AI模型时，中国模型占了多少比例。<br><br><b>反映的经济状况：</b>这是新经济竞争力的直接体现。'},
+  export:{title:'出口同比增速',body:'<b>这是什么：</b>今年这个月卖到国外的商品总额，比去年同月多了还是少了。<br><br><b>正常范围：</b>3-10%为正常。<br><br><b>反映的经济状况：</b>出口稳定说明制造业有竞争力。'},
+  currency_index:{title:'人民币CFETS汇率指数',body:'<b>这是什么：</b>人民币对一篮子货币的整体强弱。<br><br><b>正常范围：</b>95-102为稳定。<br><br><b>反映的经济状况：</b>汇率稳定有利于进出口贸易。'},
+  unemployment:{title:'城镇调查失业率',body:'<b>这是什么：</b>全国城镇劳动力中，正在找工作但没找到的人占多少比例。<br><br><b>正常范围：</b>4.5-5.5%为正常。<br><br><b>反映的经济状况：</b>失业率是民生指标的核心。'},
+  disposable_income:{title:'居民可支配收入累计同比',body:'<b>这是什么：</b>居民拿到手可以花的钱，比去年多了还是少了。<br><br><b>正常范围：</b>4-7%为正常增长。<br><br><b>反映的经济状况：</b>收入增速跟不上GDP，内需就很难起来。'},
+  rmb_loan:{title:'人民币贷款余额同比',body:'<b>这是什么：</b>银行借出去的所有人民币贷款余额，比去年同月多了多少。<br><br><b>正常范围：</b>8-14%为正常。<br><br><b>反映的经济状况：</b>贷款增速是"宽信用"的直接度量。'},
+  lpr:{title:'1年期LPR',body:'<b>这是什么：</b>银行给最优质客户贷款的基准利率。<br><br><b>正常范围：</b>3.0-4.5%。利率越低说明货币政策越宽松。<br><br><b>反映的经济状况：</b>LPR持续下调说明央行在主动宽松。'},
+  industrial_output:{title:'规模以上工业增加值同比',body:'<b>这是什么：</b>全国规模以上工业企业这个月生产了多少东西，比去年同月多了还是少了。<br><br><b>正常范围：</b>5-8%为正常。<br><br><b>反映的经济状况：</b>工业增加值是实体经济供给端的核心指标。'},
+  new_energy_penetration:{title:'新能源汽车渗透率',body:'<b>这是什么：</b>全国新卖出的汽车中，新能源车占了多少比例。<br><br><b>正常范围：</b>30-50%。越高说明新能源替代越快。<br><br><b>反映的经济状况：</b>这是中国新质生产力最具标志性的指标。'},
 };
 function transInfo(key){
   var i=TRANS_INFO[key];if(!i)return;
   document.getElementById('infoTitle').innerHTML=i.title;
-  // Append data source & update date from live data
   var live = window._transData && window._transData.indicators && window._transData.indicators[key];
   var foot = '';
   if(live && live.source){
-    foot += '<div class="info-foot"><span class="if-src">📡 '+live.source+'</span>';
-    if(live.date) foot += '<span class="if-date">📅 '+live.date+'</span>';
+    foot += '<div class="info-foot"><span>📡 '+live.source+'</span>';
+    if(live.date) foot += '<span>📅 '+live.date+'</span>';
     foot += '</div>';
   }
   document.getElementById('infoBody').innerHTML = i.body + foot;
   document.getElementById('infoModal').className='modal-overlay show';
 }
 function toggleRef(){
-  var b=document.getElementById('refBody'),a=document.getElementById('refArrow'),ba=document.getElementById('refGuide').querySelector('.ref-bar');
-  if(b.className.indexOf('show')>=0){b.className='ref-body';ba.className='ref-bar';a.textContent='▶';}
-  else{b.className='ref-body show';ba.className='ref-bar open';a.textContent='▶';}
+  var b=document.getElementById('refBody'),a=document.getElementById('refArrow'),cr=a.parentNode;
+  if(b.className.indexOf('show')>=0){b.className='cr-body';cr.className='cr';a.textContent='▶';}
+  else{b.className='cr-body show';cr.className='cr open';a.textContent='▶';}
 }
 
 // ── Real-time ──
 (function(){
-  var c=document.getElementById('rtCard'),dt=document.getElementById('rtDot'),
-      lb=document.getElementById('rtLbl'),pr=document.getElementById('rtPrice'),
-      cg=document.getElementById('rtChg'),pe=document.getElementById('rtPe'),
-      tp=document.getElementById('rtTemp'),ti=document.getElementById('rtTime'),
-      cd=document.getElementById('rtCD'),er=document.getElementById('rtErr'),
-      st=document.getElementById('rtStatus'),
-      rt=null,cts=null,sc=null,cdn=0;
+  var dt=document.getElementById('rtDot'),lb=document.getElementById('rtLbl'),
+      pr=document.getElementById('rtPrice'),cg=document.getElementById('rtChg'),
+      rt=null,sc=null;
 
   function isMarket(){
     var n=new Date();
@@ -656,7 +578,7 @@ function toggleRef(){
     if(!m)return null;
     var f=m[1].split('~');
     if(f.length<35)return null;
-    return{price:parseFloat(f[3]),yc:parseFloat(f[4]),change:parseFloat(f[31])||0,pct:parseFloat(f[32])||0,high:parseFloat(f[33])||0,low:parseFloat(f[34])||0,ts:f[30]||''};
+    return{price:parseFloat(f[3]),yc:parseFloat(f[4]),change:parseFloat(f[31])||0,pct:parseFloat(f[32])||0,ts:f[30]||''};
   }
   function compRT(rtD){
     if(!rtD||!rtD.price)return null;
@@ -669,18 +591,16 @@ function toggleRef(){
   function upUI(rd,cp){
     if(!rd)return;
     var ih=isMarket();
-    dt.className='dot '+(ih?'on':'off');
-    lb.textContent=ih?'盘中实时':'盘后';
+    dt.style.background=ih?'#059669':'#94A3B8';
+    lb.textContent=ih?'盘中':'盘后';
     var up=rd.change>=0,co=up?'#EF4444':'#059669';
     pr.textContent=rd.price.toLocaleString();pr.style.color=co;
     cg.textContent=(up?'+':'')+rd.pct.toFixed(2)+'%';cg.style.color=co;
     if(cp){
-      pe.textContent=cp.pe.toFixed(2);
-      tp.innerHTML=cp.temp+'°C';tp.style.color=cp.temp>=80?'#EF4444':cp.temp>=60?'#F59E0B':cp.temp>=30?'#F59E0B':'#3B82F6';
-      // 同步更新主温度圆环
+      // Update main ring with real-time data
       var tmpT=tInfo(cp.temp),tmpArc=document.getElementById('mainArc');
       if(tmpArc){
-        var tmpC=2*Math.PI*68;
+        var tmpC=2*Math.PI*50;
         tmpArc.style.strokeDasharray=tmpC;
         tmpArc.style.strokeDashoffset=tmpC*(1-cp.temp/100);
         tmpArc.style.stroke=tmpT.c;
@@ -690,69 +610,51 @@ function toggleRef(){
       var tmpL=document.getElementById('tempLbl');
       if(tmpL){tmpL.textContent=tmpT.l;tmpL.style.color=tmpT.c;}
     }
-    if(rd.ts&&rd.ts.length>=14){ti.textContent='更新于 '+rd.ts.substring(8,10)+':'+rd.ts.substring(10,12)+':'+rd.ts.substring(12,14);
-      // 盘后显示最后更新时间的备用
-      if(!isMarket())rtStatus(false,rd.ts);}
-    er.textContent='';
+  }
+
+  function rtStatus(ih){
+    var el=document.getElementById('rtStatus');
+    if(ih){el.textContent='盘中实时刷新（每60秒）';el.style.color='#059669';}
+    else{
+      var now=new Date();
+      var hh=('0'+now.getHours()).slice(-2),mm=('0'+now.getMinutes()).slice(-2);
+      el.textContent='盘后 · '+hh+':'+mm;el.style.color='#94A3B8';
+    }
+  }
+
+  function scheduleRT(){
+    var ih=isMarket();
+    dt.style.background=ih?'#059669':'#94A3B8';
+    lb.textContent=ih?'盘中':'盘后';
+    rtStatus(ih);
+    if(ih){
+      fetchRT();
+      if(rt)clearInterval(rt);
+      rt=setInterval(fetchRT,60000);
+      if(sc){clearInterval(sc);sc=null;}
+    }else{
+      fetchRT();
+      if(rt){clearInterval(rt);rt=null;}
+      if(sc)return;
+      sc=setInterval(function(){
+        if(isMarket()){clearInterval(sc);sc=null;scheduleRT();}
+      },30000);
+    }
   }
   function fetchRT(){
+    var er=document.getElementById('rtChg');
     fetch('https://qt.gtimg.cn/q=sh000510&_='+Date.now())
       .then(function(r){return r.arrayBuffer()})
       .then(function(buf){
         var txt=new TextDecoder('gbk').decode(buf),rd=parseT(txt);
-        if(!rd||isNaN(rd.price)){er.textContent=isMarket()?'数据解析失败':'💤 盘后无新数据';return}
+        if(!rd||isNaN(rd.price))return;
         upUI(rd,compRT(rd));
       })
-      .catch(function(){er.textContent=isMarket()?'数据获取失败':'💤 盘后无新数据'});
-  }
-  function rtStatus(ih,ts){
-    var tsEl=document.getElementById('tempStatus');
-    if(ih){
-      st.textContent='📡 盘中实时刷新中（每60秒）';
-      st.style.color='#059669';
-      if(tsEl){tsEl.textContent='📡 盘中实时';tsEl.style.color='#059669';}
-    }else{
-      var hh,mm;
-      if(ts&&ts.length>=14){
-        hh=ts.substring(8,10);mm=ts.substring(10,12);
-      }else{
-        var now=new Date();hh=('0'+now.getHours()).slice(-2);mm=('0'+now.getMinutes()).slice(-2);
-      }
-      st.textContent='💤 盘后 · 最后更新 '+hh+':'+mm;
-      st.style.color='#64748B';
-      if(tsEl){tsEl.textContent='💤 盘后数据·最后更新 '+hh+':'+mm;tsEl.style.color='#64748B';}
-    }
-  }
-  function rstCD(n){cdn=n;cd.textContent=' · '+n+'s';if(cts)clearInterval(cts);cts=setInterval(function(){cdn--;cd.textContent=cdn>0?' · '+cdn+'s':' · 刷新中…'},1000)}
-  function scheduleRT(){
-    var ih=isMarket();
-    dt.className='dot '+(ih?'on':'off');
-    lb.textContent=ih?'盘中实时':'盘后';
-    rtStatus(ih);
-    if(ih){
-      // 开盘：开始刷新
-      fetchRT();rstCD(60);
-      if(rt)clearInterval(rt);
-      rt=setInterval(function(){fetchRT();rstCD(60)},60000);
-      if(sc){clearInterval(sc);sc=null;}
-    }else{
-      // 收盘：抓一次显示最后数据，然后停止刷新
-      fetchRT();
-      if(rt){clearInterval(rt);rt=null;}
-      cd.textContent='';
-      if(sc)return;
-      sc=setInterval(function(){
-        if(isMarket()){
-          clearInterval(sc);sc=null;
-          scheduleRT();
-        }
-      },30000);
-    }
+      .catch(function(){});
   }
 
   setTimeout(function(){
-    if(!window.__D){c.style.display='none';return}
-    c.style.display='block';
+    if(!window.__D)return;
     scheduleRT();
   },500);
 })();
@@ -763,18 +665,17 @@ function switchTab(t){
       ba=document.getElementById('tabBtnA500'),bt=document.getElementById('tabBtnTrans');
   if(t==='a500'){
     a5.style.display='block';tr.style.display='none';
-    ba.className='tab act';bt.className='tab';
+    ba.className='bn-item act';bt.className='bn-item';
   }else{
     a5.style.display='none';tr.style.display='block';
-    ba.className='tab';bt.className='tab act';
+    ba.className='bn-item';bt.className='bn-item act';
     if(!window._transLoaded)loadTransition();
   }
 }
 function toggleRefTrans(){
-  var b=document.getElementById('transRefBody'),a=document.getElementById('transRefArrow'),
-      ba=document.getElementById('transRefGuide').querySelector('.ref-bar');
-  if(b.className.indexOf('show')>=0){b.className='ref-body';ba.className='ref-bar';a.textContent='▶';}
-  else{b.className='ref-body show';ba.className='ref-bar open';a.textContent='▶';}
+  var b=document.getElementById('transRefBody'),a=document.getElementById('transRefArrow'),cr=a.parentNode;
+  if(b.className.indexOf('show')>=0){b.className='cr-body';cr.className='cr';a.textContent='▶';}
+  else{b.className='cr-body show';cr.className='cr open';a.textContent='▶';}
 }
 
 // ── Transition ──
@@ -796,29 +697,22 @@ function loadTransition(){
   }catch(e){transFail();}
 }
 function transFail(){
-  document.getElementById('transDesc').textContent='⚠️ 数据加载失败，请稍后重试';
+  document.getElementById('transDesc').textContent='⚠️ 数据加载失败';
 }
 function renderTrans(d){
-  // Temperature ring
-  var C=2*Math.PI*68,arc=document.getElementById('transArc');
-  arc.style.strokeDasharray=C;
-  arc.style.strokeDashoffset=C*(1-d.temperature/100);
-  arc.style.stroke=d.color||'#F59E0B';
-  document.getElementById('transTemp').textContent=d.temperature;
-  document.getElementById('transTemp').style.color=d.color||'#F59E0B';
-  document.getElementById('transLbl').textContent=d.emoji+' '+d.band;
-  document.getElementById('transLbl').style.color=d.color||'#F59E0B';
+  var C=2*Math.PI*50,arc=document.getElementById('transArc');
+  if(arc){
+    arc.style.strokeDasharray=C;
+    arc.style.strokeDashoffset=C*(1-d.temperature/100);
+    arc.style.stroke=d.color||'#F59E0B';
+  }
   document.getElementById('transDesc').innerHTML=
-    '<div style="font-size:13px;color:#475569;margin-bottom:2px">'+d.description+'</div>'+
-    '<div style="font-size:12px;color:#64748B;margin-top:2px">'+
-    (d.temperature>=70?'结论：内需回升、转型加速，整体向好':
-     d.temperature>=40?'结论：内需偏弱但货币宽松，整体温和运行':
-     '结论：内需收缩、就业承压，整体偏冷')+'</div>';
+    '<b style="font-size:16px;color:'+(d.color||'#F59E0B')+'">'+d.temperature+'°C</b> · '+d.emoji+' '+d.band+
+    '<br><span style="font-size:12px;color:#64748B">'+d.description+'</span>';
 
-  // Lines grid (4 lines => 2x2)
+  // Lines grid
   var grid=document.getElementById('transLines'),html='';
   var keys=['line1','line2','line3','line4'];
-  // 每条线的判断文案（4线）
   var lineJudgments={
     line1:{high:'✅ 内需正常',mid:'🌤️ 内需偏弱',low:'❄️ 需求不振'},
     line2:{high:'✅ 就业良好',mid:'🌤️ 就业正常',low:'⚠️ 就业承压'},
@@ -826,74 +720,41 @@ function renderTrans(d){
     line4:{high:'🔥 转型加速',mid:'🌤️ 转型推进',low:'❄️ 动力不足'},
   };
   var lineColors={line1:'#10B981',line2:'#3B82F6',line3:'#8B5CF6',line4:'#F59E0B'};
-
-  // ── 数据驱动的辅助信息（不再硬编码权重和构成）──
-  // 构成说明：从实际指标数据反推
-  var lineKeys = {1:'line1',2:'line2',3:'line3',4:'line4'};
-  var lineSubs = {};
+  var lineKeys={1:'line1',2:'line2',3:'line3',4:'line4'};
+  var lineSubs={};
   [1,2,3,4].forEach(function(ln){
-    var names = [];
-    Object.keys(d.indicators||{}).forEach(function(k){
-      if(d.indicators[k].line === ln) names.push(d.indicators[k].name);
-    });
-    lineSubs[lineKeys[ln]] = names.join('·') || '—';
+    var names=[];
+    Object.keys(d.indicators||{}).forEach(function(k){if(d.indicators[k].line===ln)names.push(d.indicators[k].name);});
+    lineSubs[lineKeys[ln]]=names.join('·')||'—';
   });
-  // 权重：从 lineScores 数据取，不和 JS 硬编码打架
-  var lineW = {};
-  ['line1','line2','line3','line4'].forEach(function(k){
-    var ls = d.lineScores[k];
-    lineW[k] = ls ? Math.round(ls.weight)+'%' : '—';
-  });
-  // 一句话洞察：基于该线得分和内部最好/最差指标动态生成
-  function genTakeaway(lnum, sc, bestScore, worstScore, bestName, worstName){
-    if(sc >= 70) return '整体向好，各指标协同走强';
-    var parts = [];
-    if(worstScore !== null && worstScore < 40) parts.push(worstName+'偏弱');
-    if(bestScore !== null && bestScore >= 70) parts.push(bestName+'有支撑');
-    if(parts.length === 0) return '各指标表现中等，需关注边际变化';
+  var lineW={};
+  ['line1','line2','line3','line4'].forEach(function(k){var ls=d.lineScores[k];lineW[k]=ls?Math.round(ls.weight)+'%':'—';});
+  function genTakeaway(lnum,sc,bestScore,worstScore,bestName,worstName){
+    if(sc>=70)return '整体向好';
+    var parts=[];
+    if(worstScore!==null&&worstScore<40)parts.push(worstName+'偏弱');
+    if(bestScore!==null&&bestScore>=70)parts.push(bestName+'有支撑');
+    if(parts.length===0)return '表现中等';
     return parts.join('，');
   }
-
   keys.forEach(function(k,i){
     var l=d.lineScores[k];if(!l)return;
     var sc=l.score,c=lineColors[k],judge='';
-    if(sc<40){judge=lineJudgments[k].low;}
-    else if(sc<70){judge=lineJudgments[k].mid;}
-    else{judge=lineJudgments[k].high;}
-    // 找该线最好和最差指标
-    var lineNum = i+1, bestInd=null, worstInd=null;
-    Object.keys(d.indicators||{}).forEach(function(kk){
-      var ind = d.indicators[kk];
-      if(ind && ind.line === lineNum){
-        if(!bestInd || ind.score > bestInd.score) bestInd = ind;
-        if(!worstInd || ind.score < worstInd.score) worstInd = ind;
-      }
-    });
-    var drvHtml = '';
-    if(bestInd && worstInd && bestInd.name !== worstInd.name){
-      var bestShort = bestInd.name.replace('同比','').replace('累计','').replace('规模以上','');
-      var worstShort = worstInd.name.replace('同比','').replace('累计','').replace('规模以上','');
-      drvHtml = '<span class="l-badge l-badge-up">▲ '+bestShort+' '+Math.round(bestInd.score)+'</span>'+
-        '<span class="l-badge l-badge-down">▼ '+worstShort+' '+Math.round(worstInd.score)+'</span>';
+    if(sc<40)judge=lineJudgments[k].low;else if(sc<70)judge=lineJudgments[k].mid;else judge=lineJudgments[k].high;
+    var lineNum=i+1,bestInd=null,worstInd=null;
+    Object.keys(d.indicators||{}).forEach(function(kk){var ind=d.indicators[kk];if(ind&&ind.line===lineNum){if(!bestInd||ind.score>bestInd.score)bestInd=ind;if(!worstInd||ind.score<worstInd.score)worstInd=ind;}});
+    var drvHtml='';
+    if(bestInd&&worstInd&&bestInd.name!==worstInd.name){
+      var bestShort=bestInd.name.replace('同比','').replace('累计','').replace('规模以上','');
+      var worstShort=worstInd.name.replace('同比','').replace('累计','').replace('规模以上','');
+      drvHtml='<span class="l-badge l-badge-up">▲ '+bestShort+' '+Math.round(bestInd.score)+'</span><span class="l-badge l-badge-down">▼ '+worstShort+' '+Math.round(worstInd.score)+'</span>';
     }
-    var takeaway = genTakeaway(lineNum, sc, bestInd?bestInd.score:null, worstInd?worstInd.score:null, bestInd?bestInd.name:null, worstInd?worstInd.name:null);
-    html+='<div class="t-line" style="border-top:3px solid '+c+'">'+
-      '<div class="l-hdr"><span class="l-name">'+l.name+'</span><span class="l-pct">'+lineW[k]+'</span></div>'+
-      '<div class="l-score" style="color:'+c+'">'+Math.round(sc)+'</div>'+
-      '<div class="l-status" style="color:'+c+'">'+judge+'</div>'+
-      '<div class="l-bar"><div class="l-fill" style="width:'+sc+'%;background:'+c+'"></div></div>'+
-      '<div class="l-meta">'+drvHtml+
-      '<span class="l-tkw">'+takeaway+'</span></div>'+
-    '</div>';
+    var takeaway=genTakeaway(lineNum,sc,bestInd?bestInd.score:null,worstInd?worstInd.score:null,bestInd?bestInd.name:null,worstInd?worstInd.name:null);
+    html+='<div class="t-line" style="border-top:3px solid '+c+'"><div class="l-hdr"><span class="l-name">'+l.name+'</span><span class="l-pct">'+lineW[k]+'</span></div><div class="l-score" style="color:'+c+'">'+Math.round(sc)+'</div><div class="l-status" style="color:'+c+'">'+judge+'</div><div class="l-bar"><div class="l-fill" style="width:'+sc+'%;background:'+c+'"></div></div><div class="l-meta">'+drvHtml+'<span class="l-tkw">'+takeaway+'</span></div></div>';
   });
   grid.innerHTML=html;
 
-  // ── Indicator cards (grouped by line) ──
-  // 权重从数据取，不硬编码
-  function getLineWeight(ln) {
-    var ls = d.lineScores && d.lineScores['line'+ln];
-    return ls ? Math.round(ls.weight)+'%' : '—';
-  }
+  function getLineWeight(ln){var ls=d.lineScores&&d.lineScores['line'+ln];return ls?Math.round(ls.weight)+'%':'—';}
   var groups=[
     {id:'transGroup1',name:'💚 内需与物价',w:getLineWeight(1),color:'#10B981'},
     {id:'transGroup2',name:'💙 就业与收入',w:getLineWeight(2),color:'#3B82F6'},
@@ -912,71 +773,42 @@ function renderTrans(d){
       if(sc<40)c='#10B981';else if(sc<70)c='#F59E0B';else c='#EF4444';
       var fresh='';var cardStyle='';
       if(ind.stale){fresh='⚠️';cardStyle=' style="opacity:0.6"';}
-      else if(ind.date&&ind.date.indexOf('2025')>=0){fresh='📅';}
-      else{fresh='🆕';}
-      var staleBadge = ind.stale ? '<span class="tc-tag t-tag-stale" style="font-size:8px">⚠️过期</span>' : '';
-      var tag=(ind.stale?'':(ind.auto?'<span class="tc-tag t-tag-auto" style="font-size:8px">✅</span>':'<span class="tc-tag t-tag-manual" style="font-size:8px">⚠️</span>'));
-      // Unit map
+      else if(ind.date&&ind.date.indexOf('2025')>=0)fresh='📅';
+      else fresh='🆕';
+      var staleBadge=ind.stale?'<span class="tc-tag t-tag-stale">⚠️过期</span>':'';
+      var tag=(ind.stale?'':(ind.auto?'<span class="tc-tag t-tag-auto">✅</span>':'<span class="tc-tag t-tag-manual">⚠️</span>'));
       var um={'cpi':'%','ppi':'%','pmi':'','bond_yield':'%','m2':'%','ai_market_share':'%','export':'%','currency_index':'','electricity':'%','retail_sales':'%','unemployment':'%','disposable_income':'%','rmb_loan':'%','lpr':'%','industrial_output':'%','new_energy_penetration':'%'};
       var unit=um[key]||'';
-      // Reference range map
       var refs={'cpi':'0.5-3%','ppi':'-1~3%','pmi':'荣枯线50','bond_yield':'1.8-3%','m2':'8-10%','ai_market_share':'越高越好','export':'3-10%','currency_index':'95-102','electricity':'2-8%','retail_sales':'3-10%','unemployment':'4.5-5.5%','disposable_income':'4-7%','rmb_loan':'8-14%','lpr':'3.0-4.5%','industrial_output':'5-8%','new_energy_penetration':'30-50%'};
       var ref=refs[key]||'';
-      html+='<div class="t-card" onclick="transInfo(\''+key+'\')" style="cursor:pointer"'+cardStyle+'>'+
-        '<div class="tc-hdr"><span class="tc-name">'+fresh+' '+ind.name+'</span>'+staleBadge+tag+'</div>'+
-        '<div class="tc-val" style="color:'+c+'">'+ind.value+'<span style="font-size:12px;color:#94A3B8;font-weight:400;margin-left:2px">'+unit+'</span></div>'+
-        '<div class="tc-mid">'+
-          '<span class="tc-label" style="color:'+c+'">'+ind.label+'</span>'+
-          '<span class="tc-score" style="color:'+c+'">'+Math.round(sc)+'分</span>'+
-        '</div>'+
-        '<div class="tc-bar"><div class="tc-fill" style="width:'+sc+'%;background:'+c+'"></div></div>'+
-        '<div class="tc-foot"><span>参考 '+ref+'</span><span>'+ind.date+'</span></div>'+
-      '</div>';
+      html+='<div class="t-card" onclick="transInfo(\''+key+'\')" style="cursor:pointer"'+cardStyle+'><div class="tc-hdr"><span class="tc-name">'+fresh+' '+ind.name+'</span>'+staleBadge+tag+'</div><div class="tc-val" style="color:'+c+'">'+ind.value+'<span style="font-size:11px;color:#94A3B8;font-weight:400;margin-left:2px">'+unit+'</span></div><div class="tc-mid"><span class="tc-label" style="color:'+c+'">'+ind.label+'</span><span class="tc-score" style="color:'+c+'">'+Math.round(sc)+'分</span></div><div class="tc-bar"><div class="tc-fill" style="width:'+sc+'%;background:'+c+'"></div></div><div class="tc-foot"><span>参考 '+ref+'</span><span>'+ind.date+'</span></div></div>';
     });
     html+='</div>';
     el.innerHTML=html;
   });
 
-  // Warn stale data
   var warnDiv=document.getElementById('transWarn');
   var stale=[],manual=[];
   var ik=Object.keys(d.indicators||{});
-  ik.forEach(function(k){
-    var ind=d.indicators[k];
-    if(ind.stale)stale.push(ind.name);
-    if(!ind.auto)manual.push(ind.name);
-  });
+  ik.forEach(function(k){var ind=d.indicators[k];if(ind.stale)stale.push(ind.name);if(!ind.auto)manual.push(ind.name);});
   var warns=[];
-  if(stale.length>0) warns.push('📅 数据过期('+stale.length+'): '+stale.join('、')+' — 请尽快手动更新');
-  if(manual.length>0) warns.push('⚠️ 手动录入: '+manual.join('、')+' — 自动恢复后将切换');
-  if(warns.length>0){
-    warnDiv.style.display='block';
-    warnDiv.className='adv adv-ok';
-    warnDiv.style.fontSize='11px';
-    warnDiv.style.padding='8px';
-    warnDiv.innerHTML=warns.join('<br>');
-  }
+  if(stale.length>0)warns.push('📅 数据过期('+stale.length+'): '+stale.join('、'));
+  if(manual.length>0)warns.push('⚠️ 手动录入: '+manual.join('、'));
+  if(warns.length>0){warnDiv.style.display='block';warnDiv.style.fontSize='11px';warnDiv.style.padding='6px';warnDiv.innerHTML=warns.join('<br>');}
 
-  // Fill guide
   var listEl=document.getElementById('transIndicatorsList');
   if(listEl){
     var lhtml='';
     ik.forEach(function(k){
       var ind=d.indicators[k];
-      var tag=ind.auto?'<span class="t-tag t-tag-auto">✅ 自动</span>':'<span class="t-tag t-tag-manual">⚠️ 手动</span>';
+      var tag=ind.auto?'<span class="t-tag t-tag-auto">✅自动</span>':'<span class="t-tag t-tag-manual">⚠️手动</span>';
       var c='';if(ind.score<40)c='#10B981';else if(ind.score<70)c='#F59E0B';else c='#EF4444';
-      lhtml+='<div style="padding:6px 0;border-bottom:1px solid #F1F5F9">'+
-        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">'+
-        '<b style="font-size:13px;color:#0F172A">'+ind.name+'</b>'+tag+'</div>'+
-        '<div style="font-size:12px;color:#475569">当前 <span style="color:'+c+';font-weight:700">'+ind.value+'</span> → <b>'+Math.round(ind.score)+'分</b>（'+ind.label+'）· 权重'+Math.round(ind.weight*100)+'%</div>'+
-        '<div style="font-size:10px;color:#94A3B8">'+ind.source+' · 截至 '+ind.date+'</div>'+
-      '</div>';
+      lhtml+='<div style="padding:5px 0;border-bottom:1px solid #F1F5F9"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1px"><b style="font-size:12px;color:#0F172A">'+ind.name+'</b>'+tag+'</div><div style="font-size:11px;color:#475569">当前 <span style="color:'+c+';font-weight:700">'+ind.value+'</span> → <b>'+Math.round(ind.score)+'分</b>（'+ind.label+'）· 权重'+Math.round(ind.weight*100)+'%</div><div style="font-size:9px;color:#94A3B8">'+ind.source+' · 截至 '+ind.date+'</div></div>';
     });
     listEl.innerHTML=lhtml;
   }
 }
 
-// Also init transition tab data on page load (prefetch for seamless switch)
 setTimeout(function(){
   var x=new XMLHttpRequest();
   x.open('GET','transition_data.json?_='+Date.now(),true);
@@ -984,7 +816,7 @@ setTimeout(function(){
   x.send();
 },1000);
 </script>
-<!-- Info modal -->
+
 <div class="modal-overlay" id="infoModal" onclick="if(event.target===this)hideInfo()">
   <div class="modal-box">
     <span class="close" onclick="hideInfo()">×</span>
