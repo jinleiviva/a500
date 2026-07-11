@@ -170,6 +170,7 @@ body{
 .modal-box .close:hover{color:#888}
 .modal-box .title{font-size:15px;font-weight:700;margin-bottom:8px}
 .modal-box .body{font-size:13px;color:#555;line-height:1.7}
+.modal-box .info-foot{display:flex;justify-content:space-between;font-size:10px;color:#aaa;margin-top:12px;padding-top:8px;border-top:1px solid #f0f0f0}
 </style>
 </head>
 <body>
@@ -606,7 +607,15 @@ var TRANS_INFO={
 function transInfo(key){
   var i=TRANS_INFO[key];if(!i)return;
   document.getElementById('infoTitle').innerHTML=i.title;
-  document.getElementById('infoBody').innerHTML=i.body;
+  // Append data source & update date from live data
+  var live = window._transData && window._transData.indicators && window._transData.indicators[key];
+  var foot = '';
+  if(live && live.source){
+    foot += '<div class="info-foot"><span class="if-src">📡 '+live.source+'</span>';
+    if(live.date) foot += '<span class="if-date">📅 '+live.date+'</span>';
+    foot += '</div>';
+  }
+  document.getElementById('infoBody').innerHTML = i.body + foot;
   document.getElementById('infoModal').className='modal-overlay show';
 }
 function toggleRef(){
