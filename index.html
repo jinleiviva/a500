@@ -570,7 +570,7 @@ body{
       {d:"07-08",pe:16.16},
       {d:"07-09",pe:16.62},
       {d:"07-10",pe:16.31}
-    ], 'pageCreatedAt': '2026-07-11 23:15', 'pricePercentile': 93.2,
+    ], 'pageCreatedAt': '2026-07-11 23:18', 'pricePercentile': 93.2,
   };
   window.__D = D;
 
@@ -833,10 +833,10 @@ function toggleRef(){
       .then(function(r){return r.arrayBuffer()})
       .then(function(buf){
         var txt=new TextDecoder('gbk').decode(buf),rd=parseT(txt);
-        if(!rd||isNaN(rd.price)){er.textContent='数据解析失败';return}
+        if(!rd||isNaN(rd.price)){er.textContent=isMarket()?'数据解析失败':'💤 盘后无新数据';return}
         upUI(rd,compRT(rd));
       })
-      .catch(function(){er.textContent='数据获取失败'});
+      .catch(function(){er.textContent=isMarket()?'数据获取失败':'💤 盘后无新数据'});
   }
   function rtStatus(ih,ts){
     var tsEl=document.getElementById('tempStatus');
