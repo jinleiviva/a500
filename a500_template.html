@@ -139,6 +139,19 @@ body{
 .t-tag-manual{background:#fff3e0;color:#d35400}
 .t-tag-stale{background:#fdedec;color:#c0392b}
 
+/* ── Transition indicator cards ── */
+.t-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.t-card{background:#fff;border-radius:10px;padding:10px 10px 8px;box-shadow:0 1px 4px rgba(0,0,0,0.03)}
+.t-card .tc-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+.t-card .tc-name{font-size:11px;font-weight:600;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t-card .tc-tag{font-size:8px;padding:1px 4px;border-radius:3px;flex-shrink:0}
+.t-card .tc-val{font-size:22px;font-weight:700;line-height:1.2;margin:2px 0}
+.t-card .tc-bar{height:3px;border-radius:2px;background:#eee;margin:4px 0;overflow:hidden}
+.t-card .tc-fill{height:100%;border-radius:2px}
+.t-card .tc-foot{display:flex;justify-content:space-between;font-size:9px;color:#bbb}
+.t-card .tc-score{font-size:12px;font-weight:700}
+.t-card .tc-label{font-size:10px}
+
 /* ── Info buttons & modal ── */
 .info-btn{display:inline-block;width:16px;height:16px;line-height:16px;border-radius:50%;background:#ddd;color:#fff;font-size:10px;font-weight:700;text-align:center;cursor:pointer;vertical-align:middle;margin-left:3px;user-select:none}
 .info-btn:hover{background:#bbb}
@@ -348,6 +361,9 @@ body{
 
       <!-- 三条主线 -->
       <div class="t-line-grid" id="transLines"></div>
+
+      <!-- 指标卡片 -->
+      <div class="t-grid" id="transCards"></div>
 
       <!-- 数据预警 -->
       <div id="transWarn" style="display:none"></div>
@@ -701,6 +717,32 @@ function renderTrans(d){
     '</div>';
   });
   grid.innerHTML=html;
+
+  // ── Indicator cards ──
+  var cardsEl=document.getElementById('transCards');
+  if(cardsEl){
+    var ch='',ck=Object.keys(d.indicators||{});
+    ck.forEach(function(k){
+      var ind=d.indicators[k];
+      if(!ind)return;
+      var sc=ind.score,c='';
+      if(sc<40)c='#97C459';else if(sc<70)c='#EF9F27';else c='#E24B4A';
+      var fresh='';if(ind.date&&ind.date.indexOf('2025')>=0)fresh='📅';else fresh='🆕';
+      var tag=ind.auto?'<span class="tc-tag t-tag-auto" style="font-size:8px">✅</span>':'<span class="tc-tag t-tag-manual" style="font-size:8px">⚠️</span>';
+      var valDisplay=typeof ind.value==='number'?ind.value:ind.value;
+      ch+='<div class="t-card">'+
+        '<div class="tc-hdr"><span class="tc-name">'+fresh+' '+ind.name+'</span>'+tag+'</div>'+
+        '<div class="tc-val" style="color:'+c+'">'+valDisplay+'</div>'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin:2px 0">'+
+          '<span class="tc-label" style="color:'+c+'">'+ind.label+'</span>'+
+          '<span class="tc-score" style="color:'+c+'">'+Math.round(sc)+'分</span>'+
+        '</div>'+
+        '<div class="tc-bar"><div class="tc-fill" style="width:'+sc+'%;background:'+c+'"></div></div>'+
+        '<div class="tc-foot"><span>'+ind.source.substring(0,12)+'</span><span>'+ind.date+'</span></div>'+
+      '</div>';
+    });
+    cardsEl.innerHTML=ch;
+  }
 
   // Warn stale data
   var warnDiv=document.getElementById('transWarn');
