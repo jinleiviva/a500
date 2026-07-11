@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-中国经济「转型体温计」· 数据抓取与打分脚本 v0.2
+中国经济「健康度温度计」· 数据抓取与打分脚本 v0.3
 ============================================
 数据来源：akshare + 多路Web抓取回退
 输出：transition_data.json
@@ -316,15 +316,15 @@ def compute_composite(scores):
 
 def get_band(temp):
     if temp < 40:
-        return "低温区", "❄️", "#97C459", "内需与物价偏弱、转型动能尚未接续，处于承压阶段"
+        return "低温区", "❄️", "#97C459", "整体偏冷：内需偏弱、转型环境承压，经济运行面临较多挑战"
     elif temp < 70:
-        return "温和区", "🌤️", "#EF9F27", "新旧动能交替中，经济温和运行、局部结构性改善"
+        return "温和区", "🌤️", "#EF9F27", "正常运转：经济运行温和、局部有亮点，转型环境总体正常"
     else:
-        return "升温区", "🔥", "#E24B4A", "内需回暖、新动能放量、转型进度明显加快"
+        return "升温区", "🔥", "#E24B4A", "整体向好：内需回暖、新动能放量、转型与增长形成良性互动"
 
 def main():
     print(f"\n{'='*50}")
-    print(f"🌡️  中国经济「转型体温计」")
+    print(f"📊 中国经济健康度温度计")
     print(f"⏰  {datetime.now():%Y-%m-%d %H:%M}")
     print(f"📋  配置版本 v{CONFIG.get('version', '?')}  更新于 {CONFIG.get('last_updated', '?')}")
     print(f"{'='*50}")
@@ -377,7 +377,7 @@ def main():
     total_count = len(results)
 
     print(f"\n{'='*50}")
-    print(f"📊 综合转型温度: {temp}°C")
+    print(f"📊 综合健康度温度: {temp}°C")
     print(f"   档位: {emoji} {band}")
     print(f"   描述: {desc}")
     print(f"\n📡 数据新鲜度: {auto_count}/{total_count} 个指标自动获取最新数据")
