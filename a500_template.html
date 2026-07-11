@@ -147,24 +147,24 @@ body{
 .t-tag-auto{background:#ECFDF5;color:#059669}
 .t-tag-manual{background:#FFFBEB;color:#D97706}
 .t-tag-stale{background:#FEF2F2;color:#DC2626}
-.t-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
-.t-card{background:#fff;border-radius:10px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 10px rgba(0,0,0,0.04)}
+.t-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;overflow:hidden}
+.t-card{background:#fff;border-radius:10px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 10px rgba(0,0,0,0.04);min-width:0}
 .t-card:active{transform:scale(0.97)}
-.t-card .tc-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;gap:3px}
-.t-card .tc-name{font-size:11px;font-weight:600;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t-card .tc-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;gap:3px;min-width:0}
+.t-card .tc-name{font-size:11px;font-weight:600;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex-shrink:1}
 .t-card .tc-tag{font-size:7px;padding:0 4px;border-radius:3px;font-weight:600}
-.t-card .tc-val{font-size:20px;font-weight:700;line-height:1.2}
-.t-card .tc-mid{display:flex;justify-content:space-between;align-items:center;margin:2px 0}
+.t-card .tc-val{font-size:20px;font-weight:700;line-height:1.2;overflow:hidden;text-overflow:ellipsis}
+.t-card .tc-mid{display:flex;justify-content:space-between;align-items:center;margin:2px 0;min-width:0}
 .t-card .tc-label{font-size:11px;font-weight:500}
 .t-card .tc-score{font-size:12px;font-weight:700}
 .t-card .tc-bar{height:3px;border-radius:2px;background:#E2E8F0;margin:4px 0;overflow:hidden}
 .t-card .tc-fill{height:100%;border-radius:2px}
 .t-card .tc-foot{display:flex;justify-content:space-between;font-size:9px;color:#94A3B8}
-.t-gh{margin:6px 0 4px;display:flex;align-items:center;gap:6px}
-.t-gh .gh-bar{width:4px;height:16px;border-radius:2px}
-.t-gh .gh-name{font-size:13px;font-weight:600;color:#0F172A}
-.t-gh .gh-w{font-size:9px;color:#94A3B8;background:#F1F5F9;padding:0 6px;border-radius:4px}
-.t-gh .gh-line{flex:1;height:1px;background:#E2E8F0}
+.t-gh{margin:6px 0 4px;display:flex;align-items:center;gap:6px;overflow:hidden}
+.t-gh .gh-bar{width:4px;min-width:4px;height:16px;border-radius:2px}
+.t-gh .gh-name{font-size:13px;font-weight:600;color:#0F172A;white-space:nowrap}
+.t-gh .gh-w{font-size:9px;color:#94A3B8;background:#F1F5F9;padding:0 6px;border-radius:4px;flex-shrink:0}
+.t-gh .gh-line{flex:1;min-width:12px;height:1px;background:#E2E8F0}
 .t-gh-first{margin-top:2px}
 
 /* ── Bottom Sheet (仅温度说明) ── */
