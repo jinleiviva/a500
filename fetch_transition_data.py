@@ -84,22 +84,59 @@ def web_scrape_openrouter():
             return share, datetime.now().strftime('%Y-%m-%d')
     return None, None
 
-def web_scrape_unemployment():
-    """从东方财富或新闻页面抓取城镇调查失业率"""
-    html = fetch_url("https://data.eastmoney.com/cjsj/jy.html")
+MONTH_MAP = {'January':'01','February':'02','March':'03','April':'04','May':'05','June':'06',
+              'July':'07','August':'08','September':'09','October':'10','November':'11','December':'12'}
+
+def web_scrape_te(url):
+    """从 Trading Economics meta description 抓取指标数值和日期"""
+    html = fetch_url(url)
     if not html:
         return None, None
-    # 找"城镇调查失业率"附近的数字
-    nums = re.findall(r'城镇调查失业率[：:]\s*([\d.]+)', html)
-    if not nums:
-        # 尝试从表格中找
-        nums = re.findall(r'失业率[^<]*?([\d.]+)%', html)
-    if nums:
-        for n in nums:
-            v = safe_float(n)
-            if v and 3.0 < v < 7.0:
-                return v, datetime.now().strftime('%Y-%m-%d')
-    return None, None
+    m = re.search(r'<meta[^>]*name="description"[^>]*content="([^"]+)"', html)
+    if not m:
+        return None, None
+    desc = m.group(1)
+    # 提取百分比数值
+    val = None
+    for p in [r'(?:increased|decreased|rose|fell)\s+(?:to\s+)?([\d.]+)\s*percent',
+              r'([\d.]+)\s*percent']:
+        vm = re.search(p, desc, re.IGNORECASE)
+        if vm:
+            val = safe_float(vm.group(1))
+            if val:
+                break
+    # 提取日期
+    # meta描述格式示例:
+    #   "increased 4.50 percent in May of 2026" → May 2026
+    #   "decreased to 5.10 percent in May from 5.20 percent in April of 2026" → May 2026 (in May 是最新)
+    #   "increased to 19.40 percent in May from 14.10 percent in April of 2026" → May (in May 是最新)
+    month_pat = r'(January|February|March|April|May|June|July|August|September|October|November|December)'
+    # 1) 找 "in Month of YYYY" (明确年份的)
+    explicit_dates = re.findall(r'in ' + month_pat + r'\s+of\s+(\d{4})', desc)
+    # 2) 找所有 "in Month" 但不带 of YYYY 的（最新数据月份，但没带年份）
+    implicit_months = re.findall(r'in ' + month_pat + r'(?!\s+of\s)', desc)  # "in Month" 后面不跟 "of"
+    
+    date_str = None
+    if explicit_dates:
+        # 有明确年份
+        year = explicit_dates[-1][1]  # 取最后出现的年份
+        if implicit_months:
+            # "in May from ... in April of 2026" → May是最新, 2026是年份
+            latest_month = implicit_months[0]
+        else:
+            # "in May of 2026" → 直接用
+            latest_month = explicit_dates[-1][0]
+        date_str = f"{year}-{MONTH_MAP[latest_month]}"
+    elif implicit_months:
+        # 没有"of YYYY"但有月份,从上下文找年份
+        yr_m = re.search(r'(20\d{2})', desc)
+        year = yr_m.group(1) if yr_m else str(datetime.now().year)
+        date_str = f"{year}-{MONTH_MAP[implicit_months[0]]}"
+    return val, date_str
+
+def web_scrape_unemployment():
+    """从 Trading Economics 抓取城镇调查失业率 (保留旧函数兼容)"""
+    return web_scrape_te("https://tradingeconomics.com/china/unemployment-rate")
 
 def fetch_indicators():
     results = {}
@@ -201,23 +238,34 @@ def fetch_indicators():
     # 主线二：就业与收入
     # ====================================
 
-    # ── 城镇调查失业率（web scraping + fallback）──
-    unemp_val, unemp_date = web_scrape_unemployment()
+    # ── 城镇调查失业率（Trading Economics）──
+    unemp_val, unemp_date = web_scrape_te("https://tradingeconomics.com/china/unemployment-rate")
     unemp_auto = False
-    if unemp_val is not None:
+    if unemp_val and unemp_date and '2026' in unemp_date:
         unemp_auto = True
     else:
         unemp_val = cfg['unemployment']['manual_fallback']
         unemp_date = cfg['unemployment']['last_known_date']
-    results['unemployment'] = {'value': unemp_val, 'date': unemp_date, 'source': '国家统计局', 'auto_fetched': unemp_auto}
+    results['unemployment'] = {'value': unemp_val, 'date': unemp_date, 'source': 'Trading Economics', 'auto_fetched': unemp_auto}
 
-    # ── 居民可支配收入（手动更新，季度数据）──
-    results['disposable_income'] = {
-        'value': cfg['disposable_income']['manual_fallback'],
-        'date': cfg['disposable_income']['last_known_date'],
-        'source': '国家统计局（季度）',
-        'auto_fetched': False
-    }
+    # ── 居民可支配收入累计同比（Trading Economics年度数据计算）──
+    income_val, income_date = None, None
+    income_auto = False
+    # 从TE抓取年度绝对值和上年值，算同比
+    html = fetch_url("https://tradingeconomics.com/china/disposable-personal-income")
+    if html:
+        m = re.search(r'increased to ([\d,.]+)\s*CNY in (\d{4}) from ([\d,.]+)\s*CNY in (\d{4})', html)
+        if m:
+            cur = safe_float(m.group(1).replace(',', ''))
+            prev = safe_float(m.group(3).replace(',', ''))
+            if cur and prev and prev > 0:
+                income_val = round((cur / prev - 1) * 100, 1)
+                income_date = f"{m.group(2)}-12-31"  # 年度数据标年底
+                income_auto = True
+    if not income_auto:
+        income_val = cfg['disposable_income']['manual_fallback']
+        income_date = cfg['disposable_income']['last_known_date']
+    results['disposable_income'] = {'value': income_val, 'date': income_date, 'source': 'Trading Economics（年度）', 'auto_fetched': income_auto}
 
     # ====================================
     # 主线三：货币与信用
@@ -284,39 +332,21 @@ def fetch_indicators():
     # 主线四：转型与开放
     # ====================================
 
-    # ── 工业增加值同比 ──
-    ind_val, ind_date = None, None
-    try:
-        df = ak.macro_china_industrial_production_yoy()
-        latest = df.iloc[-1]
-        ind_val = safe_float(latest['今值'])
-        ind_date = str(latest['日期'])
-    except:
-        pass
-    if ind_val is None or ('2025' in ind_date):
+    # ── 工业增加值同比（Trading Economics）──
+    ind_val, ind_date = web_scrape_te("https://tradingeconomics.com/china/industrial-production")
+    ind_auto = ind_val and ind_date and '2026' in ind_date
+    if not ind_auto:
         ind_val = cfg['industrial_output']['manual_fallback']
         ind_date = cfg['industrial_output']['last_known_date']
-    results['industrial_output'] = {'value': ind_val, 'date': ind_date, 'source': '国家统计局', 'auto_fetched': '2026' in (ind_date or '')}
+    results['industrial_output'] = {'value': ind_val, 'date': ind_date, 'source': 'Trading Economics', 'auto_fetched': ind_auto}
 
-    # ── 出口同比 ──
-    export_val, export_date = None, None
-    export_auto = False
-    # 先试akshare
-    try:
-        df = ak.macro_china_exports_yoy()
-        latest = df.iloc[-1]
-        export_val = safe_float(latest['今值'])
-        export_date = str(latest['日期'])
-        if export_date and '2025' in export_date:
-            export_val = None  # 2025数据太旧，回退到手动值
-    except:
-        pass
-    if export_val is None:
+    # ── 出口同比（Trading Economics）──
+    export_val, export_date = web_scrape_te("https://tradingeconomics.com/china/exports-yoy")
+    export_auto = export_val and export_date and '2026' in export_date
+    if not export_auto:
         export_val = cfg['export']['manual_fallback']
         export_date = cfg['export']['last_known_date']
-    else:
-        export_auto = True
-    results['export'] = {'value': export_val, 'date': export_date, 'source': '海关总署', 'auto_fetched': export_auto}
+    results['export'] = {'value': export_val, 'date': export_date, 'source': 'Trading Economics', 'auto_fetched': export_auto}
 
     # ── CFETS ──
     cfets_val, cfets_date = web_scrape_cfets()
@@ -391,7 +421,7 @@ def compute_stale(date_str: str, frequency: str) -> dict:
     """判断数据是否过期。返回 {'stale': bool, 'stale_days': int}"""
     if not date_str:
         return {'stale': True, 'stale_days': 999}
-    freq_days = {'日': 7, '周': 21, '月': 60, '季': 120}
+    freq_days = {'日': 7, '周': 21, '月': 60, '季': 120, '年': 365}
     max_days = freq_days.get(frequency, 60)
     try:
         # 统一格式: "2026.5" → "2026-5" → "2026-05-15"
