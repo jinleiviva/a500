@@ -152,6 +152,14 @@ body{
 .t-card .tc-score{font-size:12px;font-weight:700}
 .t-card .tc-label{font-size:10px}
 
+/* ── Transition group headers ── */
+.t-gh{margin:6px 0 4px;display:flex;align-items:center;gap:6px}
+.t-gh .gh-bar{width:3px;height:16px;border-radius:2px;flex-shrink:0}
+.t-gh .gh-name{font-size:12px;font-weight:700;color:#333}
+.t-gh .gh-w{font-size:10px;font-weight:400;color:#999}
+.t-gh .gh-line{flex:1;height:1px;background:#eee}
+.t-gh-first{margin-top:2px}
+
 /* ── Info buttons & modal ── */
 .info-btn{display:inline-block;width:16px;height:16px;line-height:16px;border-radius:50%;background:#ddd;color:#fff;font-size:10px;font-weight:700;text-align:center;cursor:pointer;vertical-align:middle;margin-left:3px;user-select:none}
 .info-btn:hover{background:#bbb}
@@ -362,8 +370,10 @@ body{
       <!-- 三条主线 -->
       <div class="t-line-grid" id="transLines"></div>
 
-      <!-- 指标卡片 -->
-      <div class="t-grid" id="transCards"></div>
+      <!-- 指标卡片（按主线分组） -->
+      <div id="transGroup1"></div>
+      <div id="transGroup2"></div>
+      <div id="transGroup3"></div>
 
       <!-- 数据预警 -->
       <div id="transWarn" style="display:none"></div>
@@ -718,21 +728,27 @@ function renderTrans(d){
   });
   grid.innerHTML=html;
 
-  // ── Indicator cards ──
-  var cardsEl=document.getElementById('transCards');
-  if(cardsEl){
-    var ch='',ck=Object.keys(d.indicators||{});
-    ck.forEach(function(k){
-      var ind=d.indicators[k];
-      if(!ind)return;
-      var sc=ind.score,c='';
+  // ── Indicator cards (grouped by line) ──
+  var groups=[
+    {id:'transGroup1',name:'内需与物价',w:'35%',color:'#97C459'},
+    {id:'transGroup2',name:'债务与政策',w:'25%',color:'#EF9F27'},
+    {id:'transGroup3',name:'新动能与外部',w:'40%',color:'#E24B4A'},
+  ];
+  var byLine={1:[],2:[],3:[]},ck=Object.keys(d.indicators||{});
+  ck.forEach(function(k){var ind=d.indicators[k];if(ind&&byLine[ind.line])byLine[ind.line].push({key:k,data:ind});});
+  groups.forEach(function(g,gi){
+    var items=byLine[gi+1]||[],el=document.getElementById(g.id);
+    if(!el)return;
+    var html='<div class="t-gh'+(gi===0?' t-gh-first':'')+'"><div class="gh-bar" style="background:'+g.color+'"></div><span class="gh-name">'+g.name+'</span><span class="gh-w">'+g.w+'</span><div class="gh-line"></div></div>';
+    html+='<div class="t-grid">';
+    items.forEach(function(item){
+      var ind=item.data,sc=ind.score,c='';
       if(sc<40)c='#97C459';else if(sc<70)c='#EF9F27';else c='#E24B4A';
       var fresh='';if(ind.date&&ind.date.indexOf('2025')>=0)fresh='📅';else fresh='🆕';
       var tag=ind.auto?'<span class="tc-tag t-tag-auto" style="font-size:8px">✅</span>':'<span class="tc-tag t-tag-manual" style="font-size:8px">⚠️</span>';
-      var valDisplay=typeof ind.value==='number'?ind.value:ind.value;
-      ch+='<div class="t-card">'+
+      html+='<div class="t-card">'+
         '<div class="tc-hdr"><span class="tc-name">'+fresh+' '+ind.name+'</span>'+tag+'</div>'+
-        '<div class="tc-val" style="color:'+c+'">'+valDisplay+'</div>'+
+        '<div class="tc-val" style="color:'+c+'">'+ind.value+'</div>'+
         '<div style="display:flex;justify-content:space-between;align-items:center;margin:2px 0">'+
           '<span class="tc-label" style="color:'+c+'">'+ind.label+'</span>'+
           '<span class="tc-score" style="color:'+c+'">'+Math.round(sc)+'分</span>'+
@@ -741,8 +757,9 @@ function renderTrans(d){
         '<div class="tc-foot"><span>'+ind.source.substring(0,12)+'</span><span>'+ind.date+'</span></div>'+
       '</div>';
     });
-    cardsEl.innerHTML=ch;
-  }
+    html+='</div>';
+    el.innerHTML=html;
+  });
 
   // Warn stale data
   var warnDiv=document.getElementById('transWarn');
