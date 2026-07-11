@@ -56,7 +56,9 @@ body{
 
 /* ── Metrics list ── */
 .ml{background:#fff;border-radius:12px;padding:4px 14px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 10px rgba(0,0,0,0.04)}
-.ml-row{display:flex;align-items:center;padding:10px 0}
+.ml-row{display:flex;align-items:center;padding:10px 0;position:relative}
+.ml-row .ml-chev{position:absolute;right:-2px;top:50%;transform:translateY(-50%);font-size:8px;color:#CBD5E1;transition:transform 0.2s}
+.ml-row.exp .ml-chev{transform:translateY(-50%) rotate(90deg);color:#94A3B8}
 .ml-row .ml-lbl{font-size:12px;color:#64748B;width:85px;flex-shrink:0}
 .ml-row .ml-val{font-size:15px;font-weight:600;color:#0F172A;flex:1}
 .ml-row .ml-desc{font-size:12px;color:#64748B;text-align:right}
@@ -64,10 +66,10 @@ body{
 .ml-row .ml-desc.r{color:#EF4444;font-weight:500}
 .ml-row .ml-desc.y{color:#F59E0B;font-weight:500}
 .ml-div{height:1px;background:#F1F5F9}
-.ml-expand{overflow:hidden;max-height:0;transition:max-height 0.25s ease;font-size:12px;color:#475569;line-height:1.6}
+.ml-expand{overflow:hidden;max-height:0;transition:max-height 0.25s ease}
 .ml-expand.show{max-height:200px}
-.ml-expand .ml-exp-inner{padding:0 0 10px 0}
-.ml-expand .ml-exp-source{font-size:10px;color:#94A3B8;margin-top:4px}
+.ml-expand .ml-exp-inner{margin:0 0 0 -14px;padding:8px 14px 10px 14px;background:#F8FAFC;border-left:3px solid #CBD5E1;font-size:12px;color:#475569;line-height:1.7;position:relative}
+.ml-expand .ml-exp-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:4px;display:block}
 
 /* ── Section header ── */
 .sec-h{font-size:12px;font-weight:600;color:#64748B;margin-bottom:8px}
@@ -224,6 +226,7 @@ body{
           <span class="ml-lbl">回本年限</span>
           <span class="ml-val" id="peVal">--</span>
           <span class="ml-desc" id="peRank">--</span>
+          <span class="ml-chev">›</span>
         </div>
         <div class="ml-expand" id="expandPe"><div class="ml-exp-inner"></div></div>
         <div class="ml-div"></div>
@@ -231,6 +234,7 @@ body{
           <span class="ml-lbl">盈利收益率</span>
           <span class="ml-val" id="stockVal">--</span>
           <span class="ml-desc g" id="stockDesc">✅ 划算</span>
+          <span class="ml-chev">›</span>
         </div>
         <div class="ml-expand" id="expandStockYield"><div class="ml-exp-inner"></div></div>
         <div class="ml-div"></div>
@@ -238,6 +242,7 @@ body{
           <span class="ml-lbl">10年国债</span>
           <span class="ml-val" id="bondVal">--</span>
           <span class="ml-desc" id="premiumDesc">股债差 --</span>
+          <span class="ml-chev">›</span>
         </div>
         <div class="ml-expand" id="expandBondYield"><div class="ml-exp-inner"></div></div>
         <div class="ml-div"></div>
@@ -245,6 +250,7 @@ body{
           <span class="ml-lbl">股息率</span>
           <span class="ml-val" id="divYieldVal">--</span>
           <span class="ml-desc" id="divDesc">中性</span>
+          <span class="ml-chev">›</span>
         </div>
         <div class="ml-expand" id="expandDivYield"><div class="ml-exp-inner"></div></div>
       </div>
@@ -533,7 +539,7 @@ body{
       {d:"07-08",pe:16.16},
       {d:"07-09",pe:16.62},
       {d:"07-10",pe:16.31}
-    ], 'pageCreatedAt': '2026-07-11 23:59', 'pricePercentile': 93.2,
+    ], 'pageCreatedAt': '2026-07-12 00:17', 'pricePercentile': 93.2,
   };
   window.__D = D;
 
@@ -716,6 +722,8 @@ function hideSheet(){
 
 // ── Inline expand for metric rows ──
 var expandOpen = null;
+var expandColors = {pe:'#8B5CF6',stockYield:'#059669',bondYield:'#3B82F6',divYield:'#D97706'};
+var expandLabels = {pe:'📊 估值指标',stockYield:'💰 收益指标',bondYield:'🏦 利率指标',divYield:'💎 分红指标'};
 function toggleExpand(key){
   var info = INFO[key];
   if(!info)return;
@@ -724,14 +732,27 @@ function toggleExpand(key){
   // Close previous
   if(expandOpen && expandOpen !== el){
     expandOpen.className = 'ml-expand';
+    var prevKey = expandOpen._key;
+    if(prevKey){
+      var prevRow = document.querySelector('.ml-row[onclick*="'+prevKey+'"]');
+      if(prevRow)prevRow.classList.remove('exp');
+    }
   }
   if(el.className.indexOf('show') >= 0){
     el.className = 'ml-expand';
+    var row = document.querySelector('.ml-row[onclick*="'+key+'"]');
+    if(row)row.classList.remove('exp');
     expandOpen = null;
     return;
   }
-  el.querySelector('.ml-exp-inner').innerHTML = info.body;
+  var color = expandColors[key] || '#CBD5E1';
+  var label = expandLabels[key] || '';
+  var row2 = document.querySelector('.ml-row[onclick*="'+key+'"]');
+  if(row2)row2.classList.add('exp');
+  el.querySelector('.ml-exp-inner').innerHTML = '<span class="ml-exp-label" style="color:'+color+'">'+label+'</span>' + info.body;
+  el.querySelector('.ml-exp-inner').style.borderLeftColor = color;
   el.className = 'ml-expand show';
+  el._key = key;
   expandOpen = el;
 }
 function transInfo(key){
