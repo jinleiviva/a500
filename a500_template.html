@@ -729,21 +729,32 @@ function renderTrans(d){
   document.getElementById('transTemp').style.color=d.color||'#EF9F27';
   document.getElementById('transLbl').textContent=d.emoji+' '+d.band;
   document.getElementById('transLbl').style.color=d.color||'#EF9F27';
-  document.getElementById('transDesc').textContent=d.description;
+  document.getElementById('transDesc').innerHTML=
+    '<div style="font-size:13px;color:#666;margin-bottom:2px">'+d.description+'</div>'+
+    '<div style="font-size:12px;color:#888;margin-top:2px">'+
+    (d.temperature>=70?'结论：内需回暖、新经济有亮点，整体向好':
+     d.temperature>=40?'结论：内需偏弱但新经济有进展，整体温和运行':
+     '结论：内需偏弱、新动能不足，整体承压')+'</div>';
 
   // Lines grid
   var grid=document.getElementById('transLines'),html='';
-  var lines=[d.lineScores.line1,d.lineScores.line2,d.lineScores.line3];
-  var lnames={1:'内需与物价',2:'债务与政策',3:'新动能'};
-  var colors=['#97C459','#EF9F27','#E24B4A'];
   var keys=['line1','line2','line3'];
+  // 每条线的判断文案
+  var lineJudgments={
+    line1:{high:'✅ 内需正常',mid:'🌤️ 内需偏弱',low:'❄️ 需求不振'},
+    line2:{high:'✅ 空间充裕',mid:'🌤️ 压力可控',low:'⚠️ 偏紧受限'},
+    line3:{high:'🔥 新动能强劲',mid:'🌤️ 有待发力',low:'❄️ 动力不足'},
+  };
   keys.forEach(function(k,i){
     var l=d.lineScores[k];if(!l)return;
-    var sc=l.score,c='';
-    if(sc<40)c='#97C459';else if(sc<70)c='#EF9F27';else c='#E24B4A';
+    var sc=l.score,c='',judge='';
+    if(sc<40){c='#97C459';judge=lineJudgments[k].low;}
+    else if(sc<70){c='#EF9F27';judge=lineJudgments[k].mid;}
+    else{c='#E24B4A';judge=lineJudgments[k].high;}
     html+='<div class="t-line">'+
       '<div class="l-name">'+l.name+' <span class="l-pct">'+Math.round(l.weight)+'%</span></div>'+
       '<div class="l-score" style="color:'+c+'">'+Math.round(sc)+'</div>'+
+      '<div style="font-size:11px;color:'+c+';font-weight:500;margin:2px 0">'+judge+'</div>'+
       '<div class="l-bar"><div class="l-fill" style="width:'+sc+'%;background:'+c+'"></div></div>'+
     '</div>';
   });
