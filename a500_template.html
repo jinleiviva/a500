@@ -678,6 +678,18 @@ function toggleRef(){
     if(cp){
       pe.textContent=cp.pe.toFixed(2);
       tp.innerHTML=cp.temp+'°C';tp.style.color=cp.temp>=80?'#e74c3c':cp.temp>=60?'#e67e22':cp.temp>=30?'#f39c12':'#2980b9';
+      // 同步更新主温度圆环
+      var tmpT=tInfo(cp.temp),tmpArc=document.getElementById('mainArc');
+      if(tmpArc){
+        var tmpC=2*Math.PI*68;
+        tmpArc.style.strokeDasharray=tmpC;
+        tmpArc.style.strokeDashoffset=tmpC*(1-cp.temp/100);
+        tmpArc.style.stroke=tmpT.c;
+      }
+      var tmpN=document.getElementById('tempNum');
+      if(tmpN){tmpN.textContent=Math.round(cp.temp);tmpN.style.color=tmpT.c;}
+      var tmpL=document.getElementById('tempLbl');
+      if(tmpL){tmpL.textContent=tmpT.l;tmpL.style.color=tmpT.c;}
     }
     if(rd.ts&&rd.ts.length>=14)ti.textContent='更新于 '+rd.ts.substring(8,10)+':'+rd.ts.substring(10,12)+':'+rd.ts.substring(12,14);
     er.textContent='';
