@@ -20,7 +20,7 @@ body{
 .top-bar .tb-meta{font-size:11px;color:#94A3B8}
 
 /* ── Top row: mini ring + price ── */
-.top-row{display:flex;align-items:center;gap:16px;margin-bottom:14px}
+.top-row{display:flex;align-items:center;gap:16px;margin-bottom:14px;background:#fff;border-radius:14px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.05)}
 .temp-ring{width:100px;height:100px;flex-shrink:0;position:relative}
 .temp-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
 .temp-ring .bg{fill:none;stroke:#E2E8F0;stroke-width:10}
@@ -34,12 +34,15 @@ body{
   font-size:11px;font-weight:600
 }
 .pr-box{flex:1;min-width:0}
-.pr-box .pr-price{font-size:22px;font-weight:700;line-height:1.2}
-.pr-box .pr-chg{font-size:13px;margin-top:1px}
-.pr-box .pr-status{display:flex;align-items:center;gap:4px;margin-top:4px;font-size:11px;color:#64748B}
-.pr-box .pr-dot{width:6px;height:6px;border-radius:50%}
-.pr-box .pr-dot.on{background:#059669}
+.pr-box .pr-price{font-size:24px;font-weight:700;line-height:1.2;letter-spacing:-0.5px}
+.pr-box .pr-chg{font-size:14px;margin-top:2px;font-weight:500}
+.pr-box .pr-status{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:12px;color:#64748B;background:#F8FAFC;border-radius:20px;padding:3px 10px 3px 6px}
+.pr-box .pr-dot{width:8px;height:8px;border-radius:50%}
+.pr-box .pr-dot.on{background:#059669;box-shadow:0 0 0 2px rgba(5,150,105,0.2)}
 .pr-box .pr-dot.off{background:#94A3B8}
+.pr-box .pr-dot.pulse{animation:prPulse 2s infinite}
+@keyframes prPulse{0%,100%{box-shadow:0 0 0 2px rgba(5,150,105,0.2)}50%{box-shadow:0 0 0 5px rgba(5,150,105,0.08)}}
+.pr-box .pr-time{font-size:10px;color:#94A3B8;margin-top:2px;margin-left:auto}
 
 /* ── Advice chip ── */
 .adv-chip{display:inline-block;padding:4px 12px;border-radius:20px;font-weight:600;font-size:11px;margin-top:6px}
@@ -52,14 +55,14 @@ body{
 .s-div{height:1px;background:#E2E8F0;margin-bottom:10px}
 
 /* ── Metrics list ── */
-.ml{}
-.ml-row{display:flex;align-items:center;padding:8px 0}
-.ml-row .ml-lbl{font-size:11px;color:#64748B;width:80px;flex-shrink:0}
-.ml-row .ml-val{font-size:14px;font-weight:600;color:#0F172A;flex:1}
-.ml-row .ml-desc{font-size:11px;color:#64748B;text-align:right}
-.ml-row .ml-desc.g{color:#059669}
-.ml-row .ml-desc.r{color:#EF4444}
-.ml-row .ml-desc.y{color:#F59E0B}
+.ml{background:#fff;border-radius:12px;padding:4px 14px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 10px rgba(0,0,0,0.04)}
+.ml-row{display:flex;align-items:center;padding:10px 0}
+.ml-row .ml-lbl{font-size:12px;color:#64748B;width:85px;flex-shrink:0}
+.ml-row .ml-val{font-size:15px;font-weight:600;color:#0F172A;flex:1}
+.ml-row .ml-desc{font-size:12px;color:#64748B;text-align:right}
+.ml-row .ml-desc.g{color:#059669;font-weight:500}
+.ml-row .ml-desc.r{color:#EF4444;font-weight:500}
+.ml-row .ml-desc.y{color:#F59E0B;font-weight:500}
 .ml-div{height:1px;background:#F1F5F9}
 
 /* ── Section header ── */
@@ -199,10 +202,11 @@ body{
           <div class="pr-price" id="rtPrice">--</div>
           <div class="pr-chg" id="rtChg">--</div>
           <div class="pr-status">
-            <span class="pr-dot" id="rtDot">●</span>
+            <span class="pr-dot on pulse" id="rtDot"></span>
             <span id="rtLbl">--</span>
-            <span style="margin-left:auto;font-size:10px;color:#94A3B8" id="rtTime"></span>
+            <span class="pr-time" id="rtTime"></span>
           </div>
+          <div id="tempStatus" style="font-size:10px;color:#94A3B8;margin-top:4px">--</div>
           <div id="advice" class="adv-chip adv-chip-ok" style="display:none">--</div>
         </div>
       </div>
@@ -212,25 +216,25 @@ body{
       <!-- Metrics list -->
       <div class="ml">
         <div class="ml-row">
-          <span class="ml-lbl">回本年限</span>
+          <span class="ml-lbl">回本年限 <span class="info-btn" onclick="showInfo('pe')" style="width:12px;height:12px;line-height:12px;font-size:8px">?</span></span>
           <span class="ml-val" id="peVal">--</span>
           <span class="ml-desc" id="peRank">--</span>
         </div>
         <div class="ml-div"></div>
         <div class="ml-row">
-          <span class="ml-lbl">盈利收益率</span>
+          <span class="ml-lbl">盈利收益率 <span class="info-btn" onclick="showInfo('stockYield')" style="width:12px;height:12px;line-height:12px;font-size:8px">?</span></span>
           <span class="ml-val" id="stockVal">--</span>
-          <span class="ml-desc g">✅ 划算</span>
+          <span class="ml-desc g" id="stockDesc">✅ 划算</span>
         </div>
         <div class="ml-div"></div>
         <div class="ml-row">
-          <span class="ml-lbl">10年国债</span>
+          <span class="ml-lbl">10年国债 <span class="info-btn" onclick="showInfo('bondYield')" style="width:12px;height:12px;line-height:12px;font-size:8px">?</span></span>
           <span class="ml-val" id="bondVal">--</span>
           <span class="ml-desc" id="premiumDesc">股债差 --</span>
         </div>
         <div class="ml-div"></div>
         <div class="ml-row">
-          <span class="ml-lbl">股息率</span>
+          <span class="ml-lbl">股息率 <span class="info-btn" onclick="showInfo('divYield')" style="width:12px;height:12px;line-height:12px;font-size:8px">?</span></span>
           <span class="ml-val" id="divYieldVal">--</span>
           <span class="ml-desc" id="divDesc">中性</span>
         </div>
@@ -316,11 +320,11 @@ body{
 
       <!-- Bottom meta -->
       <div class="bm">
-        <span class="pr-dot" id="bmDot" style="width:5px;height:5px;background:#059669;display:inline-block;border-radius:50%"></span>
-        <span id="rtStatus">--</span>
-        <span class="tag" style="background:#ECFDF5;color:#059669">实时</span>
-        <span class="tag" style="background:#FFFBEB;color:#D97706">估值</span>
-        <span style="margin-left:auto">不构成投资建议</span>
+        <span class="pr-dot on pulse" id="bmDot" style="width:6px;height:6px;display:inline-block;border-radius:50%"></span>
+        <span id="bmStatus">盘中实时</span>
+        <span class="tag" style="background:#ECFDF5;color:#059669">点位/国债实时</span>
+        <span class="tag" style="background:#FFFBEB;color:#D97706">PE为估值</span>
+        <span style="margin-left:auto;font-size:9px;color:#B4B2A9">仅供参考</span>
       </div>
 
     </div><!-- end tabA500 -->
@@ -563,8 +567,7 @@ function toggleRef(){
 
 // ── Real-time ──
 (function(){
-  var dt=document.getElementById('rtDot'),lb=document.getElementById('rtLbl'),
-      pr=document.getElementById('rtPrice'),cg=document.getElementById('rtChg'),
+  var pr=document.getElementById('rtPrice'),cg=document.getElementById('rtChg'),
       rt=null,sc=null;
 
   function isMarket(){
@@ -591,11 +594,21 @@ function toggleRef(){
   function upUI(rd,cp){
     if(!rd)return;
     var ih=isMarket();
-    dt.style.background=ih?'#059669':'#94A3B8';
-    lb.textContent=ih?'盘中':'盘后';
+    var dot=document.getElementById('rtDot'),lbl=document.getElementById('rtLbl'),
+        bmDot=document.getElementById('bmDot'),bmSt=document.getElementById('bmStatus'),
+        ts=document.getElementById('tempStatus');
+    if(dot){dot.className='pr-dot '+(ih?'on pulse':'off');}
+    if(lbl)lbl.textContent=ih?'📡 盘中':'💤 盘后';
+    if(bmDot)bmDot.style.background=ih?'#059669':'#94A3B8';
+    if(bmSt)bmSt.textContent=ih?'盘中实时刷新':'盘后数据';
+    if(ts)ts.textContent=ih?'📡 盘中实时（每60秒自动更新）':'💤 盘后数据';
+
     var up=rd.change>=0,co=up?'#EF4444':'#059669';
     pr.textContent=rd.price.toLocaleString();pr.style.color=co;
     cg.textContent=(up?'+':'')+rd.pct.toFixed(2)+'%';cg.style.color=co;
+    if(rd.ts&&rd.ts.length>=14){
+      document.getElementById('rtTime').textContent='最后更新 '+rd.ts.substring(8,10)+':'+rd.ts.substring(10,12)+':'+rd.ts.substring(12,14);
+    }
     if(cp){
       // Update main ring with real-time data
       var tmpT=tInfo(cp.temp),tmpArc=document.getElementById('mainArc');
@@ -613,19 +626,17 @@ function toggleRef(){
   }
 
   function rtStatus(ih){
-    var el=document.getElementById('rtStatus');
-    if(ih){el.textContent='盘中实时刷新（每60秒）';el.style.color='#059669';}
-    else{
-      var now=new Date();
-      var hh=('0'+now.getHours()).slice(-2),mm=('0'+now.getMinutes()).slice(-2);
-      el.textContent='盘后 · '+hh+':'+mm;el.style.color='#94A3B8';
-    }
+    var el=document.getElementById('bmStatus');
+    if(!el)return;
+    if(ih){el.textContent='盘中实时刷新';el.style.color='#059669';}
+    else{el.textContent='盘后数据';el.style.color='#94A3B8';}
   }
 
   function scheduleRT(){
     var ih=isMarket();
-    dt.style.background=ih?'#059669':'#94A3B8';
-    lb.textContent=ih?'盘中':'盘后';
+    var bmDot=document.getElementById('bmDot');
+    var ts=document.getElementById('tempStatus');
+    if(bmDot)bmDot.style.background=ih?'#059669':'#94A3B8';
     rtStatus(ih);
     if(ih){
       fetchRT();
