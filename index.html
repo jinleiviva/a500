@@ -126,7 +126,7 @@ body{
 /* ── Transition thermometer ── */
 .t-trans{display:none}
 .t-trans.show{display:block}
-.t-line-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:8px 0}
+.t-line-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
 .t-line{background:#fff;border-radius:10px;padding:10px 8px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.03)}
 .t-line .l-name{font-size:9px;color:#999;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .t-line .l-bar{height:4px;border-radius:2px;background:#eee;margin:4px 0;overflow:hidden}
@@ -374,6 +374,7 @@ body{
       <div id="transGroup1"></div>
       <div id="transGroup2"></div>
       <div id="transGroup3"></div>
+      <div id="transGroup4"></div>
 
       <!-- 数据预警 -->
       <div id="transWarn" style="display:none"></div>
@@ -385,7 +386,7 @@ body{
           <div class="r-grp">
             <div class="r-h">🌡️ 经济健康度怎么算？</div>
             <div class="r-lbl">综合温度 = 各指标得分 × 权重的加权总和。</div>
-            <div class="r-lbl">三条主线：<b>内需与物价（35%）</b> + <b>债务与政策（25%）</b> + <b>新动能与外部（40%）</b>。</div>
+            <div class="r-lbl">四条主线：<b>💚内需与物价（30%）</b> + <b>💙就业与收入（15%）</b> + <b>💜货币与信用（25%）</b> + <b>🧡转型与开放（30%）</b>。</div>
             <div class="r-lbl">每个指标按当前值 vs 阈值映射到 0–100 分，越高说明该方面状况越好。</div>
             <div class="r-lbl">注意：这套指标测量的是经济在转型期中的<u>健康程度</u>（环境温度），而不是转型本身的进度快慢。</div>
           </div>
@@ -454,7 +455,6 @@ body{
       6005.9
     ], 'tempHistory': [
       {d:"07-08",t:74},
-      {d:"07-09",t:95},
       {d:"07-10",t:83}
     ],
     'priceStale': false, 'peLastCalibrated': '2026-07-07',
@@ -554,7 +554,7 @@ body{
       {d:"07-08",pe:16.16},
       {d:"07-09",pe:16.62},
       {d:"07-10",pe:16.31}
-    ], 'pageCreatedAt': '2026-07-11 18:34', 'pricePercentile': 93.2,
+    ], 'pageCreatedAt': '2026-07-11 18:58', 'pricePercentile': 93.2,
   };
   window.__D = D;
 
@@ -718,15 +718,19 @@ var TRANS_INFO={
   cpi:{title:'CPI同比（居民消费价格）',body:'<b>这是什么：</b>今年这个月买东西比去年同月贵了多少。<br><br><b>怎么算的：</b>国家统计局在全国各地采价，对比今年和去年同期的价格变化。<br><br><b>正常范围：</b>0.5-3%为温和通胀。太低说明没人消费，太高说明钱不值钱。<br><br><b>反映的经济状况：</b>CPI温和正增长说明内需正常，是经济健康运行的标志之一。当前接近零，说明需求偏弱。'},
   ppi:{title:'PPI同比（工业生产者出厂价格）',body:'<b>这是什么：</b>工厂把货卖给下游时的价格，比去年同月贵/便宜了多少。<br><br><b>怎么算的：</b>国家统计局收集全国工业企业的出厂价，对比去年同月。<br><br><b>正常范围：</b>-1%到3%。低于-2%说明工业需求不足，高于3%说明上游涨价太猛。<br><br><b>反映的经济状况：</b>PPI回升说明工业需求在修复，过高则挤压下游利润。当前值反映工业端供需格局。'},
   pmi:{title:'制造业PMI（采购经理人指数）',body:'<b>这是什么：</b>每个月对全国采购经理做问卷，问"你这个月生意比上个月好还是差"，汇总成一个指数。<br><br><b>怎么算的：</b>扩散指数。50是荣枯线——>50说明大部分人觉得生意在变好，<50说明在变差。<br><br><b>正常范围：</b>>52说明景气向好，48-50偏弱。<br><br><b>反映的经济状况：</b>PMI在扩张区间意味着制造业整体稳定，经济基本盘健康。'},
+  electricity:{title:'全社会用电量同比',body:'<b>这是什么：</b>今年这个月全国用了多少电，比去年同月多了还是少了。<br><br><b>怎么算的：</b>国家能源局每月抄全国电表。今年5月总用电量 ÷ 去年5月总用电量 - 1。<br><br><b>为什么可靠：</b>电表读数没法作假，是衡量真实经济活力最硬的指标，比GDP统计更可信。<br><br><b>正常范围：</b>2-8%。低于2%说明经济活力不足，高于8%偏热。<br><br><b>反映的经济状况：</b>只要电表在转，经济就在运转。当前处于稳健区间，说明经济在正常运行。'},
+  retail_sales:{title:'社会消费品零售总额同比',body:'<b>这是什么：</b>今年这个月全国卖了多少东西（餐饮+商品零售），比去年同月多还是少。<br><br><b>怎么算的：</b>国家统计局每月统计限额以上和限额以下单位零售额合计。<br><br><b>正常范围：</b>3-10%为正常增长。负增长说明消费收缩。<br><br><b>反映的经济状况：</b>社零是内需最直接的指标。当前负增长，说明居民消费意愿偏弱，这是内需修复的核心挑战。'},
   bond_yield:{title:'10年国债收益率',body:'<b>这是什么：</b>你买10年期国债，国家每年给你多少利息。<br><br><b>怎么算的：</b>债券市场每天交易撮合出来的利率。<br><br><b>正常范围：</b>1.8-3%。过低说明大家都不敢投钱、避险情绪高。<br><br><b>反映的经济状况：</b>低利率降低企业融资成本，但过低也反映经济信心不足。当前1.74%偏低。'},
   m2:{title:'M2同比（广义货币供应量）',body:'<b>这是什么：</b>全社会一共有多少钱。包括现金、活期存款、定期存款、理财等。<br><br><b>怎么算的：</b>央行每月统计全社会货币总量，对比去年同月增速。<br><br><b>正常范围：</b>8-10%为适度。太低说明信用偏紧，太高可能带来通胀。<br><br><b>反映的经济状况：</b>适度宽松的货币环境是企业正常经营的前提。同样数据在不同的经济周期含义不同。'},
-  a500_pe_percentile:{title:'A500估值分位（PE）',body:'<b>这是什么：</b>A500当前的"贵不贵"在历史上排第几。<br><br><b>怎么算的：</b>把所有历史PE从低到高排，看当前PE排在哪里。<br><br><b>正常范围：</b>0-100%。越低越便宜，越高越贵。<br><br><b>反映的经济状况（反向打分）：</b>估值偏低通常出现在市场悲观期，偏高说明市场已较热。当前偏高，说明不便宜。'},
-  a500_price_percentile:{title:'A500价格位置',body:'<b>这是什么：</b>A500当前价格在近5年中的相对高低。<br><br><b>怎么算的：</b>把近5年每天价格从低到高排，看当前价格排在哪里。<br><br><b>正常范围：</b>20-80%为正常波动区间。<br><br><b>反映的经济状况（反向打分）：</b>价格偏低通常出现在经济底部区域，偏高说明已涨了不少。当前处于高位。'},
   ai_market_share:{title:'中国AI模型海外调用份额',body:'<b>这是什么：</b>全球开发者在OpenRouter平台上调用AI模型时，中国模型（DeepSeek、小米、腾讯等）占了多少比例。<br><br><b>怎么算的：</b>OpenRouter每周公布各模型调用量（Token数）。中国模型总调用量 ÷ 全球总调用量 = 份额。<br><br><b>正常范围：</b>越高越好。当前中国模型已连续数周排名靠前。<br><br><b>反映的经济状况：</b>这是新经济竞争力的直接体现——中国AI被全球开发者用"脚"投票选中。'},
   export:{title:'出口同比增速',body:'<b>这是什么：</b>今年这个月卖到国外的商品总额，比去年同月多了还是少了。<br><br><b>怎么算的：</b>海关总署统计每个月所有出口货物价值，对比去年同月。<br><br><b>正常范围：</b>3-10%为正常。低于-3%说明外需恶化。<br><br><b>反映的经济状况：</b>出口稳定说明制造业有竞争力。但也需关注出口结构——高技术产品占比是否在提升。'},
   currency_index:{title:'人民币CFETS汇率指数',body:'<b>这是什么：</b>人民币对一篮子货币（美元、欧元、日元等）的整体强弱。<br><br><b>怎么算的：</b>中国外汇交易中心每周发布。100是基准，高于100说明人民币升值，低于100贬值。<br><br><b>正常范围：</b>95-102为稳定。低于95偏弱，高于105偏强。<br><br><b>反映的经济状况：</b>汇率稳定有利于进出口贸易和跨境资本流动。大幅波动无论升值贬值对经济都不利。'},
-  electricity:{title:'全社会用电量同比',body:'<b>这是什么：</b>今年这个月全国用了多少电，比去年同月多了还是少了。<br><br><b>怎么算的：</b>国家能源局每月抄全国电表。今年5月总用电量 ÷ 去年5月总用电量 - 1。<br><br><b>为什么可靠：</b>电表读数没法作假，是衡量真实经济活力最硬的指标，比GDP统计更可信。<br><br><b>正常范围：</b>2-8%。低于2%说明经济活力不足，高于8%偏热。<br><br><b>反映的经济状况：</b>只要电表在转，经济就在运转。当前处于稳健区间，说明经济在正常运行。'},
-  a500_turnover:{title:'A500周成交额变化',body:'<b>这是什么：</b>最近一周A500的成交额，比前一周多了还是少了。<br><br><b>怎么算的：</b>最近5个交易日成交额平均值 ÷ 前5个交易日平均值 - 1。<br><br><b>正常范围：</b>±10%为平稳。高于30%说明放量，低于-30%说明明显缩量。<br><br><b>反映的经济状况：</b>成交活跃说明市场信心好、新经济企业融资环境好。当前缩量反映情绪偏谨慎。'},
+  unemployment:{title:'城镇调查失业率',body:'<b>这是什么：</b>全国城镇劳动力中，正在找工作但没找到的人占多少比例。<br><br><b>怎么算的：</b>国家统计局每月对城镇住户做抽样调查，按国际劳工组织（ILO）标准统计。<br><br><b>正常范围：</b>4.5-5.5%为正常。低于4.5%说明就业好，高于5.5%则压力较大。<br><br><b>反映的经济状况：</b>失业率是民生指标的核心——失业率上升会压制消费和信心，是经济健康度的先行预警。'},
+  disposable_income:{title:'居民可支配收入累计同比',body:'<b>这是什么：</b>居民拿到手可以花的钱，比去年多了还是少了。<br><br><b>怎么算的：</b>国家统计局每季度对全国住户抽样调查，汇总人均可支配收入。<br><br><b>正常范围：</b>4-7%为正常增长。低于3%说明收入增长乏力。<br><br><b>反映的经济状况：</b>收入增长是消费的前提。收入增速跟不上GDP，内需就很难起来。'},
+  rmb_loan:{title:'人民币贷款余额同比',body:'<b>这是什么：</b>银行借出去的所有人民币贷款余额，比去年同月多了多少。<br><br><b>怎么算的：</b>中国人民银行每月统计金融机构人民币信贷收支表。<br><br><b>正常范围：</b>8-14%为正常。低于7%说明信用偏紧，企业融资需求不足。<br><br><b>反映的经济状况：</b>贷款增速是"宽信用"的直接度量。当前增速偏低，说明企业借贷意愿弱、经济内生融资需求不足。'},
+  lpr:{title:'1年期LPR（贷款市场报价利率）',body:'<b>这是什么：</b>银行给最优质客户贷款的基准利率。也是所有贷款利率的锚。<br><br><b>怎么算的：</b>18家报价行每月报价，去掉最高最低后取算术平均。<br><br><b>正常范围：</b>3.0-4.5%。利率越低说明货币政策越宽松。<br><br><b>反映的经济状况：</b>LPR持续下调说明央行在主动宽松来刺激经济。当前3.0%处于历史低位，宽松信号明确。'},
+  industrial_output:{title:'规模以上工业增加值同比',body:'<b>这是什么：</b>全国规模以上工业企业（年收入2000万以上）这个月生产了多少东西，比去年同月多了还是少了。<br><br><b>怎么算的：</b>国家统计局每月统计工业企业总产出，剔除价格因素。<br><br><b>正常范围：</b>5-8%为正常。低于3%说明生产端偏弱。<br><br><b>反映的经济状况：</b>工业增加值是实体经济供给端的核心指标。作为高技术制造业增加值的替代指标，反映制造业整体活力。'},
+  new_energy_penetration:{title:'新能源汽车渗透率',body:'<b>这是什么：</b>全国新卖出的汽车中，新能源车（纯电+插混）占了多少比例。<br><br><b>怎么算的：</b>中国汽车工业协会每月公布。新能源销量 ÷ 总销量。<br><br><b>正常范围：</b>30-50%。越高说明新能源替代越快。<br><br><b>反映的经济状况：</b>这是中国新质生产力最具标志性的指标——从十年前不到5%到如今40%+，体现产业链转型升级的速度。'},
 };
 function transInfo(key){
   var i=TRANS_INFO[key];if(!i)return;
@@ -862,26 +866,28 @@ function renderTrans(d){
   document.getElementById('transDesc').innerHTML=
     '<div style="font-size:13px;color:#666;margin-bottom:2px">'+d.description+'</div>'+
     '<div style="font-size:12px;color:#888;margin-top:2px">'+
-    (d.temperature>=70?'结论：内需回暖、新经济有亮点，整体向好':
-     d.temperature>=40?'结论：内需偏弱但新经济有进展，整体温和运行':
-     '结论：内需偏弱、新动能不足，整体承压')+'</div>';
+    (d.temperature>=70?'结论：内需回升、转型加速，整体向好':
+     d.temperature>=40?'结论：内需偏弱但货币宽松，整体温和运行':
+     '结论：内需收缩、就业承压，整体偏冷')+'</div>';
 
-  // Lines grid
+  // Lines grid (4 lines => 2x2)
   var grid=document.getElementById('transLines'),html='';
-  var keys=['line1','line2','line3'];
-  // 每条线的判断文案
+  var keys=['line1','line2','line3','line4'];
+  // 每条线的判断文案（4线）
   var lineJudgments={
     line1:{high:'✅ 内需正常',mid:'🌤️ 内需偏弱',low:'❄️ 需求不振'},
-    line2:{high:'✅ 空间充裕',mid:'🌤️ 压力可控',low:'⚠️ 偏紧受限'},
-    line3:{high:'🔥 新动能强劲',mid:'🌤️ 有待发力',low:'❄️ 动力不足'},
+    line2:{high:'✅ 就业良好',mid:'🌤️ 就业正常',low:'⚠️ 就业承压'},
+    line3:{high:'✅ 信用扩张',mid:'🌤️ 货币适度',low:'⚠️ 信用偏紧'},
+    line4:{high:'🔥 转型加速',mid:'🌤️ 转型推进',low:'❄️ 动力不足'},
   };
+  var lineColors={line1:'#27AE60',line2:'#2980B9',line3:'#8E44AD',line4:'#E67E22'};
   keys.forEach(function(k,i){
     var l=d.lineScores[k];if(!l)return;
-    var sc=l.score,c='',judge='';
-    if(sc<40){c='#97C459';judge=lineJudgments[k].low;}
-    else if(sc<70){c='#EF9F27';judge=lineJudgments[k].mid;}
-    else{c='#E24B4A';judge=lineJudgments[k].high;}
-    html+='<div class="t-line">'+
+    var sc=l.score,c=lineColors[k],judge='';
+    if(sc<40){judge=lineJudgments[k].low;}
+    else if(sc<70){judge=lineJudgments[k].mid;}
+    else{judge=lineJudgments[k].high;}
+    html+='<div class="t-line" style="border-top:3px solid '+c+'">'+
       '<div class="l-name">'+l.name+' <span class="l-pct">'+Math.round(l.weight)+'%</span></div>'+
       '<div class="l-score" style="color:'+c+'">'+Math.round(sc)+'</div>'+
       '<div style="font-size:11px;color:'+c+';font-weight:500;margin:2px 0">'+judge+'</div>'+
@@ -892,11 +898,12 @@ function renderTrans(d){
 
   // ── Indicator cards (grouped by line) ──
   var groups=[
-    {id:'transGroup1',name:'内需与物价',w:'35%',color:'#97C459'},
-    {id:'transGroup2',name:'债务与政策',w:'25%',color:'#EF9F27'},
-    {id:'transGroup3',name:'新动能与外部',w:'40%',color:'#E24B4A'},
+    {id:'transGroup1',name:'💚 内需与物价',w:'30%',color:'#27AE60'},
+    {id:'transGroup2',name:'💙 就业与收入',w:'15%',color:'#2980B9'},
+    {id:'transGroup3',name:'💜 货币与信用',w:'25%',color:'#8E44AD'},
+    {id:'transGroup4',name:'🧡 转型与开放',w:'30%',color:'#E67E22'},
   ];
-  var byLine={1:[],2:[],3:[]},ck=Object.keys(d.indicators||{});
+  var byLine={1:[],2:[],3:[],4:[]},ck=Object.keys(d.indicators||{});
   ck.forEach(function(k){var ind=d.indicators[k];if(ind&&byLine[ind.line])byLine[ind.line].push({key:k,data:ind});});
   groups.forEach(function(g,gi){
     var items=byLine[gi+1]||[],el=document.getElementById(g.id);
@@ -909,10 +916,10 @@ function renderTrans(d){
       var fresh='';if(ind.date&&ind.date.indexOf('2025')>=0)fresh='📅';else fresh='🆕';
       var tag=ind.auto?'<span class="tc-tag t-tag-auto" style="font-size:8px">✅</span>':'<span class="tc-tag t-tag-manual" style="font-size:8px">⚠️</span>';
       // Unit map
-      var um={'cpi':'%','ppi':'%','pmi':'点','bond_yield':'%','m2':'%','a500_pe_percentile':'%','a500_price_percentile':'%','ai_market_share':'%','export':'%','currency_index':'点','electricity':'%','a500_turnover':'%'};
+      var um={'cpi':'%','ppi':'%','pmi':'','bond_yield':'%','m2':'%','ai_market_share':'%','export':'%','currency_index':'','electricity':'%','retail_sales':'%','unemployment':'%','disposable_income':'%','rmb_loan':'%','lpr':'%','industrial_output':'%','new_energy_penetration':'%'};
       var unit=um[key]||'';
       // Reference range map
-      var refs={'cpi':'正常 0.5-3%','ppi':'正常 -1~3%','pmi':'荣枯线 50','bond_yield':'正常 1.8-3%','m2':'正常 8-10%','a500_pe_percentile':'越低越便宜','a500_price_percentile':'越低越安全','ai_market_share':'越高越好','export':'正常 3-10%','currency_index':'稳定 95-102','electricity':'正常 2-8%','a500_turnover':'平稳 ±10%'};
+      var refs={'cpi':'0.5-3%','ppi':'-1~3%','pmi':'荣枯线50','bond_yield':'1.8-3%','m2':'8-10%','ai_market_share':'越高越好','export':'3-10%','currency_index':'95-102','electricity':'2-8%','retail_sales':'3-10%','unemployment':'4.5-5.5%','disposable_income':'4-7%','rmb_loan':'8-14%','lpr':'3.0-4.5%','industrial_output':'5-8%','new_energy_penetration':'30-50%'};
       var ref=refs[key]||'';
       html+='<div class="t-card" onclick="transInfo(\''+key+'\')" style="cursor:pointer">'+
         '<div class="tc-hdr"><span class="tc-name">'+fresh+' '+ind.name+'</span>'+tag+'</div>'+
