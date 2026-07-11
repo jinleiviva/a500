@@ -761,27 +761,80 @@ function renderTrans(d){
     line4:{high:'🔥 转型加速',mid:'🌤️ 转型推进',low:'❄️ 动力不足'},
   };
   var lineColors={line1:'#27AE60',line2:'#2980B9',line3:'#8E44AD',line4:'#E67E22'};
+
+  // ── 数据驱动的辅助信息（不再硬编码权重和构成）──
+  // 构成说明：从实际指标数据反推
+  var lineKeys = {1:'line1',2:'line2',3:'line3',4:'line4'};
+  var lineSubs = {};
+  [1,2,3,4].forEach(function(ln){
+    var names = [];
+    Object.keys(d.indicators||{}).forEach(function(k){
+      if(d.indicators[k].line === ln) names.push(d.indicators[k].name);
+    });
+    lineSubs[lineKeys[ln]] = names.join('·') || '—';
+  });
+  // 权重：从 lineScores 数据取，不和 JS 硬编码打架
+  var lineW = {};
+  ['line1','line2','line3','line4'].forEach(function(k){
+    var ls = d.lineScores[k];
+    lineW[k] = ls ? Math.round(ls.weight)+'%' : '—';
+  });
+  // 一句话洞察：基于该线得分和内部最好/最差指标动态生成
+  function genTakeaway(lnum, sc, bestScore, worstScore, bestName, worstName){
+    if(sc >= 70) return '整体向好，各指标协同走强';
+    var parts = [];
+    if(worstScore !== null && worstScore < 40) parts.push(worstName+'偏弱');
+    if(bestScore !== null && bestScore >= 70) parts.push(bestName+'有支撑');
+    if(parts.length === 0) return '各指标表现中等，需关注边际变化';
+    return parts.join('，');
+  }
+
   keys.forEach(function(k,i){
     var l=d.lineScores[k];if(!l)return;
     var sc=l.score,c=lineColors[k],judge='';
     if(sc<40){judge=lineJudgments[k].low;}
     else if(sc<70){judge=lineJudgments[k].mid;}
     else{judge=lineJudgments[k].high;}
+    // 找该线最好和最差指标
+    var lineNum = i+1, bestInd=null, worstInd=null;
+    Object.keys(d.indicators||{}).forEach(function(kk){
+      var ind = d.indicators[kk];
+      if(ind && ind.line === lineNum){
+        if(!bestInd || ind.score > bestInd.score) bestInd = ind;
+        if(!worstInd || ind.score < worstInd.score) worstInd = ind;
+      }
+    });
+    var drvHtml = '';
+    if(bestInd && worstInd && bestInd.name !== worstInd.name){
+      drvHtml = '<div class="l-drivers">'+
+        '<div class="l-drv-item"><span class="l-drv-name">▲ </span><span class="l-drv-score l-drv-up">'+bestInd.name+' '+Math.round(bestInd.score)+'</span></div>'+
+        '<div class="l-drv-item"><span class="l-drv-name">▼ </span><span class="l-drv-score l-drv-down">'+worstInd.name+' '+Math.round(worstInd.score)+'</span></div>'+
+      '</div>';
+    }
+    var takeaway = genTakeaway(lineNum, sc, bestInd?bestInd.score:null, worstInd?worstInd.score:null, bestInd?bestInd.name:null, worstInd?worstInd.name:null);
     html+='<div class="t-line" style="border-top:3px solid '+c+'">'+
-      '<div class="l-name">'+l.name+' <span class="l-pct">'+Math.round(l.weight)+'%</span></div>'+
+      '<div class="l-name">'+l.name+' <span class="l-pct">'+lineW[k]+'</span></div>'+
+      '<div class="l-sub">'+lineSubs[k]+'</div>'+
       '<div class="l-score" style="color:'+c+'">'+Math.round(sc)+'</div>'+
-      '<div style="font-size:11px;color:'+c+';font-weight:500;margin:2px 0">'+judge+'</div>'+
+      '<div style="font-size:11px;color:'+c+';font-weight:500;margin:1px 0">'+judge+'</div>'+
       '<div class="l-bar"><div class="l-fill" style="width:'+sc+'%;background:'+c+'"></div></div>'+
+      drvHtml+
+      '<div class="l-takeaway">'+takeaway+'</div>'+
     '</div>';
   });
   grid.innerHTML=html;
 
   // ── Indicator cards (grouped by line) ──
+  // 权重从数据取，不硬编码
+  function getLineWeight(ln) {
+    var ls = d.lineScores && d.lineScores['line'+ln];
+    return ls ? Math.round(ls.weight)+'%' : '—';
+  }
   var groups=[
-    {id:'transGroup1',name:'💚 内需与物价',w:'30%',color:'#27AE60'},
-    {id:'transGroup2',name:'💙 就业与收入',w:'15%',color:'#2980B9'},
-    {id:'transGroup3',name:'💜 货币与信用',w:'25%',color:'#8E44AD'},
-    {id:'transGroup4',name:'🧡 转型与开放',w:'30%',color:'#E67E22'},
+    {id:'transGroup1',name:'💚 内需与物价',w:getLineWeight(1),color:'#27AE60'},
+    {id:'transGroup2',name:'💙 就业与收入',w:getLineWeight(2),color:'#2980B9'},
+    {id:'transGroup3',name:'💜 货币与信用',w:getLineWeight(3),color:'#8E44AD'},
+    {id:'transGroup4',name:'🧡 转型与开放',w:getLineWeight(4),color:'#E67E22'},
   ];
   var byLine={1:[],2:[],3:[],4:[]},ck=Object.keys(d.indicators||{});
   ck.forEach(function(k){var ind=d.indicators[k];if(ind&&byLine[ind.line])byLine[ind.line].push({key:k,data:ind});});
