@@ -138,6 +138,7 @@ body{
 .t-tag-auto{background:#e8f8f0;color:#1e8449}
 .t-tag-manual{background:#fff3e0;color:#d35400}
 .t-tag-stale{background:#fdedec;color:#c0392b}
+.t-tag-stale{background:#fdedec;color:#c0392b}
 
 /* ── Transition indicator cards ── */
 .t-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
@@ -555,7 +556,7 @@ body{
       {d:"07-08",pe:16.16},
       {d:"07-09",pe:16.62},
       {d:"07-10",pe:16.31}
-    ], 'pageCreatedAt': '2026-07-11 19:15', 'pricePercentile': 93.2,
+    ], 'pageCreatedAt': '2026-07-11 19:22', 'pricePercentile': 93.2,
   };
   window.__D = D;
 
@@ -975,16 +976,20 @@ function renderTrans(d){
     items.forEach(function(item){
       var ind=item.data,sc=ind.score,c='',key=item.key;
       if(sc<40)c='#97C459';else if(sc<70)c='#EF9F27';else c='#E24B4A';
-      var fresh='';if(ind.date&&ind.date.indexOf('2025')>=0)fresh='📅';else fresh='🆕';
-      var tag=ind.auto?'<span class="tc-tag t-tag-auto" style="font-size:8px">✅</span>':'<span class="tc-tag t-tag-manual" style="font-size:8px">⚠️</span>';
+      var fresh='';var cardStyle='';
+      if(ind.stale){fresh='⚠️';cardStyle=' style="opacity:0.6"';}
+      else if(ind.date&&ind.date.indexOf('2025')>=0){fresh='📅';}
+      else{fresh='🆕';}
+      var staleBadge = ind.stale ? '<span class="tc-tag t-tag-stale" style="font-size:8px">⚠️过期</span>' : '';
+      var tag=(ind.stale?'':(ind.auto?'<span class="tc-tag t-tag-auto" style="font-size:8px">✅</span>':'<span class="tc-tag t-tag-manual" style="font-size:8px">⚠️</span>'));
       // Unit map
       var um={'cpi':'%','ppi':'%','pmi':'','bond_yield':'%','m2':'%','ai_market_share':'%','export':'%','currency_index':'','electricity':'%','retail_sales':'%','unemployment':'%','disposable_income':'%','rmb_loan':'%','lpr':'%','industrial_output':'%','new_energy_penetration':'%'};
       var unit=um[key]||'';
       // Reference range map
       var refs={'cpi':'0.5-3%','ppi':'-1~3%','pmi':'荣枯线50','bond_yield':'1.8-3%','m2':'8-10%','ai_market_share':'越高越好','export':'3-10%','currency_index':'95-102','electricity':'2-8%','retail_sales':'3-10%','unemployment':'4.5-5.5%','disposable_income':'4-7%','rmb_loan':'8-14%','lpr':'3.0-4.5%','industrial_output':'5-8%','new_energy_penetration':'30-50%'};
       var ref=refs[key]||'';
-      html+='<div class="t-card" onclick="transInfo(\''+key+'\')" style="cursor:pointer">'+
-        '<div class="tc-hdr"><span class="tc-name">'+fresh+' '+ind.name+'</span>'+tag+'</div>'+
+      html+='<div class="t-card" onclick="transInfo(\''+key+'\')" style="cursor:pointer"'+cardStyle+'>'+
+        '<div class="tc-hdr"><span class="tc-name">'+fresh+' '+ind.name+'</span>'+staleBadge+tag+'</div>'+
         '<div class="tc-val" style="color:'+c+'">'+ind.value+'<span style="font-size:12px;color:#bbb;font-weight:400;margin-left:2px">'+unit+'</span></div>'+
         '<div style="display:flex;justify-content:space-between;align-items:center;margin:2px 0">'+
           '<span class="tc-label" style="color:'+c+'">'+ind.label+'</span>'+
@@ -1004,14 +1009,18 @@ function renderTrans(d){
   var ik=Object.keys(d.indicators||{});
   ik.forEach(function(k){
     var ind=d.indicators[k];
+    if(ind.stale)stale.push(ind.name);
     if(!ind.auto)manual.push(ind.name);
   });
-  if(manual.length>0){
+  var warns=[];
+  if(stale.length>0) warns.push('📅 数据过期('+stale.length+'): '+stale.join('、')+' — 请尽快手动更新');
+  if(manual.length>0) warns.push('⚠️ 手动录入: '+manual.join('、')+' — 自动恢复后将切换');
+  if(warns.length>0){
     warnDiv.style.display='block';
     warnDiv.className='adv adv-ok';
     warnDiv.style.fontSize='11px';
     warnDiv.style.padding='8px';
-    warnDiv.innerHTML='⚠️ 部分数据为手动录入：'+manual.join('、')+'。自动数据源恢复后将切换。';
+    warnDiv.innerHTML=warns.join('<br>');
   }
 
   // Fill guide
