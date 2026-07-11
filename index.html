@@ -217,6 +217,7 @@ body{
         <div class="num" id="tempNum">--</div>
         <div class="lbl" id="tempLbl">--</div>
       </div>
+      <div id="tempStatus" style="text-align:center;font-size:11px;color:#999;margin-top:2px">--</div>
       <span class="info-btn" onclick="showInfo('temp')" style="position:absolute;top:-2px;right:-2px">?</span>
     </div>
 
@@ -569,7 +570,7 @@ body{
       {d:"07-08",pe:16.16},
       {d:"07-09",pe:16.62},
       {d:"07-10",pe:16.31}
-    ], 'pageCreatedAt': '2026-07-11 23:12', 'pricePercentile': 93.2,
+    ], 'pageCreatedAt': '2026-07-11 23:15', 'pricePercentile': 93.2,
   };
   window.__D = D;
 
@@ -824,7 +825,7 @@ function toggleRef(){
     }
     if(rd.ts&&rd.ts.length>=14){ti.textContent='更新于 '+rd.ts.substring(8,10)+':'+rd.ts.substring(10,12)+':'+rd.ts.substring(12,14);
       // 盘后显示最后更新时间的备用
-      if(!isMarket())rtStatus(false);}
+      if(!isMarket())rtStatus(false,rd.ts);}
     er.textContent='';
   }
   function fetchRT(){
@@ -837,14 +838,22 @@ function toggleRef(){
       })
       .catch(function(){er.textContent='数据获取失败'});
   }
-  function rtStatus(ih){
+  function rtStatus(ih,ts){
+    var tsEl=document.getElementById('tempStatus');
     if(ih){
       st.textContent='📡 盘中实时刷新中（每60秒）';
       st.style.color='#1e8449';
+      if(tsEl){tsEl.textContent='📡 盘中实时';tsEl.style.color='#1e8449';}
     }else{
-      var now=new Date(),hh=('0'+now.getHours()).slice(-2),mm=('0'+now.getMinutes()).slice(-2);
+      var hh,mm;
+      if(ts&&ts.length>=14){
+        hh=ts.substring(8,10);mm=ts.substring(10,12);
+      }else{
+        var now=new Date();hh=('0'+now.getHours()).slice(-2);mm=('0'+now.getMinutes()).slice(-2);
+      }
       st.textContent='💤 盘后 · 最后更新 '+hh+':'+mm;
       st.style.color='#999';
+      if(tsEl){tsEl.textContent='💤 盘后数据·最后更新 '+hh+':'+mm;tsEl.style.color='#999';}
     }
   }
   function rstCD(n){cdn=n;cd.textContent=' · '+n+'s';if(cts)clearInterval(cts);cts=setInterval(function(){cdn--;cd.textContent=cdn>0?' · '+cdn+'s':' · 刷新中…'},1000)}
@@ -860,7 +869,8 @@ function toggleRef(){
       rt=setInterval(function(){fetchRT();rstCD(60)},60000);
       if(sc){clearInterval(sc);sc=null;}
     }else{
-      // 收盘：停止刷新，每30s检查是否开盘
+      // 收盘：抓一次显示最后数据，然后停止刷新
+      fetchRT();
       if(rt){clearInterval(rt);rt=null;}
       cd.textContent='';
       if(sc)return;
