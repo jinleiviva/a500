@@ -146,7 +146,7 @@
     "unemployment": {
       "name": "城镇调查失业率",
       "line": 2, "weight": 0.08,
-      "data_source": "国家统计局",
+      "data_source": "Trading Economics",
       "auto_fetch": true,
       "frequency": "月",
       "unit": "%",
@@ -159,16 +159,16 @@
         {"min": 5.5, "max": 6.5, "score": 10, "label": "高"},
         {"min": 6.5, "max": 999, "score": 0, "label": "严峻"}
       ],
-      "manual_fallback": 5.2,
-      "last_known_value": 5.2,
+      "manual_fallback": 5.1,
+      "last_known_value": 5.1,
       "last_known_date": "2026-05-31"
     },
     "disposable_income": {
       "name": "居民可支配收入累计同比",
       "line": 2, "weight": 0.07,
-      "data_source": "国家统计局（季度）",
-      "auto_fetch": false,
-      "frequency": "季",
+      "data_source": "Trading Economics（年度）",
+      "auto_fetch": true,
+      "frequency": "年",
       "unit": "%",
       "reference_range": "4%~7%",
       "thresholds": [
@@ -179,9 +179,9 @@
         {"min": 7, "max": 10, "score": 100, "label": "强劲"},
         {"min": 10, "max": 999, "score": 60, "label": "过热"}
       ],
-      "manual_fallback": 5.3,
-      "last_known_value": 5.3,
-      "last_known_date": "2026-Q1"
+      "manual_fallback": 4.3,
+      "last_known_value": 4.3,
+      "last_known_date": "2025-12-31"
     },
     "m2": {
       "name": "M2同比",
@@ -261,7 +261,7 @@
     "industrial_output": {
       "name": "工业增加值同比",
       "line": 4, "weight": 0.07,
-      "data_source": "国家统计局",
+      "data_source": "Trading Economics",
       "auto_fetch": true,
       "frequency": "月",
       "unit": "%",
@@ -274,14 +274,14 @@
         {"min": 7, "max": 10, "score": 90, "label": "强劲"},
         {"min": 10, "max": 999, "score": 100, "label": "过热"}
       ],
-      "manual_fallback": 5.8,
-      "last_known_value": 5.8,
-      "last_known_date": "2025-06-30"
+      "manual_fallback": 4.5,
+      "last_known_value": 4.5,
+      "last_known_date": "2026-05-31"
     },
     "export": {
       "name": "出口同比增速",
       "line": 4, "weight": 0.06,
-      "data_source": "海关总署",
+      "data_source": "Trading Economics",
       "auto_fetch": true,
       "frequency": "月",
       "unit": "%",
@@ -293,8 +293,8 @@
         {"min": 3, "max": 10, "score": 70, "label": "增长"},
         {"min": 10, "max": 999, "score": 100, "label": "强劲"}
       ],
-      "manual_fallback": 13.8,
-      "last_known_value": 13.8,
+      "manual_fallback": 19.4,
+      "last_known_value": 19.4,
       "last_known_date": "2026-05-31"
     },
     "currency_index": {
