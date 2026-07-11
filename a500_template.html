@@ -126,13 +126,23 @@ body{
 /* ── Transition thermometer ── */
 .t-trans{display:none}
 .t-trans.show{display:block}
-.t-line-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
-.t-line{background:#fff;border-radius:10px;padding:10px 8px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.03)}
-.t-line .l-name{font-size:9px;color:#999;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.t-line .l-bar{height:4px;border-radius:2px;background:#eee;margin:4px 0;overflow:hidden}
-.t-line .l-fill{height:100%;border-radius:2px;transition:width 0.5s}
-.t-line .l-score{font-size:22px;font-weight:700}
-.t-line .l-pct{font-size:10px;color:#bbb}
+/* ── 经济健康 4线卡片 ── */
+.t-trans{display:none}
+.t-trans.show{display:block}
+.t-line-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.t-line{background:#fff;border-radius:14px;padding:14px 12px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,0.05)}
+.t-line .l-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;padding:0 2px}
+.t-line .l-name{font-size:12px;font-weight:700;color:#444}
+.t-line .l-pct{font-size:10px;color:#aaa;background:#f5f5f5;padding:1px 7px;border-radius:5px;font-weight:500}
+.t-line .l-score{font-size:32px;font-weight:800;line-height:1;margin:4px 0}
+.t-line .l-status{font-size:13px;font-weight:600;margin-bottom:6px}
+.t-line .l-bar{height:5px;border-radius:3px;background:#e8e8e8;margin:0 0 8px;overflow:hidden}
+.t-line .l-fill{height:100%;border-radius:3px;transition:width 0.5s}
+.t-line .l-meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px;padding-top:8px;border-top:1px solid #f0f0f0}
+.t-line .l-badge{font-size:9px;padding:2px 7px;border-radius:5px;white-space:nowrap;font-weight:600}
+.t-line .l-badge-up{background:#e8f8f0;color:#1e8449}
+.t-line .l-badge-down{background:#fdedec;color:#c0392b}
+.t-line .l-tkw{font-size:10px;color:#999;line-height:1.3;margin-left:auto;text-align:right;max-width:60%}
 .t-desc{text-align:center;font-size:13px;color:#666;padding:6px 0 10px;line-height:1.5}
 .t-tag{display:inline-block;padding:1px 5px;border-radius:3px;font-weight:600;font-size:9px;margin:1px}
 .t-tag-auto{background:#e8f8f0;color:#1e8449}
@@ -140,26 +150,28 @@ body{
 .t-tag-stale{background:#fdedec;color:#c0392b}
 .t-tag-stale{background:#fdedec;color:#c0392b}
 
-/* ── Transition indicator cards ── */
-.t-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
-.t-card{background:#fff;border-radius:10px;padding:10px 10px 8px;box-shadow:0 1px 4px rgba(0,0,0,0.03)}
-.t-card .tc-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
-.t-card .tc-name{font-size:11px;font-weight:600;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.t-card .tc-tag{font-size:8px;padding:1px 4px;border-radius:3px;flex-shrink:0}
-.t-card .tc-val{font-size:22px;font-weight:700;line-height:1.2;margin:2px 0}
-.t-card .tc-bar{height:3px;border-radius:2px;background:#eee;margin:4px 0;overflow:hidden}
+/* ── 经济健康 指标卡片 ── */
+.t-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.t-card{background:#fff;border-radius:12px;padding:12px;box-shadow:0 1px 5px rgba(0,0,0,0.04);transition:all 0.15s}
+.t-card:active{transform:scale(0.98)}
+.t-card .tc-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;gap:4px}
+.t-card .tc-name{font-size:11px;font-weight:600;color:#444;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t-card .tc-tag{font-size:8px;padding:1px 5px;border-radius:4px;flex-shrink:0;font-weight:600}
+.t-card .tc-val{font-size:24px;font-weight:700;line-height:1.2;margin:2px 0}
+.t-card .tc-mid{display:flex;justify-content:space-between;align-items:center;margin:2px 0}
+.t-card .tc-label{font-size:11px;font-weight:500}
+.t-card .tc-score{font-size:13px;font-weight:700}
+.t-card .tc-bar{height:4px;border-radius:2px;background:#eee;margin:6px 0;overflow:hidden}
 .t-card .tc-fill{height:100%;border-radius:2px}
-.t-card .tc-foot{display:flex;justify-content:space-between;font-size:9px;color:#bbb}
-.t-card .tc-score{font-size:12px;font-weight:700}
-.t-card .tc-label{font-size:10px}
+.t-card .tc-foot{display:flex;justify-content:space-between;font-size:10px;color:#bbb}
 
-/* ── Transition group headers ── */
-.t-gh{margin:6px 0 4px;display:flex;align-items:center;gap:6px}
-.t-gh .gh-bar{width:3px;height:16px;border-radius:2px;flex-shrink:0}
-.t-gh .gh-name{font-size:12px;font-weight:700;color:#333}
-.t-gh .gh-w{font-size:10px;font-weight:400;color:#999}
-.t-gh .gh-line{flex:1;height:1px;background:#eee}
-.t-gh-first{margin-top:2px}
+/* ── 经济健康 分组标题 ── */
+.t-gh{margin:8px 0 6px;display:flex;align-items:center;gap:8px}
+.t-gh .gh-bar{width:4px;height:18px;border-radius:2px;flex-shrink:0}
+.t-gh .gh-name{font-size:13px;font-weight:700;color:#333}
+.t-gh .gh-w{font-size:10px;font-weight:500;color:#999;background:#f5f5f5;padding:1px 7px;border-radius:5px}
+.t-gh .gh-line{flex:1;height:1px;background:#e8e8e8}
+.t-gh-first{margin-top:4px}
 
 /* ── Info buttons & modal ── */
 .info-btn{display:inline-block;width:16px;height:16px;line-height:16px;border-radius:50%;background:#ddd;color:#fff;font-size:10px;font-weight:700;text-align:center;cursor:pointer;vertical-align:middle;margin-left:3px;user-select:none}
@@ -807,20 +819,19 @@ function renderTrans(d){
     });
     var drvHtml = '';
     if(bestInd && worstInd && bestInd.name !== worstInd.name){
-      drvHtml = '<div class="l-drivers">'+
-        '<div class="l-drv-item"><span class="l-drv-name">▲ </span><span class="l-drv-score l-drv-up">'+bestInd.name+' '+Math.round(bestInd.score)+'</span></div>'+
-        '<div class="l-drv-item"><span class="l-drv-name">▼ </span><span class="l-drv-score l-drv-down">'+worstInd.name+' '+Math.round(worstInd.score)+'</span></div>'+
-      '</div>';
+      var bestShort = bestInd.name.replace('同比','').replace('累计','').replace('规模以上','');
+      var worstShort = worstInd.name.replace('同比','').replace('累计','').replace('规模以上','');
+      drvHtml = '<span class="l-badge l-badge-up">▲ '+bestShort+' '+Math.round(bestInd.score)+'</span>'+
+        '<span class="l-badge l-badge-down">▼ '+worstShort+' '+Math.round(worstInd.score)+'</span>';
     }
     var takeaway = genTakeaway(lineNum, sc, bestInd?bestInd.score:null, worstInd?worstInd.score:null, bestInd?bestInd.name:null, worstInd?worstInd.name:null);
     html+='<div class="t-line" style="border-top:3px solid '+c+'">'+
-      '<div class="l-name">'+l.name+' <span class="l-pct">'+lineW[k]+'</span></div>'+
-      '<div class="l-sub">'+lineSubs[k]+'</div>'+
+      '<div class="l-hdr"><span class="l-name">'+l.name+'</span><span class="l-pct">'+lineW[k]+'</span></div>'+
       '<div class="l-score" style="color:'+c+'">'+Math.round(sc)+'</div>'+
-      '<div style="font-size:11px;color:'+c+';font-weight:500;margin:1px 0">'+judge+'</div>'+
+      '<div class="l-status" style="color:'+c+'">'+judge+'</div>'+
       '<div class="l-bar"><div class="l-fill" style="width:'+sc+'%;background:'+c+'"></div></div>'+
-      drvHtml+
-      '<div class="l-takeaway">'+takeaway+'</div>'+
+      '<div class="l-meta">'+drvHtml+
+      '<span class="l-tkw">'+takeaway+'</span></div>'+
     '</div>';
   });
   grid.innerHTML=html;
@@ -862,7 +873,7 @@ function renderTrans(d){
       html+='<div class="t-card" onclick="transInfo(\''+key+'\')" style="cursor:pointer"'+cardStyle+'>'+
         '<div class="tc-hdr"><span class="tc-name">'+fresh+' '+ind.name+'</span>'+staleBadge+tag+'</div>'+
         '<div class="tc-val" style="color:'+c+'">'+ind.value+'<span style="font-size:12px;color:#bbb;font-weight:400;margin-left:2px">'+unit+'</span></div>'+
-        '<div style="display:flex;justify-content:space-between;align-items:center;margin:2px 0">'+
+        '<div class="tc-mid">'+
           '<span class="tc-label" style="color:'+c+'">'+ind.label+'</span>'+
           '<span class="tc-score" style="color:'+c+'">'+Math.round(sc)+'分</span>'+
         '</div>'+
