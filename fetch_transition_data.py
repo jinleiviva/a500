@@ -171,7 +171,11 @@ def fetch_indicators():
     try:
         df = ak.macro_china_society_electricity()
         elec_val = safe_float(df['全社会用电量同比'].iloc[-1])
-        elec_date = str(df['统计时间'].iloc[-1])
+        elec_date = str(df['统计时间'].iloc[-1]).replace('.', '-')
+        # 标准化日期格式: "2026-5" -> "2026-05"
+        parts = elec_date.split('-')
+        if len(parts) == 2:
+            elec_date = f"{parts[0]}-{int(parts[1]):02d}"
         results['electricity'] = {'value': elec_val, 'date': elec_date, 'source': '国家能源局', 'auto_fetched': True}
     except:
         results['electricity'] = {'value': cfg['electricity'].get('manual_fallback', 5.0), 'date': '2026-05-31', 'source': '国家能源局（回退）', 'auto_fetched': False}
@@ -383,6 +387,32 @@ def fetch_indicators():
 
     return results
 
+def compute_stale(date_str: str, frequency: str) -> dict:
+    """判断数据是否过期。返回 {'stale': bool, 'stale_days': int}"""
+    if not date_str:
+        return {'stale': True, 'stale_days': 999}
+    freq_days = {'日': 7, '周': 21, '月': 60, '季': 120}
+    max_days = freq_days.get(frequency, 60)
+    try:
+        # 统一格式: "2026.5" → "2026-5" → "2026-05-15"
+        d_clean = date_str.replace('年', '-').replace('月', '-01').replace('Q1', '-02-01').replace('Q2', '-05-01').replace('Q3', '-08-01').replace('Q4', '-11-01')
+        # 处理 "2026.5" → "2026-5"
+        d_clean = d_clean.replace('.', '-')
+        # 去掉空格
+        d_clean = d_clean.strip()
+        parts = d_clean.split('-')
+        if len(parts) >= 3 and len(parts[2]) > 0 and parts[2].isdigit():
+            d = datetime(int(parts[0]), int(parts[1]), int(parts[2]))
+        elif len(parts) >= 2 and len(parts[1]) > 0 and parts[1].isdigit():
+            # 只有年月时取月中（15号）避免月初判断为过期
+            d = datetime(int(parts[0]), int(parts[1]), 15)
+        else:
+            return {'stale': True, 'stale_days': 999}
+        delta = (datetime.now() - d).days
+        return {'stale': delta > max_days, 'stale_days': delta}
+    except:
+        return {'stale': True, 'stale_days': 999}
+
 def compute_scores(results):
     scores = {}
     for key, info in results.items():
@@ -391,6 +421,7 @@ def compute_scores(results):
         cfg = CONFIG['indicators'][key]
         val = info['value']
         sc, lbl = score_value(val, cfg['thresholds'])
+        stale_info = compute_stale(info.get('date', ''), cfg.get('frequency', '月'))
         scores[key] = {
             'score': sc, 'label': lbl, 'value': val,
             'date': info.get('date', ''),
@@ -398,6 +429,8 @@ def compute_scores(results):
             'auto_fetched': info.get('auto_fetched', True),
             'weight': cfg['weight'], 'line': cfg['line'],
             'name': cfg['name'],
+            'stale': stale_info['stale'],
+            'stale_days': stale_info['stale_days'],
         }
     return scores
 
@@ -477,21 +510,27 @@ def main():
             "name": s['name'], "score": s['score'], "label": s['label'],
             "value": s['value'], "date": s['date'], "source": s['source'],
             "line": s['line'], "weight": s['weight'], "auto": s.get('auto_fetched', True),
+            "stale": s.get('stale', False), "stale_days": s.get('stale_days', 0),
         } for k, s in scores.items()},
     }
 
     with open(OUTPUT_JSON, 'w', encoding='utf-8') as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 
+    print(f"\n┌────────────────────────────────────────────────┐")
+    print(f"│  📊 综合健康度温度: {temp}°C{' '*(13-len(str(temp)))}│")
+    print(f"│     档位: {emoji} {band}{' '*(18-len(band))}│")
+    print(f"│     描述: {desc}{' '*(23-len(desc))}│")
+    print(f"├────────────────────────────────────────────────┤")
+    stale_count = sum(1 for s in scores.values() if s.get('stale'))
     auto_count = sum(1 for v in results.values() if v.get('auto_fetched'))
     total_count = len(results)
-
-    print(f"\n{'='*50}")
-    print(f"📊 综合健康度温度: {temp}°C")
-    print(f"   档位: {emoji} {band}")
-    print(f"   描述: {desc}")
-    print(f"\n📡 数据新鲜度: {auto_count}/{total_count} 个指标自动获取最新数据")
-    print(f"✅ {OUTPUT_JSON}")
+    fresh_count = total_count - stale_count
+    print(f"│  📡 {auto_count}/{total_count} 自动获取 · {fresh_count}/{total_count} 未过期│")
+    if stale_count > 0:
+        stale_names = [s['name'] for s in scores.values() if s.get('stale')]
+        print(f"│  ⚠️  过期指标({stale_count}): {'·'.join(stale_names)}│")
+    print(f"└────────────────────────────────────────────────┘")
 
 if __name__ == '__main__':
     main()
