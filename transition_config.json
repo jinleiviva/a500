@@ -4,9 +4,9 @@
   "last_updated": "2026-07-11",
   
   "weights": {
-    "line1_internal_demand": 0.40,
+    "line1_internal_demand": 0.35,
     "line2_debt_policy": 0.25,
-    "line3_new_momentum": 0.35
+    "line3_new_momentum": 0.40
   },
 
   "indicators": {
@@ -161,7 +161,7 @@
     },
     "currency_index": {
       "name": "人民币CFETS汇率指数",
-      "line": 3, "weight": 0.07,
+      "line": 3, "weight": 0.05,
       "data_source": "外汇交易中心 | Web抓取",
       "frequency": "周",
       "auto_fetch": false,
@@ -175,6 +175,36 @@
       "manual_fallback": 97.5,
       "last_known_value": 97.5,
       "last_known_date": "2026-06-30"
+    },
+    "electricity": {
+      "name": "全社会用电量同比",
+      "line": 1, "weight": 0.05,
+      "data_source": "akshare | 国家能源局",
+      "frequency": "月",
+      "auto_fetch": true,
+      "thresholds": [
+        {"min": -999, "max": -2, "score": 0, "label": "下降"},
+        {"min": -2, "max": 2, "score": 25, "label": "停滞"},
+        {"min": 2, "max": 5, "score": 55, "label": "温和"},
+        {"min": 5, "max": 8, "score": 80, "label": "稳健"},
+        {"min": 8, "max": 15, "score": 100, "label": "强劲"},
+        {"min": 15, "max": 999, "score": 60, "label": "过热"}
+      ]
+    },
+    "a500_turnover": {
+      "name": "A500周成交额变化",
+      "line": 3, "weight": 0.05,
+      "data_source": "A500温度计 | akshare",
+      "frequency": "周",
+      "auto_fetch": true,
+      "_note": "从A500日线计算最近一周 vs 前一周成交额变化",
+      "thresholds": [
+        {"min": -999, "max": -30, "score": 0, "label": "骤降"},
+        {"min": -30, "max": -10, "score": 20, "label": "缩量"},
+        {"min": -10, "max": 10, "score": 50, "label": "平稳"},
+        {"min": 10, "max": 30, "score": 75, "label": "活跃"},
+        {"min": 30, "max": 999, "score": 100, "label": "放量"}
+      ]
     }
   }
 }
