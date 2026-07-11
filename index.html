@@ -268,6 +268,7 @@ body{
         <div class="it"><div class="lab">估算温度 <span class="info-btn" onclick="showInfo('rtTemp')" style="width:13px;height:13px;line-height:13px;font-size:9px">?</span></div><div class="num" id="rtTemp">--°C</div></div>
       </div>
       <div class="foot"><span id="rtTime"></span><span id="rtCD"></span></div>
+      <div id="rtStatus" style="font-size:10px;margin-top:4px;text-align:center">--</div>
       <div class="err" id="rtErr"></div>
     </div>
 
@@ -568,7 +569,7 @@ body{
       {d:"07-08",pe:16.16},
       {d:"07-09",pe:16.62},
       {d:"07-10",pe:16.31}
-    ], 'pageCreatedAt': '2026-07-11 23:07', 'pricePercentile': 93.2,
+    ], 'pageCreatedAt': '2026-07-11 23:12', 'pricePercentile': 93.2,
   };
   window.__D = D;
 
@@ -773,7 +774,8 @@ function toggleRef(){
       cg=document.getElementById('rtChg'),pe=document.getElementById('rtPe'),
       tp=document.getElementById('rtTemp'),ti=document.getElementById('rtTime'),
       cd=document.getElementById('rtCD'),er=document.getElementById('rtErr'),
-      rt=null,cts=null,cdn=0;
+      st=document.getElementById('rtStatus'),
+      rt=null,cts=null,sc=null,cdn=0;
 
   function isMarket(){
     var n=new Date();
@@ -820,7 +822,9 @@ function toggleRef(){
       var tmpL=document.getElementById('tempLbl');
       if(tmpL){tmpL.textContent=tmpT.l;tmpL.style.color=tmpT.c;}
     }
-    if(rd.ts&&rd.ts.length>=14)ti.textContent='更新于 '+rd.ts.substring(8,10)+':'+rd.ts.substring(10,12)+':'+rd.ts.substring(12,14);
+    if(rd.ts&&rd.ts.length>=14){ti.textContent='更新于 '+rd.ts.substring(8,10)+':'+rd.ts.substring(10,12)+':'+rd.ts.substring(12,14);
+      // 盘后显示最后更新时间的备用
+      if(!isMarket())rtStatus(false);}
     er.textContent='';
   }
   function fetchRT(){
@@ -833,16 +837,46 @@ function toggleRef(){
       })
       .catch(function(){er.textContent='数据获取失败'});
   }
+  function rtStatus(ih){
+    if(ih){
+      st.textContent='📡 盘中实时刷新中（每60秒）';
+      st.style.color='#1e8449';
+    }else{
+      var now=new Date(),hh=('0'+now.getHours()).slice(-2),mm=('0'+now.getMinutes()).slice(-2);
+      st.textContent='💤 盘后 · 最后更新 '+hh+':'+mm;
+      st.style.color='#999';
+    }
+  }
   function rstCD(n){cdn=n;cd.textContent=' · '+n+'s';if(cts)clearInterval(cts);cts=setInterval(function(){cdn--;cd.textContent=cdn>0?' · '+cdn+'s':' · 刷新中…'},1000)}
+  function scheduleRT(){
+    var ih=isMarket();
+    dt.className='dot '+(ih?'on':'off');
+    lb.textContent=ih?'盘中实时':'盘后';
+    rtStatus(ih);
+    if(ih){
+      // 开盘：开始刷新
+      fetchRT();rstCD(60);
+      if(rt)clearInterval(rt);
+      rt=setInterval(function(){fetchRT();rstCD(60)},60000);
+      if(sc){clearInterval(sc);sc=null;}
+    }else{
+      // 收盘：停止刷新，每30s检查是否开盘
+      if(rt){clearInterval(rt);rt=null;}
+      cd.textContent='';
+      if(sc)return;
+      sc=setInterval(function(){
+        if(isMarket()){
+          clearInterval(sc);sc=null;
+          scheduleRT();
+        }
+      },30000);
+    }
+  }
 
   setTimeout(function(){
     if(!window.__D){c.style.display='none';return}
-    c.style.display='block';fetchRT();rstCD(60);
-    rt=setInterval(function(){fetchRT();rstCD(60)},60000);
-    setInterval(function(){
-      lb.textContent=isMarket()?'盘中实时':'盘后';
-      dt.className='dot '+(isMarket()?'on':'off');
-    },30000);
+    c.style.display='block';
+    scheduleRT();
   },500);
 })();
 
