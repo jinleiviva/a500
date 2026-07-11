@@ -87,9 +87,10 @@ body{
 .bm .tag{display:inline-block;padding:1px 5px;border-radius:3px;font-weight:500;font-size:9px;margin:0 2px}
 
 /* ── Bottom nav ── */
-.bnv{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:480px;max-width:100%;display:flex;background:#fff;border-top:1px solid #E2E8F0;padding:8px 0 12px;justify-content:center;gap:0}
-.bnv .bn-item{flex:1;text-align:center;font-size:12px;font-weight:500;color:#94A3B8;cursor:pointer;padding:4px 0;transition:color 0.15s;user-select:none}
-.bnv .bn-item.act{color:#6366F1;font-weight:600}
+.bnv{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:480px;max-width:100%;background:#E2E8F0;border-radius:14px 14px 0 0;padding:4px;display:flex;position:relative}
+.bnv .bn-slider{position:absolute;top:4px;bottom:4px;width:calc(50% - 4px);background:#fff;border-radius:11px;box-shadow:0 1px 4px rgba(0,0,0,0.08),0 2px 8px rgba(0,0,0,0.04);transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);z-index:0;pointer-events:none}
+.bnv .bn-item{flex:1;text-align:center;font-size:12px;font-weight:500;color:#64748B;cursor:pointer;padding:10px 0;position:relative;z-index:1;transition:color 0.2s;user-select:none}
+.bnv .bn-item.act{color:#0F172A;font-weight:600}
 .bnv .bn-item .bn-icon{display:block;font-size:16px;margin-bottom:2px}
 
 /* ── Loading ── */
@@ -160,17 +161,17 @@ body{
 .t-gh .gh-line{flex:1;height:1px;background:#E2E8F0}
 .t-gh-first{margin-top:2px}
 
-/* ── Modal ── */
-.info-btn{display:inline-block;width:14px;height:14px;line-height:14px;border-radius:50%;background:#CBD5E1;color:#fff;font-size:9px;font-weight:700;text-align:center;cursor:pointer;vertical-align:middle;margin-left:2px;user-select:none}
-.info-btn:hover{background:#94A3B8}
-.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.35);z-index:999;justify-content:center;align-items:center}
-.modal-overlay.show{display:flex}
-.modal-box{background:#fff;border-radius:14px;padding:20px 18px;max-width:340px;width:88%;box-shadow:0 8px 32px rgba(0,0,0,0.15);position:relative}
-.modal-box .close{position:absolute;top:8px;right:12px;font-size:18px;color:#94A3B8;cursor:pointer;line-height:1}
-.modal-box .close:hover{color:#475569}
-.modal-box .title{font-size:15px;font-weight:700;margin-bottom:8px;color:#0F172A}
-.modal-box .body{font-size:13px;color:#475569;line-height:1.7}
-.modal-box .info-foot{display:flex;justify-content:space-between;font-size:10px;color:#94A3B8;margin-top:10px;padding-top:6px;border-top:1px solid #E2E8F0}
+/* ── Bottom Sheet ── */
+.sheet-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.3);z-index:999;justify-content:center;align-items:flex-end;opacity:0;transition:opacity 0.2s}
+.sheet-overlay.show{display:flex;opacity:1}
+.sheet-box{background:#fff;border-radius:16px 16px 0 0;padding:24px 20px 32px;max-width:480px;width:100%;max-height:70vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,0.1);transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);position:relative}
+.sheet-overlay.show .sheet-box{transform:translateY(0)}
+.sheet-box .sheet-handle{width:36px;height:4px;border-radius:2px;background:#E2E8F0;margin:0 auto 16px}
+.sheet-box .close{position:absolute;top:12px;right:16px;font-size:20px;color:#94A3B8;cursor:pointer;line-height:1}
+.sheet-box .close:hover{color:#475569}
+.sheet-box .title{font-size:16px;font-weight:700;margin-bottom:10px;color:#0F172A;padding-right:30px}
+.sheet-box .body{font-size:13px;color:#475569;line-height:1.7}
+.sheet-box .info-foot{display:flex;justify-content:space-between;font-size:10px;color:#94A3B8;margin-top:12px;padding-top:8px;border-top:1px solid #E2E8F0}
 </style>
 </head>
 <body>
@@ -190,7 +191,7 @@ body{
 
       <!-- Top row: mini ring + price + advice -->
       <div class="top-row">
-        <div class="temp-ring">
+        <div class="temp-ring" onclick="showSheet('temp')" style="cursor:pointer">
           <svg viewBox="0 0 120 120">
             <circle class="bg" cx="60" cy="60" r="50"/>
             <circle class="arc" id="mainArc" cx="60" cy="60" r="50" stroke-dasharray="314.16" stroke-dashoffset="50" stroke="#EF4444"/>
@@ -215,26 +216,26 @@ body{
 
       <!-- Metrics list -->
       <div class="ml">
-        <div class="ml-row">
-          <span class="ml-lbl">回本年限 <span class="info-btn" onclick="showInfo('pe')" style="width:12px;height:12px;line-height:12px;font-size:8px">?</span></span>
+        <div class="ml-row" onclick="showSheet('pe')" style="cursor:pointer;transition:background 0.15s" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background=''">
+          <span class="ml-lbl">回本年限</span>
           <span class="ml-val" id="peVal">--</span>
           <span class="ml-desc" id="peRank">--</span>
         </div>
         <div class="ml-div"></div>
-        <div class="ml-row">
-          <span class="ml-lbl">盈利收益率 <span class="info-btn" onclick="showInfo('stockYield')" style="width:12px;height:12px;line-height:12px;font-size:8px">?</span></span>
+        <div class="ml-row" onclick="showSheet('stockYield')" style="cursor:pointer;transition:background 0.15s" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background=''">
+          <span class="ml-lbl">盈利收益率</span>
           <span class="ml-val" id="stockVal">--</span>
           <span class="ml-desc g" id="stockDesc">✅ 划算</span>
         </div>
         <div class="ml-div"></div>
-        <div class="ml-row">
-          <span class="ml-lbl">10年国债 <span class="info-btn" onclick="showInfo('bondYield')" style="width:12px;height:12px;line-height:12px;font-size:8px">?</span></span>
+        <div class="ml-row" onclick="showSheet('bondYield')" style="cursor:pointer;transition:background 0.15s" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background=''">
+          <span class="ml-lbl">10年国债</span>
           <span class="ml-val" id="bondVal">--</span>
           <span class="ml-desc" id="premiumDesc">股债差 --</span>
         </div>
         <div class="ml-div"></div>
-        <div class="ml-row">
-          <span class="ml-lbl">股息率 <span class="info-btn" onclick="showInfo('divYield')" style="width:12px;height:12px;line-height:12px;font-size:8px">?</span></span>
+        <div class="ml-row" onclick="showSheet('divYield')" style="cursor:pointer;transition:background 0.15s" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background=''">
+          <span class="ml-lbl">股息率</span>
           <span class="ml-val" id="divYieldVal">--</span>
           <span class="ml-desc" id="divDesc">中性</span>
         </div>
@@ -379,6 +380,7 @@ body{
 
   <!-- Bottom nav -->
   <div class="bnv" id="bottomNav">
+    <div class="bn-slider" id="bnSlider"></div>
     <div class="bn-item act" id="tabBtnA500" onclick="switchTab('a500')"><span class="bn-icon">🌡️</span>温度</div>
     <div class="bn-item" id="tabBtnTrans" onclick="switchTab('transition')"><span class="bn-icon">📊</span>经济健康</div>
   </div>
@@ -523,7 +525,7 @@ body{
       {d:"07-08",pe:16.16},
       {d:"07-09",pe:16.62},
       {d:"07-10",pe:16.31}
-    ], 'pageCreatedAt': '2026-07-11 23:46', 'pricePercentile': 93.2,
+    ], 'pageCreatedAt': '2026-07-11 23:55', 'pricePercentile': 93.2,
   };
   window.__D = D;
 
@@ -544,17 +546,39 @@ body{
     var d=D,ti=tInfo(d.temperature);
     document.getElementById('todayDate').textContent='数据截至 '+d.date+' 收盘';
 
-    // Temp ring (mini, viewBox 120 → r=50, circumference=2*PI*50=314.16)
+    // Temp ring with loading animation
     var C=2*Math.PI*50,arc=document.getElementById('mainArc');
-    if(arc){
-      arc.style.strokeDasharray=C;
-      arc.style.strokeDashoffset=C*(1-d.temperature/100);
-      arc.style.stroke=ti.c;
-    }
     var numEl=document.getElementById('tempNum');
-    if(numEl){numEl.textContent=d.temperature;numEl.style.color=ti.c;}
     var lblEl=document.getElementById('tempLbl');
-    if(lblEl){lblEl.textContent=ti.l;lblEl.style.color=ti.c;}
+    
+    if(arc){
+      // Step 1: set to empty position (CSS transition will animate to target)
+      arc.style.strokeDasharray=C;
+      arc.style.stroke='transparent'; // hide during animation
+      arc.style.strokeDashoffset=C;
+    }
+    if(numEl){numEl.textContent='0';numEl.style.color=ti.c;}
+    if(lblEl)lblEl.textContent='--';
+    
+    // Step 2: after a frame, animate to real values
+    setTimeout(function(){
+      var targetTemp=d.temperature;
+      if(arc){
+        arc.style.stroke=ti.c;
+        arc.style.strokeDashoffset=C*(1-targetTemp/100);
+      }
+      // Number count-up
+      var start=0,duration=800,step=30;
+      var inc=targetTemp/(duration/step);
+      var cur=0;
+      var ct=setInterval(function(){
+        cur+=inc;
+        if(cur>=targetTemp){cur=targetTemp;clearInterval(ct);}
+        if(numEl)numEl.textContent=Math.round(cur);
+      },step);
+      // Label
+      setTimeout(function(){if(lblEl){lblEl.textContent=ti.l;lblEl.style.color=ti.c;}},400);
+    },50);
 
     // Advice chip
     var adv=document.getElementById('advice');
@@ -594,6 +618,27 @@ body{
 
     // Temp trend
     if(d.tempHistory&&d.tempHistory.length>0){
+      // Temperature zone colors plugin
+      var zonePlugin = {
+        id:'tempZones',
+        beforeDraw:function(chart){
+          var ctx=chart.ctx,ca=chart.chartArea,ys=chart.scales.y;
+          if(!ys)return;
+          var zones=[
+            {min:0,max:30,color:'rgba(59,130,246,0.06)'},
+            {min:30,max:60,color:'rgba(16,185,129,0.04)'},
+            {min:60,max:80,color:'rgba(245,158,11,0.06)'},
+            {min:80,max:100,color:'rgba(239,68,68,0.06)'},
+          ];
+          zones.forEach(function(z){
+            var y0=ys.getPixelForValue(z.max),y1=ys.getPixelForValue(z.min);
+            if(y1<ca.top)y1=ca.top;
+            if(y0>ca.bottom)y0=ca.bottom;
+            ctx.fillStyle=z.color;
+            ctx.fillRect(ca.left,y0,ca.right-ca.left,y1-y0);
+          });
+        }
+      };
       new Chart(document.getElementById('tempChart').getContext('2d'),{
         type:'line',data:{
           labels:d.tempHistory.map(function(r){return r.d}),
@@ -610,7 +655,8 @@ body{
             x:{display:true,grid:{display:false},ticks:{maxTicksLimit:7,font:{size:9},color:'#94A3B8'}},
             y:{display:true,min:0,max:100,grid:{color:'#F1F5F9'},ticks:{font:{size:9},color:'#94A3B8',callback:function(v){return v+'°C'}}}
           }
-        }
+        },
+        plugins:[zonePlugin]
       });
     }
 
@@ -648,14 +694,29 @@ var INFO = {
   rtPe:{title:'估算回本是什么？',body:'盘中实时估算的PE（回本年限）。<br><br>因为PE只在收盘后才更新，盘中我们用"实时价格÷昨收×昨日PE"来估算当前的回本年限。'},
   rtTemp:{title:'估算温度是什么？',body:'盘中实时估算的温度。<br><br>用估算的PE和历史上的PE数据做对比，算出当前温度。'},
 };
-function showInfo(key){
-  var i=INFO[key];if(!i)return;
-  document.getElementById('infoTitle').innerHTML=i.title;
-  document.getElementById('infoBody').innerHTML=i.body;
-  document.getElementById('infoModal').className='modal-overlay show';
+function showSheet(key){
+  var info = INFO[key] || TRANS_INFO[key];
+  if(!info)return;
+  document.getElementById('sTitle').innerHTML=info.title;
+  document.getElementById('sBody').innerHTML=info.body;
+  document.getElementById('sFoot').innerHTML='';
+  document.getElementById('sheetModal').className='sheet-overlay show';
 }
-function hideInfo(){
-  document.getElementById('infoModal').className='modal-overlay';
+function hideSheet(){
+  document.getElementById('sheetModal').className='sheet-overlay';
+}
+function transInfo(key){
+  var i=TRANS_INFO[key];if(!i)return;
+  document.getElementById('sTitle').innerHTML=i.title;
+  document.getElementById('sBody').innerHTML=i.body;
+  var live = window._transData && window._transData.indicators && window._transData.indicators[key];
+  var foot = '';
+  if(live && live.source){
+    foot += '<span>📡 '+live.source+'</span>';
+    if(live.date) foot += '<span>📅 '+live.date+'</span>';
+  }
+  document.getElementById('sFoot').innerHTML=foot;
+  document.getElementById('sheetModal').className='sheet-overlay show';
 }
 var TRANS_INFO={
   cpi:{title:'CPI同比（居民消费价格）',body:'<b>这是什么：</b>今年这个月买东西比去年同月贵了多少。<br><br><b>怎么算的：</b>国家统计局在全国各地采价，对比今年和去年同期的价格变化。<br><br><b>正常范围：</b>0.5-3%为温和通胀。太低说明没人消费，太高说明钱不值钱。<br><br><b>反映的经济状况：</b>CPI温和正增长说明内需正常。'},
@@ -675,19 +736,6 @@ var TRANS_INFO={
   industrial_output:{title:'规模以上工业增加值同比',body:'<b>这是什么：</b>全国规模以上工业企业这个月生产了多少东西，比去年同月多了还是少了。<br><br><b>正常范围：</b>5-8%为正常。<br><br><b>反映的经济状况：</b>工业增加值是实体经济供给端的核心指标。'},
   new_energy_penetration:{title:'新能源汽车渗透率',body:'<b>这是什么：</b>全国新卖出的汽车中，新能源车占了多少比例。<br><br><b>正常范围：</b>30-50%。越高说明新能源替代越快。<br><br><b>反映的经济状况：</b>这是中国新质生产力最具标志性的指标。'},
 };
-function transInfo(key){
-  var i=TRANS_INFO[key];if(!i)return;
-  document.getElementById('infoTitle').innerHTML=i.title;
-  var live = window._transData && window._transData.indicators && window._transData.indicators[key];
-  var foot = '';
-  if(live && live.source){
-    foot += '<div class="info-foot"><span>📡 '+live.source+'</span>';
-    if(live.date) foot += '<span>📅 '+live.date+'</span>';
-    foot += '</div>';
-  }
-  document.getElementById('infoBody').innerHTML = i.body + foot;
-  document.getElementById('infoModal').className='modal-overlay show';
-}
 function toggleRef(){
   var b=document.getElementById('refBody'),a=document.getElementById('refArrow'),cr=a.parentNode;
   if(b.className.indexOf('show')>=0){b.className='cr-body';cr.className='cr';a.textContent='▶';}
@@ -802,13 +850,16 @@ function toggleRef(){
 // ── TAB ──
 function switchTab(t){
   var a5=document.getElementById('tabA500'),tr=document.getElementById('tabTransition'),
-      ba=document.getElementById('tabBtnA500'),bt=document.getElementById('tabBtnTrans');
+      ba=document.getElementById('tabBtnA500'),bt=document.getElementById('tabBtnTrans'),
+      sl=document.getElementById('bnSlider');
   if(t==='a500'){
     a5.style.display='block';tr.style.display='none';
     ba.className='bn-item act';bt.className='bn-item';
+    if(sl)sl.style.transform='translateX(0)';
   }else{
     a5.style.display='none';tr.style.display='block';
     ba.className='bn-item';bt.className='bn-item act';
+    if(sl)sl.style.transform='translateX('+(sl.offsetWidth+4)+'px)';
     if(!window._transLoaded)loadTransition();
   }
 }
@@ -957,11 +1008,13 @@ setTimeout(function(){
 },1000);
 </script>
 
-<div class="modal-overlay" id="infoModal" onclick="if(event.target===this)hideInfo()">
-  <div class="modal-box">
-    <span class="close" onclick="hideInfo()">×</span>
-    <div class="title" id="infoTitle"></div>
-    <div class="body" id="infoBody"></div>
+<div class="sheet-overlay" id="sheetModal" onclick="if(event.target===this)hideSheet()">
+  <div class="sheet-box" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <span class="close" onclick="hideSheet()">×</span>
+    <div class="title" id="sTitle"></div>
+    <div class="body" id="sBody"></div>
+    <div class="info-foot" id="sFoot"></div>
   </div>
 </div>
 
