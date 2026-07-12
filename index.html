@@ -92,9 +92,45 @@ body{
 .bm{display:flex;align-items:center;gap:6px;padding:10px 0;font-size:10px;color:#94A3B8}
 .bm .tag{display:inline-block;padding:1px 5px;border-radius:3px;font-weight:500;font-size:9px;margin:0 2px}
 
+/* ── Dividend (红利低波) ── */
+.d-trans{display:none;padding-top:4px}
+.d-trans.show{display:block}
+.d-top{background:#fff;border-radius:14px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.05);margin-bottom:10px}
+.d-top .d-row1{display:flex;align-items:center;gap:12px}
+.d-light{width:72px;height:72px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.d-light .d-l-icon{font-size:22px}
+.d-light .d-l-lbl{font-size:12px;font-weight:600}
+.d-light.green{background:#DCFCE7}
+.d-light.green .d-l-lbl{color:#059669}
+.d-light.yellow{background:#FEF3C7}
+.d-light.yellow .d-l-lbl{color:#D97706}
+.d-light.red{background:#FEE2E2}
+.d-light.red .d-l-lbl{color:#DC2626}
+.d-pbox{flex:1;min-width:0}
+.d-pbox .d-price{font-size:22px;font-weight:700;line-height:1.2;letter-spacing:-0.5px}
+.d-pbox .d-chg{font-size:13px;margin-top:1px;font-weight:500}
+.d-pbox .d-sub{display:flex;gap:10px;margin-top:4px}
+.d-pbox .d-sub span{font-size:10px;color:#64748B}
+.d-pbox .d-sub .d-sub-v{color:#0F172A;font-weight:500}
+.d-pbox .d-status{display:flex;align-items:center;gap:4px;margin-top:4px;font-size:10px;color:#64748B}
+.d-pbox .d-dot{width:5px;height:5px;border-radius:50%;display:inline-block}
+.d-pbox .d-dot.green{background:#059669}
+.d-pbox .d-dot.gray{background:#94A3B8}
+.d-div-card{background:#F0FDF4;border-radius:8px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.d-div-card .d-div-lbl{font-size:11px;color:#059669;font-weight:500}
+.d-div-card .d-div-val{font-size:18px;font-weight:700;color:#059669}
+.d-div-card .d-div-pct{font-size:10px;color:#94A3B8}
+.d-factors{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px}
+.d-factor{background:#fff;border-radius:10px;padding:10px 6px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.d-factor .df-lbl{font-size:10px;color:#64748B;margin-bottom:2px}
+.d-factor .df-val{font-size:17px;font-weight:700;line-height:1.2}
+.d-factor .df-tag{font-size:9px;font-weight:500;margin-top:1px}
+.d-factor .df-bar{height:3px;border-radius:2px;background:#E2E8F0;margin-top:5px;overflow:hidden}
+.d-factor .df-fill{height:100%;border-radius:2px}
+
 /* ── Bottom nav ── */
 .bnv{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:480px;max-width:100%;background:#E2E8F0;border-radius:14px 14px 0 0;padding:4px;display:flex;position:relative}
-.bnv .bn-slider{position:absolute;top:4px;bottom:4px;width:calc(50% - 4px);background:#fff;border-radius:11px;box-shadow:0 1px 4px rgba(0,0,0,0.08),0 2px 8px rgba(0,0,0,0.04);transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);z-index:0;pointer-events:none}
+.bnv .bn-slider{position:absolute;top:4px;bottom:4px;width:calc(33.33% - 4px);background:#fff;border-radius:11px;box-shadow:0 1px 4px rgba(0,0,0,0.08),0 2px 8px rgba(0,0,0,0.04);transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);z-index:0;pointer-events:none}
 .bnv .bn-item{flex:1;text-align:center;font-size:12px;font-weight:500;color:#64748B;cursor:pointer;padding:10px 0;position:relative;z-index:1;transition:color 0.2s;user-select:none}
 .bnv .bn-item.act{color:#0F172A;font-weight:600}
 .bnv .bn-item .bn-icon{display:block;font-size:16px;margin-bottom:2px}
@@ -390,13 +426,167 @@ body{
       </div>
     </div>
 
+    <!-- ── Tab: 红利低波 ── -->
+    <div class="d-trans" id="tabDividend">
+      <div id="dividendContent" style="display:none">
+        <div class="d-top">
+          <div class="d-row1">
+            <div class="d-light" id="dLight">
+              <div class="d-l-icon" id="dLightIcon">🟡</div>
+              <div class="d-l-lbl" id="dLightLabel">适合持有</div>
+            </div>
+            <div class="d-pbox">
+              <div class="d-price" id="dPrice">--</div>
+              <div class="d-chg" id="dChg">--</div>
+              <div class="d-sub">
+                <span>折溢率 <span class="d-sub-v" id="dPremium">--</span></span>
+                <span>成交量 <span class="d-sub-v" id="dVolume">--</span></span>
+                <span>规模 <span class="d-sub-v" id="dSize">--</span></span>
+              </div>
+              <div class="d-status">
+                <span class="d-dot gray" id="dDot"></span>
+                <span id="dStatus">--</span>
+                <span style="margin-left:auto;font-size:10px;color:#94A3B8" id="dUpdateTime">--</span>
+              </div>
+            </div>
+          </div>
+          <div class="d-div-card">
+            <span class="d-div-lbl">当前股息率</span>
+            <div>
+              <span class="d-div-val" id="dDivYield">--</span>
+              <span class="d-div-pct" id="dDivPct">--</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-factors">
+          <div class="d-factor">
+            <div class="df-lbl">股息率分位</div>
+            <div class="df-val" id="dfDivPct">--</div>
+            <div class="df-tag" id="dfDivTag">--</div>
+            <div class="df-bar"><div class="df-fill" id="dfDivBar" style="width:0%"></div></div>
+          </div>
+          <div class="d-factor">
+            <div class="df-lbl">PE分位</div>
+            <div class="df-val" id="dfPePct">--</div>
+            <div class="df-tag" id="dfPeTag">--</div>
+            <div class="df-bar"><div class="df-fill" id="dfPeBar" style="width:0%"></div></div>
+          </div>
+          <div class="d-factor">
+            <div class="df-lbl">折溢价</div>
+            <div class="df-val" id="dfPrem">--</div>
+            <div class="df-tag" id="dfPremTag">--</div>
+            <div class="df-bar"><div class="df-fill" id="dfPremBar" style="width:0%"></div></div>
+          </div>
+        </div>
+
+        <div class="ml">
+          <div class="ml-row" onclick="toggleExpandDiv('pe')" style="cursor:pointer;transition:background 0.15s" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background=''">
+            <span class="ml-lbl">市盈率</span>
+            <span class="ml-val" id="dPeVal">--</span>
+            <span class="ml-desc" id="dPeDesc">--</span>
+            <span class="ml-chev">›</span>
+          </div>
+          <div class="ml-expand" id="expandDivPe"><div class="ml-exp-inner"></div></div>
+          <div class="ml-div"></div>
+          <div class="ml-row" style="padding:10px 0">
+            <span class="ml-lbl">市净率</span>
+            <span class="ml-val" id="dPbVal">--</span>
+            <span class="ml-desc" id="dPbDesc">--</span>
+          </div>
+          <div class="ml-div"></div>
+          <div class="ml-row" style="padding:10px 0">
+            <span class="ml-lbl">ROE</span>
+            <span class="ml-val" id="dRoeVal">--</span>
+            <span class="ml-desc" id="dRoeDesc">--</span>
+          </div>
+          <div class="ml-div"></div>
+          <div class="ml-row" onclick="toggleExpandDiv('size')" style="cursor:pointer;transition:background 0.15s" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background=''">
+            <span class="ml-lbl">ETF规模</span>
+            <span class="ml-val" id="dSizeVal">--</span>
+            <span class="ml-desc g" id="dSizeDesc">--</span>
+            <span class="ml-chev">›</span>
+          </div>
+          <div class="ml-expand" id="expandDivSize"><div class="ml-exp-inner"></div></div>
+        </div>
+
+        <div class="s-div"></div>
+
+        <div class="sec-h">温度走势（基于PE分位）</div>
+        <div class="trend-box">
+          <canvas id="divTempChart"></canvas>
+        </div>
+
+        <div class="s-div"></div>
+
+        <div class="sec-h">股息率走势 <span class="sec-right" id="dDivYieldCurrent">--</span></div>
+        <div class="trend-box">
+          <canvas id="divYieldChart"></canvas>
+        </div>
+
+        <div class="cr" onclick="toggleRefDiv()">
+          <span class="cr-lbl">💡 红利低波参考指南</span>
+          <span class="cr-arr" id="refDivArrow">▶</span>
+        </div>
+        <div class="cr-body" id="refDivBody">
+          <div class="r-grp">
+            <div class="r-h">🚦 红绿灯理解</div>
+            <div class="r-lbl">🟢 <b>适合买入</b> — 股息率高 + PE低 + 没溢价，三重信号共振。适合分批建仓。</div>
+            <div class="r-lbl">🟡 <b>适合持有</b> — 当前性价比中等。已持有的继续拿分红，等更好的买点再加仓。</div>
+            <div class="r-lbl">🔴 <b>观望/减仓</b> — 股息率不够吸引人或PE太高。耐心等待，不要急着买。</div>
+            <div class="r-lbl" style="margin-top:4px;color:#94A3B8">公式：综合 = 股息率分位得分×50% + PE分位反向得分×30% + 折溢价得分×20%</div>
+          </div>
+          <div class="r-grp">
+            <div class="r-h">📊 各因子含义</div>
+            <table class="r-tbl">
+              <tr><td>股息率分位</td><td>当前股息率在历史上的位置，高=买入性价比高</td></tr>
+              <tr><td>PE分位</td><td>市盈率历史位置，低=便宜，高=贵（反向打分）</td></tr>
+              <tr><td>折溢价</td><td>ETF价格 vs 净值，溢价高时买入不划算</td></tr>
+            </table>
+          </div>
+          <div class="r-grp">
+            <div class="r-h">💰 股息率 vs 国债利差</div>
+            <div class="r-lbl">红利低波的"安全垫"来自股息率 - 10年国债利率。当前利差约 <b class="g">3.4%</b>（5.17% - 1.74%），处于历史偏高水平，红利资产的"票息"优势突出。</div>
+          </div>
+          <div class="r-grp">
+            <div class="r-h">⏰ 什么时候卖？</div>
+            <div class="r-lbl">红利低波是<b>配置型品种</b>，不是交易品种。建议：</div>
+            <ul class="r-rel">
+              <li><b>正常情况：</b>长期持有吃分红，别频繁买卖</li>
+              <li><b>考虑减仓：</b>股息率跌破3.5% + PE分位>80% 同时出现时</li>
+              <li><b>不要恐慌：</b>单年亏10-15%不用怕，历史上都能涨回来</li>
+            </ul>
+          </div>
+          <div class="r-grp">
+            <div class="r-h">🔗 相关指标</div>
+            <ul class="r-rel">
+              <li><b>市盈率 PE</b> = 指数价格 ÷ 成分股总利润。红利低波PE常在6-10倍之间</li>
+              <li><b>市净率 PB</b> = 指数价格 ÷ 成分股净资产。红利低波PB常在0.7-1.2倍</li>
+              <li><b>ROE</b> = 净利润 ÷ 净资产。衡量成分股盈利能力，越高越好</li>
+              <li><b>ETF规模</b> = 规模越大流动性越好，日成交<5000万注意滑点</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="bm" style="border-top:1px solid #F1F5F9;margin-top:8px">
+          <span class="pr-dot off" id="dDotBm" style="width:5px;height:5px;display:inline-block;border-radius:50%;background:#94A3B8"></span>
+          <span id="dBmSt">盘后数据</span>
+          <span class="tag" style="background:#ECFDF5;color:#059669">股息率实时</span>
+          <span class="tag" style="background:#FFFBEB;color:#D97706">PE/估值有滞后</span>
+          <span style="margin-left:auto;font-size:9px;color:#B4B2A9">仅供参考</span>
+        </div>
+      </div><!-- end dividendContent -->
+      <div class="loading" id="divLoading"><div class="sp"></div><div>红利数据加载中…</div></div>
+    </div><!-- end tabDividend -->
+
   </div><!-- end #content -->
 
   <!-- Bottom nav -->
   <div class="bnv" id="bottomNav">
     <div class="bn-slider" id="bnSlider"></div>
     <div class="bn-item act" id="tabBtnA500" onclick="switchTab('a500')"><span class="bn-icon">🌡️</span>温度</div>
-    <div class="bn-item" id="tabBtnTrans" onclick="switchTab('transition')"><span class="bn-icon">📊</span>经济健康</div>
+    <div class="bn-item" id="tabBtnDividend" onclick="switchTab('dividend')"><span class="bn-icon">💰</span>红利</div>
+    <div class="bn-item" id="tabBtnTrans" onclick="switchTab('transition')"><span class="bn-icon">📊</span>经济</div>
   </div>
 
 </div>
@@ -539,7 +729,7 @@ body{
       {d:"07-08",pe:16.16},
       {d:"07-09",pe:16.62},
       {d:"07-10",pe:16.31}
-    ], 'pageCreatedAt': '2026-07-12 00:22', 'pricePercentile': 93.2,
+    ], 'pageCreatedAt': '2026-07-12 18:58', 'pricePercentile': 93.2,
   };
   window.__D = D;
 
@@ -768,6 +958,186 @@ function transInfo(key){
   document.getElementById('sFoot').innerHTML=foot;
   document.getElementById('sheetModal').className='sheet-overlay show';
 }
+}
+
+// ── 红利低波 ──
+function loadDividend(){
+  window._divLoaded=true;
+  if(window._divData){renderDividend(window._divData);return;}
+  var x=new XMLHttpRequest();
+  x.open('GET','dividend_data.json?_='+Date.now(),true);
+  x.onload=function(){
+    if(x.status===200){
+      try{var T=JSON.parse(x.responseText);window._divData=T;renderDividend(T);}
+      catch(e){divFail();}
+    }else{divFail();}
+  };
+  x.onerror=divFail;
+  x.send();
+}
+function divFail(){
+  document.getElementById('divLoading').innerHTML='<div style="padding:40px;color:#94A3B8">⚠️ 数据加载失败</div>';
+}
+function renderDividend(d){
+  document.getElementById('divLoading').style.display='none';
+  document.getElementById('dividendContent').style.display='block';
+
+  // 红绿灯
+  var dt=d.light||'yellow',dl=d.light_label||'--',ds=d.light_score||0;
+  var dLight=document.getElementById('dLight'),dIcon=document.getElementById('dLightIcon'),dLbl=document.getElementById('dLightLabel');
+  dLight.className='d-light '+dt;
+  dIcon.textContent=dt==='green'?'🟢':dt==='yellow'?'🟡':'🔴';
+  dLbl.textContent=dl;
+
+  // 价格
+  var ep=d.etf_price||'--',ed=d.pe_date||'--';
+  document.getElementById('dPrice').textContent=ep;
+  document.getElementById('dChg').textContent='--';
+
+  // ETF 数据
+  document.getElementById('dPremium').textContent=(d.etf_premium>=0?'+':'')+(d.etf_premium||0).toFixed(2)+'%';
+  var vol=d.etf_volume||0;
+  document.getElementById('dVolume').textContent=vol>=1e8?(vol/1e8).toFixed(2)+'亿':(vol/1e4).toFixed(0)+'万';
+  document.getElementById('dSize').textContent=(d.etf_size||'--')+'亿';
+  document.getElementById('dUpdateTime').textContent='数据截至 '+ed;
+
+  // 股息率
+  var dy=d.dividend_yield||0;
+  document.getElementById('dDivYield').textContent=dy.toFixed(2)+'%';
+  document.getElementById('dDivPct').textContent='历史分位 · '+(d.dividend_yield_percentile||'--')+'%';
+  document.getElementById('dDivYieldCurrent').textContent='当前 '+dy.toFixed(2)+'%';
+
+  // 三个因子
+  function setFactor(el,val,color,tag,barW){
+    document.getElementById(el+'Pct').textContent=val;
+    document.getElementById(el+'Pct').style.color=color;
+    document.getElementById(el+'Tag').textContent=tag;
+    document.getElementById(el+'Tag').style.color=color;
+    document.getElementById(el+'Bar').style.width=barW;
+    document.getElementById(el+'Bar').style.background=color;
+  }
+  var dp=d.dividend_yield_percentile||0;
+  var dpColor=dp>=80?'#059669':dp>=50?'#F59E0B':'#DC2626';
+  var dpTag=dp>=80?'高':dp>=50?'中':'低';
+  setFactor('dfDiv',dp+'%',dpColor,dpTag,dp+'%');
+
+  var pp=d.pe_percentile||0;
+  var ppColor=pp<30?'#059669':pp<60?'#F59E0B':'#DC2626';
+  var ppTag=pp<30?'低':pp<60?'中':'偏高';
+  setFactor('dfPe',pp+'%',ppColor,ppTag,pp+'%');
+
+  var pm=d.etf_premium||0;
+  var pmColor=pm<=0.3?'#059669':pm<=0.8?'#F59E0B':'#DC2626';
+  var pmTag=pm<=0?'折价':pm<=0.3?'正常':'偏高';
+  setFactor('dfPrem',(pm>=0?'+':'')+pm.toFixed(2)+'%',pmColor,pmTag,Math.min(Math.abs(pm)*50,100)+'%');
+
+  // 指标列表
+  document.getElementById('dPeVal').textContent=d.pe||'--';
+  var peDesc=document.getElementById('dPeDesc');
+  peDesc.textContent=pp+'% '+(pp>=80?'偏高':pp>=50?'中等':'偏低');
+  peDesc.className='ml-desc '+(pp>=80?'y':pp<30?'g':'');
+
+  document.getElementById('dPbVal').textContent='0.82';
+  document.getElementById('dPbDesc').textContent='偏低';
+  document.getElementById('dPbDesc').className='ml-desc g';
+
+  document.getElementById('dRoeVal').textContent='9.50%';
+  document.getElementById('dRoeDesc').textContent='中等';
+  document.getElementById('dRoeDesc').className='ml-desc';
+
+  document.getElementById('dSizeVal').textContent=(d.etf_size||'--')+'亿';
+  var dsDesc=document.getElementById('dSizeDesc');
+  if(d.etf_size>50){dsDesc.textContent='充裕';dsDesc.className='ml-desc g';}
+  else if(d.etf_size>10){dsDesc.textContent='正常';dsDesc.className='ml-desc';}
+  else{dsDesc.textContent='偏小';dsDesc.className='ml-desc y';}
+
+  // 温度走势图
+  if(d.temp_history&&d.temp_history.length>0){
+    new Chart(document.getElementById('divTempChart').getContext('2d'),{
+      type:'line',data:{
+        labels:d.temp_history.map(function(r){return r.d.substring(5)}),
+        datasets:[{
+          label:'温度',data:d.temp_history.map(function(r){return r.t}),
+          borderColor:'#059669',backgroundColor:'rgba(5,150,105,0.08)',
+          borderWidth:1.5,fill:true,tension:0.4,pointRadius:0,
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          x:{display:true,grid:{display:false},ticks:{maxTicksLimit:7,font:{size:9},color:'#94A3B8'}},
+          y:{display:true,min:0,max:100,grid:{color:'#F1F5F9'},ticks:{font:{size:9},color:'#94A3B8',callback:function(v){return v+'%'}}}
+        }
+      },
+      plugins:[{id:'divZones',beforeDraw:function(chart){
+        var ctx=chart.ctx,ca=chart.chartArea,ys=chart.scales.y;
+        if(!ys)return;
+        [[0,30,'rgba(239,68,68,0.04)'],[30,60,'rgba(245,158,11,0.04)'],[60,80,'rgba(16,185,129,0.04)'],[80,100,'rgba(5,150,105,0.06)']].forEach(function(z){
+          var y0=ys.getPixelForValue(z[1]),y1=ys.getPixelForValue(z[0]);
+          if(y1<ca.top)y1=ca.top;if(y0>ca.bottom)y0=ca.bottom;
+          ctx.fillStyle=z[2];ctx.fillRect(ca.left,y0,ca.right-ca.left,y1-y0);
+        });
+      }}]
+    });
+  }
+
+  // 股息率走势图
+  if(d.dividend_history&&d.dividend_history.length>0){
+    new Chart(document.getElementById('divYieldChart').getContext('2d'),{
+      type:'line',data:{
+        labels:d.dividend_history.map(function(r){return r.d.substring(5)}),
+        datasets:[{
+          label:'股息率',data:d.dividend_history.map(function(r){return r.v}),
+          borderColor:'#059669',backgroundColor:'rgba(5,150,105,0.1)',
+          borderWidth:1.5,fill:true,tension:0.4,pointRadius:0,
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          x:{display:true,grid:{display:false},ticks:{maxTicksLimit:7,font:{size:9},color:'#94A3B8'}},
+          y:{display:true,grid:{color:'#F1F5F9'},ticks:{font:{size:9},color:'#94A3B8',callback:function(v){return v+'%'}}}
+        }
+      }
+    });
+  }
+}
+
+var DIV_INFO = {
+  pe:{title:'市盈率（PE）是什么？',body:'市盈率 = ETF价格 ÷ 成分股总利润。<br><br>红利低波的成分股以银行+能源为主，PE长期在6-10倍之间波动。超过12倍算偏贵，低于6倍算便宜。<br><br><b>当前PE '+(window._divData?window._divData.pe:'--')+'</b>，处于历史'+(window._divData?'第'+window._divData.pe_percentile+'百分位':'--')+'。'},
+  size:{title:'ETF规模怎么看？',body:'ETF规模决定了买卖的流畅度。<br><br><b>规模 > 50亿：</b>流动性充裕，大额买卖都没问题<br><b>10-50亿：</b>正常，普通交易没问题<br><b>< 10亿：</b>偏小，日成交可能低于5000万，大额会有滑点<br><br>563020当前规模约'+(window._divData?window._divData.etf_size+'亿':'--')+'，流动性充裕。'},
+};
+
+function toggleExpandDiv(key){
+  var info = DIV_INFO[key];
+  if(!info)return;
+  var el = document.getElementById('expandDiv' + key.charAt(0).toUpperCase() + key.slice(1));
+  if(!el)return;
+  if(expandOpen && expandOpen !== el){
+    expandOpen.className = 'ml-expand';
+    var prevKey = expandOpen._key;
+  }
+  if(el.className.indexOf('show') >= 0){
+    el.className = 'ml-expand';
+    expandOpen = null;
+    return;
+  }
+  var color = key==='pe'?'#8B5CF6':'#059669';
+  var label = key==='pe'?'📊 估值指标':'🏦 流动性指标';
+  el.querySelector('.ml-exp-inner').innerHTML = '<span class="ml-exp-label" style="color:'+color+'">'+label+'</span>' + info.body;
+  el.querySelector('.ml-exp-inner').style.borderLeftColor = color;
+  el.className = 'ml-expand show';
+  el._key = key;
+  expandOpen = el;
+}
+function toggleRefDiv(){
+  var b=document.getElementById('refDivBody'),a=document.getElementById('refDivArrow'),cr=a.parentNode;
+  if(b.className.indexOf('show')>=0){b.className='cr-body';cr.className='cr';a.textContent='▶';}
+  else{b.className='cr-body show';cr.className='cr open';a.textContent='▶';}
+}
+
 var TRANS_INFO={
   cpi:{title:'CPI同比（居民消费价格）',body:'<b>这是什么：</b>今年这个月买东西比去年同月贵了多少。<br><br><b>怎么算的：</b>国家统计局在全国各地采价，对比今年和去年同期的价格变化。<br><br><b>正常范围：</b>0.5-3%为温和通胀。太低说明没人消费，太高说明钱不值钱。<br><br><b>反映的经济状况：</b>CPI温和正增长说明内需正常。'},
   ppi:{title:'PPI同比（工业生产者出厂价格）',body:'<b>这是什么：</b>工厂把货卖给下游时的价格，比去年同月贵/便宜了多少。<br><br><b>怎么算的：</b>国家统计局收集全国工业企业的出厂价。<br><br><b>正常范围：</b>-1%到3%。低于-2%说明工业需求不足。<br><br><b>反映的经济状况：</b>PPI回升说明工业需求在修复。'},
@@ -899,17 +1269,21 @@ function toggleRef(){
 
 // ── TAB ──
 function switchTab(t){
-  var a5=document.getElementById('tabA500'),tr=document.getElementById('tabTransition'),
-      ba=document.getElementById('tabBtnA500'),bt=document.getElementById('tabBtnTrans'),
-      sl=document.getElementById('bnSlider');
+  var a5=document.getElementById('tabA500'),tr=document.getElementById('tabTransition'),dv=document.getElementById('tabDividend'),
+      ba=document.getElementById('tabBtnA500'),bt=document.getElementById('tabBtnTrans'),bd=document.getElementById('tabBtnDividend'),
+      sl=document.getElementById('bnSlider'),iW=sl?sl.offsetWidth:0;
+  a5.style.display='none';tr.style.display='none';dv.style.display='none';
+  ba.className='bn-item';bt.className='bn-item';bd.className='bn-item';
   if(t==='a500'){
-    a5.style.display='block';tr.style.display='none';
-    ba.className='bn-item act';bt.className='bn-item';
+    a5.style.display='block';ba.className='bn-item act';
     if(sl)sl.style.transform='translateX(0)';
+  }else if(t==='dividend'){
+    dv.style.display='block';bd.className='bn-item act';
+    if(sl)sl.style.transform='translateX('+(iW+4)+'px)';
+    if(!window._divLoaded)loadDividend();
   }else{
-    a5.style.display='none';tr.style.display='block';
-    ba.className='bn-item';bt.className='bn-item act';
-    if(sl)sl.style.transform='translateX('+(sl.offsetWidth+4)+'px)';
+    tr.style.display='block';bt.className='bn-item act';
+    if(sl)sl.style.transform='translateX('+((iW+4)*2)+'px)';
     if(!window._transLoaded)loadTransition();
   }
 }
