@@ -116,6 +116,8 @@ body{
 .d-pbox .d-dot{width:5px;height:5px;border-radius:50%;display:inline-block}
 .d-pbox .d-dot.green{background:#059669}
 .d-pbox .d-dot.gray{background:#94A3B8}
+.d-trend{font-size:11px;color:#DC2626;text-align:center;padding:4px 0;background:#FEF2F2;border-radius:6px;margin:4px 0}
+.d-weight{font-size:10px;color:#94A3B8;text-align:center}
 .d-div-card{background:#F0FDF4;border-radius:8px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;margin-top:10px}
 .d-div-card .d-div-lbl{font-size:11px;color:#059669;font-weight:500}
 .d-div-card .d-div-val{font-size:18px;font-weight:700;color:#059669}
@@ -457,6 +459,8 @@ body{
               <span class="d-div-pct" id="dDivPct">--</span>
             </div>
           </div>
+          <div class="d-trend" id="dTrendReason" style="display:none"></div>
+          <div class="d-weight" id="dWeights">权重: 股息率60% · PE 30% · 折溢价10%</div>
         </div>
 
         <div class="d-factors">
@@ -533,8 +537,9 @@ body{
             <div class="r-h">🚦 红绿灯理解</div>
             <div class="r-lbl">🟢 <b>适合买入</b> — 股息率高 + PE低 + 没溢价，三重信号共振。适合分批建仓。</div>
             <div class="r-lbl">🟡 <b>适合持有</b> — 当前性价比中等。已持有的继续拿分红，等更好的买点再加仓。</div>
+            <div class="r-lbl">🟡 <b>🔒 趋势保护</b> — PE从20日高点回撤>10%时强制🟡，避免单边下跌中无脑接盘。</div>
             <div class="r-lbl">🔴 <b>观望/减仓</b> — 股息率不够吸引人或PE太高。耐心等待，不要急着买。</div>
-            <div class="r-lbl" style="margin-top:4px;color:#94A3B8">公式：综合 = 股息率分位得分×50% + PE分位反向得分×30% + 折溢价得分×20%</div>
+            <div class="r-lbl" style="margin-top:4px;color:#94A3B8">公式：综合 = 股息率分位得分×60% + PE分位反向得分×30% + 折溢价得分×10%（连续打分，无断点跳跃）</div>
           </div>
           <div class="r-grp">
             <div class="r-h">📊 各因子含义</div>
@@ -852,12 +857,20 @@ function renderDividend(d){
   document.getElementById('divLoading').style.display='none';
   document.getElementById('dividendContent').style.display='block';
 
-  // 红绿灯
+  // 红绿灯（含趋势保护）
   var dt=d.light||'yellow',dl=d.light_label||'--',ds=d.light_score||0;
+  var isBlocked=d.trend_blocked;
+  if(isBlocked){dt='yellow';dl='🔒 '+dl;}
   var dLight=document.getElementById('dLight'),dIcon=document.getElementById('dLightIcon'),dLbl=document.getElementById('dLightLabel');
   dLight.className='d-light '+dt;
   dIcon.textContent=dt==='green'?'🟢':dt==='yellow'?'🟡':'🔴';
   dLbl.textContent=dl;
+  // 趋势保护提示
+  var trEl=document.getElementById('dTrendReason');
+  if(trEl){
+    if(isBlocked){trEl.innerHTML='🔒 '+d.trend_reason;trEl.style.display='block';}
+    else{trEl.style.display='none';}
+  }
 
   // 价格
   var ep=d.etf_price||'--',ed=d.pe_date||'--';
