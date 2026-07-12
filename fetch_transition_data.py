@@ -390,7 +390,8 @@ def fetch_indicators():
                         fuel_v = safe_float(fuel_vals.iloc[i])
                         if total_v and fuel_v and total_v > 0:
                             pen_val = round(fuel_v / total_v * 100, 1)
-                            pen_date = f"2026-{int(re.search(r'(\d+)', month).group(1)):02d}"
+                            m = re.search(r'(\d+)', month)
+                            pen_date = f"2026-{int(m.group(1)):02d}" if m else "2026-06"
                             results['new_energy_penetration'] = {'value': pen_val, 'date': pen_date, 'source': '中国汽车工业协会', 'auto_fetched': True}
                             break
     except:
