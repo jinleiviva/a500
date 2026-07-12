@@ -1036,6 +1036,14 @@ function toggleRefDiv(){
   else{b.className='cr-body show';cr.className='cr open';a.textContent='▶';}
 }
 
+// ── 全局：盘中判断 ──
+function isMarket(){
+  var n=new Date();
+  if(n.getDay()===0||n.getDay()===6)return false;
+  var t=n.getHours()*100+n.getMinutes();
+  return(t>=930&&t<=1130)||(t>=1300&&t<=1500);
+}
+
 // ── 红利实时(gtimg) ──
 function fetchDivRT(){
   fetch('https://qt.gtimg.cn/q=sh563020&_='+Date.now())
@@ -1097,12 +1105,6 @@ function toggleRef(){
   var pr=document.getElementById('rtPrice'),cg=document.getElementById('rtChg'),
       rt=null,sc=null;
 
-  function isMarket(){
-    var n=new Date();
-    if(n.getDay()===0||n.getDay()===6)return false;
-    var t=n.getHours()*100+n.getMinutes();
-    return(t>=930&&t<=1130)||(t>=1300&&t<=1500);
-  }
   function parseT(text){
     var m=text.match(/v_sh000510="([^"]+)"/);
     if(!m)return null;
