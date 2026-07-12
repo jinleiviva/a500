@@ -121,7 +121,7 @@ body{
 .d-div-card{background:#F0FDF4;border-radius:8px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;margin-top:10px}
 .d-div-card .d-div-lbl{font-size:11px;color:#059669;font-weight:500}
 .d-div-card .d-div-val{font-size:18px;font-weight:700;color:#059669}
-.d-div-card .d-div-pct{font-size:10px;color:#94A3B8}
+.d-div-card .d-div-pct{font-size:10px;color:#94A3B8}\n.d-spread{display:flex;align-items:center;gap:4px;margin-top:6px;padding:6px 0 0;font-size:11px;color:#475569}\n.d-spread .ds-lbl{color:#64748B}\n.d-spread .ds-val{font-weight:700;color:#059669}\n.d-spread .ds-status{font-size:10px;margin-left:auto}
 .d-factors{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px}
 .d-factor{background:#fff;border-radius:10px;padding:10px 6px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
 .d-factor .df-lbl{font-size:10px;color:#64748B;margin-bottom:2px}
@@ -462,6 +462,11 @@ body{
               <span class="d-div-pct" id="dDivPct">--</span>
             </div>
           </div>
+          <div class="d-spread" id="dSpread">
+            <span class="ds-lbl">股息率 vs 国债利差</span>
+            <span class="ds-val" id="dSpreadVal">--</span>
+            <span class="ds-status" id="dSpreadStatus">--</span>
+          </div>
           <div class="d-trend" id="dTrendReason" style="display:none"></div>
           <div class="d-weight" id="dWeights">权重: 股息率60% · PE 30% · 折溢价10%</div>
         </div>
@@ -741,7 +746,7 @@ body{
       {d:"07-08",pe:16.16},
       {d:"07-09",pe:16.62},
       {d:"07-10",pe:16.31}
-    ], 'pageCreatedAt': '2026-07-12 19:59', 'pricePercentile': 93.2,
+    ], 'pageCreatedAt': '2026-07-12 20:30', 'pricePercentile': 93.2,
   };
   window.__D = D;
 
@@ -1024,6 +1029,11 @@ function renderDividend(d){
   if(dot)dot.className='d-dot '+(ih?'green':'gray');
   if(st)st.textContent=ih?'📡 实时':'💤 盘后';
 
+  // 利差
+  var spread = d.spread || null, sVal=document.getElementById('dSpreadVal'), sSt=document.getElementById('dSpreadStatus');
+  if(spread!==null){sVal.textContent=spread.toFixed(2)+'%';sSt.textContent=spread>=3?'高位✅':spread>=2?'中等':'偏低⚠️';}
+  else{sVal.textContent='--';sSt.textContent='';}
+
   // 股息率
   var dy=d.dividend_yield||0;
   document.getElementById('dDivYield').textContent=dy.toFixed(2)+'%';
@@ -1060,13 +1070,25 @@ function renderDividend(d){
   peDesc.textContent=pp+'% '+(pp>=80?'偏高':pp>=50?'中等':'偏低');
   peDesc.className='ml-desc '+(pp>=80?'y':pp<30?'g':'');
 
-  document.getElementById('dPbVal').textContent='0.82';
-  document.getElementById('dPbDesc').textContent='偏低';
-  document.getElementById('dPbDesc').className='ml-desc g';
+  // PB — 动态，不再硬编码
+  var pb = d.pb || null;
+  document.getElementById('dPbVal').textContent = pb ? pb.toFixed(2) : '--';
+  var pbEl = document.getElementById('dPbDesc');
+  if (pb !== null) {
+    if (pb < 0.7) { pbEl.textContent='偏低'; pbEl.className='ml-desc g'; }
+    else if (pb < 1.2) { pbEl.textContent='正常'; pbEl.className='ml-desc'; }
+    else { pbEl.textContent='偏高'; pbEl.className='ml-desc y'; }
+  } else { pbEl.textContent='--'; pbEl.className='ml-desc'; }
 
-  document.getElementById('dRoeVal').textContent='9.50%';
-  document.getElementById('dRoeDesc').textContent='中等';
-  document.getElementById('dRoeDesc').className='ml-desc';
+  // ROE — 动态，不再硬编码
+  var roe = d.roe || null;
+  document.getElementById('dRoeVal').textContent = roe ? roe.toFixed(1)+'%' : '--';
+  var roeEl = document.getElementById('dRoeDesc');
+  if (roe !== null) {
+    if (roe >= 15) { roeEl.textContent='优秀'; roeEl.className='ml-desc g'; }
+    else if (roe >= 8) { roeEl.textContent='中等'; roeEl.className='ml-desc'; }
+    else { roeEl.textContent='偏低'; roeEl.className='ml-desc y'; }
+  } else { roeEl.textContent='--'; roeEl.className='ml-desc'; }
 
   document.getElementById('dSizeVal').textContent=(d.etf_size||'--')+'亿';
   var dsDesc=document.getElementById('dSizeDesc');
@@ -1130,8 +1152,8 @@ function renderDividend(d){
 
 var DIV_INFO = {
   pe:{title:'市盈率（PE）是什么？',body:'市盈率 = ETF价格 ÷ 成分股总利润。<br><br>红利低波的成分股以银行+能源为主，PE长期在6-10倍之间波动。超过12倍算偏贵，低于6倍算便宜。<br><br><b>当前PE '+(window._divData?window._divData.pe:'--')+'</b>，处于历史'+(window._divData?'第'+window._divData.pe_percentile+'百分位':'--')+'。'},
-  pb:{title:'市净率（PB）是什么？',body:'市净率 = ETF价格 ÷ 每股净资产。<br><br>PB低于1倍 = 用低于净资产的价格买到，传统上被认为是低估。但红利低波成分股银行占比高，银行股PB长期低于1倍（0.5-0.8是常态）。<br><br><b>0.82倍</b>意味着每1元净资产你只花0.82元就能买到。'},
-  roe:{title:'净资产收益率（ROE）是什么？',body:'ROE = 净利润 ÷ 净资产。衡量公司用股东的钱赚钱的效率。<br><br><b>9.50%</b>意味着每100元净资产，一年能赚9.5元。<br><br>红利低波成分股整体的ROE在8-12%之间属于正常。低于6%说明盈利质量差，高于15%属于优秀。'},
+  pb:{title:'市净率（PB）是什么？',body:'市净率 = ETF价格 ÷ 每股净资产。<br><br>PB低于1倍 = 用低于净资产的价格买到，传统上被认为是低估。但红利低波成分股银行占比高，银行股PB长期低于1倍（0.5-0.8是常态）。<br><br><b>当前PB '+(window._divData&&window._divData.pb?window._divData.pb.toFixed(2):'--')+'</b>，'+(window._divData&&window._divData.pb?'<span style="color:'+(window._divData.pb<0.7?'#059669':window._divData.pb<1.2?'#475569':'#DC2626')+'">'+(window._divData.pb<0.7?'估值偏低':window._divData.pb<1.2?'估值正常':'估值偏高')+'</span>':'')+'。'},
+  roe:{title:'净资产收益率（ROE）是什么？',body:'ROE = 净利润 ÷ 净资产。衡量公司用股东的钱赚钱的效率。<br><br><b>当前ROE '+(window._divData&&window._divData.roe?window._divData.roe.toFixed(1)+'%':'--')+'</b>'+(window._divData&&window._divData.roe?'，<span style="color:'+(window._divData.roe>=15?'#059669':window._divData.roe>=8?'#475569':'#DC2626')+'">'+(window._divData.roe>=15?'盈利能力优秀':window._divData.roe>=8?'盈利能力中等':'盈利能力偏低')+'</span>':'')+'。<br><br>红利低波成分股整体的ROE在8-12%之间属于正常。低于6%说明盈利质量差，高于15%属于优秀。'},
   size:{title:'ETF规模怎么看？',body:'ETF规模决定了买卖的流畅度。<br><br><b>规模 > 50亿：</b>流动性充裕，大额买卖都没问题<br><b>10-50亿：</b>正常，普通交易没问题<br><b>< 10亿：</b>偏小，日成交可能低于5000万，大额会有滑点<br><br>563020当前规模约'+(window._divData?window._divData.etf_size+'亿':'--')+'，流动性充裕。'},
 };
 

@@ -5,6 +5,10 @@
   "dividend_yield": 5.17,
   "dividend_yield_date": "2026-07-10",
   "dividend_yield_percentile": 55,
+  "pb": 0.9,
+  "roe": 11.7,
+  "bond_yield": 1.7398,
+  "spread": 3.43,
   "etf_price": 1.104,
   "etf_premium": 0.16,
   "etf_volume": 227322442.0,
@@ -180,5 +184,5 @@
       "v": 5.17
     }
   ],
-  "update_time": "2026-07-12 19:43"
+  "update_time": "2026-07-12 20:30"
 }
