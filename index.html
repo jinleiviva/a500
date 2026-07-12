@@ -496,17 +496,21 @@ body{
           </div>
           <div class="ml-expand" id="expandDivPe"><div class="ml-exp-inner"></div></div>
           <div class="ml-div"></div>
-          <div class="ml-row" style="padding:10px 0">
+          <div class="ml-row" onclick="toggleExpandDiv('pb')" style="cursor:pointer;transition:background 0.15s" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background=''">
             <span class="ml-lbl">市净率</span>
             <span class="ml-val" id="dPbVal">--</span>
             <span class="ml-desc" id="dPbDesc">--</span>
+            <span class="ml-chev">›</span>
           </div>
+          <div class="ml-expand" id="expandDivPb"><div class="ml-exp-inner"></div></div>
           <div class="ml-div"></div>
-          <div class="ml-row" style="padding:10px 0">
+          <div class="ml-row" onclick="toggleExpandDiv('roe')" style="cursor:pointer;transition:background 0.15s" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background=''">
             <span class="ml-lbl">ROE</span>
             <span class="ml-val" id="dRoeVal">--</span>
             <span class="ml-desc" id="dRoeDesc">--</span>
+            <span class="ml-chev">›</span>
           </div>
+          <div class="ml-expand" id="expandDivRoe"><div class="ml-exp-inner"></div></div>
           <div class="ml-div"></div>
           <div class="ml-row" onclick="toggleExpandDiv('size')" style="cursor:pointer;transition:background 0.15s" onmouseenter="this.style.background='#F8FAFC'" onmouseleave="this.style.background=''">
             <span class="ml-lbl">ETF规模</span>
@@ -737,7 +741,7 @@ body{
       {d:"07-08",pe:16.16},
       {d:"07-09",pe:16.62},
       {d:"07-10",pe:16.31}
-    ], 'pageCreatedAt': '2026-07-12 19:49', 'pricePercentile': 93.2,
+    ], 'pageCreatedAt': '2026-07-12 19:53', 'pricePercentile': 93.2,
   };
   window.__D = D;
 
@@ -1141,8 +1145,10 @@ function toggleExpandDiv(key){
     expandOpen = null;
     return;
   }
-  var color = key==='pe'?'#8B5CF6':'#059669';
-  var label = key==='pe'?'📊 估值指标':'🏦 流动性指标';
+  var colors = {pe:'#8B5CF6',pb:'#2563EB',roe:'#D97706',size:'#059669'};
+  var labels = {pe:'📊 估值指标',pb:'🏦 资产指标',roe:'💰 盈利指标',size:'💧 流动性指标'};
+  var color = colors[key]||'#059669';
+  var label = labels[key]||'';
   el.querySelector('.ml-exp-inner').innerHTML = '<span class="ml-exp-label" style="color:'+color+'">'+label+'</span>' + info.body;
   el.querySelector('.ml-exp-inner').style.borderLeftColor = color;
   el.className = 'ml-expand show';
