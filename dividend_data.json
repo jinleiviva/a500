@@ -8,7 +8,7 @@
   "etf_price": 1.104,
   "etf_premium": 0.16,
   "etf_volume": 227322442.0,
-  "etf_size": 124.04,
+  "etf_size": 124.82,
   "etf_update_time": "2026-07-10 16:11:50+08:00",
   "light": "yellow",
   "light_score": 57,
@@ -180,5 +180,5 @@
       "v": 5.17
     }
   ],
-  "update_time": "2026-07-12 19:30"
+  "update_time": "2026-07-12 19:43"
 }
