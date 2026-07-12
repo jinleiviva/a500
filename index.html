@@ -226,7 +226,7 @@ body{
 
     <!-- Top bar -->
     <div class="top-bar">
-      <span class="tb-title">A500 温度计</span>
+      <span class="tb-title" id="pageTitle">A500 温度计</span>
       <span class="tb-meta"><span id="todayDate">--</span></span>
     </div>
 
@@ -445,6 +445,9 @@ body{
                 <span>成交量 <span class="d-sub-v" id="dVolume">--</span></span>
                 <span>规模 <span class="d-sub-v" id="dSize">--</span></span>
               </div>
+              <div class="d-sub" style="margin-top:4px">
+                <span>追踪 <span class="d-sub-v" style="font-weight:600;color:#059669">563020 易方达红利低波</span></span>
+              </div>
               <div class="d-status">
                 <span class="d-dot gray" id="dDot"></span>
                 <span id="dStatus">--</span>
@@ -589,9 +592,9 @@ body{
   <!-- Bottom nav -->
   <div class="bnv" id="bottomNav">
     <div class="bn-slider" id="bnSlider"></div>
-    <div class="bn-item act" id="tabBtnA500" onclick="switchTab('a500')"><span class="bn-icon">🌡️</span>温度</div>
+    <div class="bn-item act" id="tabBtnA500" onclick="switchTab('a500')"><span class="bn-icon">🌡️</span>A500</div>
     <div class="bn-item" id="tabBtnDividend" onclick="switchTab('dividend')"><span class="bn-icon">💰</span>红利</div>
-    <div class="bn-item" id="tabBtnTrans" onclick="switchTab('transition')"><span class="bn-icon">📊</span>经济</div>
+    <div class="bn-item" id="tabBtnTrans" onclick="switchTab('transition')"><span class="bn-icon">📊</span>经济健康</div>
   </div>
 
 </div>
@@ -734,7 +737,7 @@ body{
       {d:"07-08",pe:16.16},
       {d:"07-09",pe:16.62},
       {d:"07-10",pe:16.31}
-    ], 'pageCreatedAt': '2026-07-12 19:32', 'pricePercentile': 93.2,
+    ], 'pageCreatedAt': '2026-07-12 19:49', 'pricePercentile': 93.2,
   };
   window.__D = D;
 
@@ -972,7 +975,7 @@ function loadDividend(){
   x.open('GET','dividend_data.json?_='+Date.now(),true);
   x.onload=function(){
     if(x.status===200){
-      try{var T=JSON.parse(x.responseText);window._divData=T;renderDividend(T);}
+      try{var T=JSON.parse(x.responseText);window._divData=T;renderDividend(T);setTimeout(scheduleDivRT,100);}
       catch(e){divFail();}
     }else{divFail();}
   };
@@ -1079,7 +1082,7 @@ function renderDividend(d){
         plugins:{legend:{display:false}},
         scales:{
           x:{display:true,grid:{display:false},ticks:{maxTicksLimit:7,font:{size:9},color:'#94A3B8'}},
-          y:{display:true,min:0,max:100,grid:{color:'#F1F5F9'},ticks:{font:{size:9},color:'#94A3B8',callback:function(v){return v+'%'}}}
+          y:{display:true,min:0,max:100,grid:{color:'#F1F5F9'},ticks:{font:{size:9},color:'#94A3B8',stepSize:20,callback:function(v){return v+'分位'}}}
         }
       },
       plugins:[{id:'divZones',beforeDraw:function(chart){
@@ -1110,7 +1113,7 @@ function renderDividend(d){
         plugins:{legend:{display:false}},
         scales:{
           x:{display:true,grid:{display:false},ticks:{maxTicksLimit:7,font:{size:9},color:'#94A3B8'}},
-          y:{display:true,grid:{color:'#F1F5F9'},ticks:{font:{size:9},color:'#94A3B8',callback:function(v){return v+'%'}}}
+          y:{display:true,grid:{color:'#F1F5F9'},ticks:{font:{size:9},color:'#94A3B8',callback:function(v){return v.toFixed(1)+'%'}}}
         }
       }
     });
@@ -1119,6 +1122,8 @@ function renderDividend(d){
 
 var DIV_INFO = {
   pe:{title:'市盈率（PE）是什么？',body:'市盈率 = ETF价格 ÷ 成分股总利润。<br><br>红利低波的成分股以银行+能源为主，PE长期在6-10倍之间波动。超过12倍算偏贵，低于6倍算便宜。<br><br><b>当前PE '+(window._divData?window._divData.pe:'--')+'</b>，处于历史'+(window._divData?'第'+window._divData.pe_percentile+'百分位':'--')+'。'},
+  pb:{title:'市净率（PB）是什么？',body:'市净率 = ETF价格 ÷ 每股净资产。<br><br>PB低于1倍 = 用低于净资产的价格买到，传统上被认为是低估。但红利低波成分股银行占比高，银行股PB长期低于1倍（0.5-0.8是常态）。<br><br><b>0.82倍</b>意味着每1元净资产你只花0.82元就能买到。'},
+  roe:{title:'净资产收益率（ROE）是什么？',body:'ROE = 净利润 ÷ 净资产。衡量公司用股东的钱赚钱的效率。<br><br><b>9.50%</b>意味着每100元净资产，一年能赚9.5元。<br><br>红利低波成分股整体的ROE在8-12%之间属于正常。低于6%说明盈利质量差，高于15%属于优秀。'},
   size:{title:'ETF规模怎么看？',body:'ETF规模决定了买卖的流畅度。<br><br><b>规模 > 50亿：</b>流动性充裕，大额买卖都没问题<br><b>10-50亿：</b>正常，普通交易没问题<br><b>< 10亿：</b>偏小，日成交可能低于5000万，大额会有滑点<br><br>563020当前规模约'+(window._divData?window._divData.etf_size+'亿':'--')+'，流动性充裕。'},
 };
 
@@ -1148,6 +1153,37 @@ function toggleRefDiv(){
   var b=document.getElementById('refDivBody'),a=document.getElementById('refDivArrow'),cr=a.parentNode;
   if(b.className.indexOf('show')>=0){b.className='cr-body';cr.className='cr';a.textContent='▶';}
   else{b.className='cr-body show';cr.className='cr open';a.textContent='▶';}
+}
+
+// ── 红利实时(gtimg) ──
+function fetchDivRT(){
+  fetch('https://qt.gtimg.cn/q=sh563020&_='+Date.now())
+    .then(function(r){return r.arrayBuffer()})
+    .then(function(buf){
+      var txt=new TextDecoder('gbk').decode(buf),m=txt.match(/v_sh563020="([^"]+)"/);
+      if(!m)return;
+      var f=m[1].split('~');
+      if(f.length<35)return;
+      var price=parseFloat(f[3]),yc=parseFloat(f[4]),chg=parseFloat(f[31])||0,pct=parseFloat(f[32])||0;
+      var ih=isMarket(),dot=document.getElementById('dDot'),st=document.getElementById('dStatus'),
+          pr=document.getElementById('dPrice'),cg=document.getElementById('dChg');
+      if(dot)dot.className='d-dot '+(ih?'green':'gray');
+      if(st)st.textContent=ih?'📡实时':'💤盘后';
+      if(pr)pr.textContent=price;
+      if(cg){cg.textContent=(chg>=0?'+':'')+pct.toFixed(2)+'%';cg.style.color=chg>=0?'#EF4444':'#059669';}
+    })
+    .catch(function(){});
+}
+function scheduleDivRT(){
+  if(!window._divLoaded)return;
+  fetchDivRT();
+  setInterval(function(){
+    var ih=isMarket();
+    var dot=document.getElementById('dDot'),st=document.getElementById('dStatus');
+    if(dot)dot.className='d-dot '+(ih?'green':'gray');
+    if(st)st.textContent=ih?'📡实时':'💤盘后';
+    if(ih)fetchDivRT();
+  },60000);
 }
 
 var TRANS_INFO={
@@ -1283,19 +1319,22 @@ function toggleRef(){
 function switchTab(t){
   var a5=document.getElementById('tabA500'),tr=document.getElementById('tabTransition'),dv=document.getElementById('tabDividend'),
       ba=document.getElementById('tabBtnA500'),bt=document.getElementById('tabBtnTrans'),bd=document.getElementById('tabBtnDividend'),
-      sl=document.getElementById('bnSlider'),iW=sl?sl.offsetWidth:0;
+      sl=document.getElementById('bnSlider'),iW=sl?sl.offsetWidth:0,pt=document.getElementById('pageTitle');
   a5.style.display='none';tr.style.display='none';dv.style.display='none';
   ba.className='bn-item';bt.className='bn-item';bd.className='bn-item';
   if(t==='a500'){
     a5.style.display='block';ba.className='bn-item act';
     if(sl)sl.style.transform='translateX(0)';
+    if(pt)pt.textContent='A500 温度计';
   }else if(t==='dividend'){
     dv.style.display='block';bd.className='bn-item act';
     if(sl)sl.style.transform='translateX('+(iW+4)+'px)';
+    if(pt)pt.textContent='红利低波 温度计';
     if(!window._divLoaded)loadDividend();
   }else{
     tr.style.display='block';bt.className='bn-item act';
     if(sl)sl.style.transform='translateX('+((iW+4)*2)+'px)';
+    if(pt)pt.textContent='经济健康 温度计';
     if(!window._transLoaded)loadTransition();
   }
 }
