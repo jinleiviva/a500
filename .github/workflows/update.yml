@@ -44,14 +44,21 @@ jobs:
         env:
           NO_PROXY: '*'
 
+      - name: 运行红利低波脚本
+        run: python fetch_dividend_data.py
+        env:
+          NO_PROXY: '*'
+
       - name: 准备 GitHub Pages 文件
         run: |
           # 温度计脚本产出 a500_dashboard.html，Pages 需要 index.html
           cp a500_dashboard.html index.html
           cp transition_data.json . 2>/dev/null || true
+          cp dividend_data.json . 2>/dev/null || true
           mkdir -p _site
           cp index.html _site/
           cp transition_data.json _site/ 2>/dev/null || true
+          cp dividend_data.json _site/ 2>/dev/null || true
 
       - name: 提交更新后的 PE 历史数据
         run: |
