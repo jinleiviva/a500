@@ -890,6 +890,10 @@ function renderDividend(d){
   document.getElementById('dVolume').textContent=vol>=1e8?(vol/1e8).toFixed(2)+'亿':(vol/1e4).toFixed(0)+'万';
   document.getElementById('dSize').textContent=(d.etf_size||'--')+'亿';
   document.getElementById('dUpdateTime').textContent='数据截至 '+ed;
+  // 初始状态：盘中/盘后
+  var ih=isMarket(),dot=document.getElementById('dDot'),st=document.getElementById('dStatus');
+  if(dot)dot.className='d-dot '+(ih?'green':'gray');
+  if(st)st.textContent=ih?'📡 实时':'💤 盘后';
 
   // 股息率
   var dy=d.dividend_yield||0;
@@ -1043,9 +1047,10 @@ function fetchDivRT(){
       if(f.length<35)return;
       var price=parseFloat(f[3]),yc=parseFloat(f[4]),chg=parseFloat(f[31])||0,pct=parseFloat(f[32])||0;
       var ih=isMarket(),dot=document.getElementById('dDot'),st=document.getElementById('dStatus'),
-          pr=document.getElementById('dPrice'),cg=document.getElementById('dChg');
+          pr=document.getElementById('dPrice'),cg=document.getElementById('dChg'),ut=document.getElementById('dUpdateTime');
       if(dot)dot.className='d-dot '+(ih?'green':'gray');
-      if(st)st.textContent=ih?'📡实时':'💤盘后';
+      if(st)st.textContent=ih?'📡 盘中实时':'💤 盘后';
+      if(ut&&f[30])ut.textContent='更新于 '+f[30].substring(8,10)+':'+f[30].substring(10,12)+':'+f[30].substring(12,14);
       if(pr)pr.textContent=price;
       if(cg){cg.textContent=(chg>=0?'+':'')+pct.toFixed(2)+'%';cg.style.color=chg>=0?'#EF4444':'#059669';}
     })
@@ -1058,7 +1063,7 @@ function scheduleDivRT(){
     var ih=isMarket();
     var dot=document.getElementById('dDot'),st=document.getElementById('dStatus');
     if(dot)dot.className='d-dot '+(ih?'green':'gray');
-    if(st)st.textContent=ih?'📡实时':'💤盘后';
+    if(st)st.textContent=ih?'📡 盘中实时':'💤 盘后';
     if(ih)fetchDivRT();
   },60000);
 }
