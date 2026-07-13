@@ -15,7 +15,7 @@ A500 温度计 · 盘中实时脚本
 输出:  realtime_data.js  (+ 同步到主目录)
 """
 
-import os, json, datetime, time
+import os, json, datetime, time, re, urllib.request
 
 # ── 清代理（akshare 走直连）──
 for k in list(os.environ.keys()):
@@ -72,20 +72,69 @@ def is_market_open() -> bool:
     return (930 <= t <= 1130) or (1300 <= t <= 1500)
 
 
-def fetch_spot(retries: int = 5):
-    """返回 (最新价, 涨跌幅%)，失败返回 (None, None)。带重试。"""
+# ── 多源实时行情：东方财富(主) → 新浪 → 腾讯(兜底) ──
+# 东方财富对自动化高频访问会间歇性封 IP（连接被直接重置），
+# 故增加两个走不同域名的独立源，任一可用即得真·实时数据。
+_A500_CODE = "sh000510"   # 中证A500 指数代码
+_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+
+
+def _fetch_em():
+    """东方财富（akshare）。"""
+    df = ak.stock_zh_index_spot_em(symbol='沪深重要指数')
+    row = df[df['名称'].astype(str).str.contains('A500|中证A500', na=False)]
+    if not row.empty:
+        return float(row.iloc[0]['最新价']), float(row.iloc[0]['涨跌幅'])
+    return None, None
+
+
+def _fetch_sina():
+    """新浪财经实时（不同域名，通常不被封）。返回 (最新价, 涨跌幅%)。"""
+    url = f"https://hq.sinajs.cn/list={_A500_CODE}"
+    req = urllib.request.Request(url, headers={"User-Agent": _UA, "Referer": "https://finance.sina.com.cn/"})
+    raw = urllib.request.urlopen(req, timeout=10).read().decode("gbk", "ignore")
+    m = re.search(r'hq_str_%s="([^"]+)"' % _A500_CODE, raw)
+    if not m:
+        return None, None
+    p = m.group(1).split(",")
+    if len(p) < 4:
+        return None, None
+    cur, prev = float(p[3]), float(p[1])
+    return cur, round((cur - prev) / prev * 100, 2)
+
+
+def _fetch_tencent():
+    """腾讯财经实时（不同域名，兜底）。返回 (最新价, 涨跌幅%)。"""
+    url = f"https://qt.gtimg.cn/q={_A500_CODE}"
+    req = urllib.request.Request(url, headers={"User-Agent": _UA, "Referer": "https://finance.qq.com/"})
+    raw = urllib.request.urlopen(req, timeout=10).read().decode("gbk", "ignore")
+    m = re.search(r'v_%s="([^"]+)"' % _A500_CODE, raw)
+    if not m:
+        return None, None
+    p = m.group(1).split("~")
+    if len(p) < 5:
+        return None, None
+    cur, prev = float(p[3]), float(p[4])
+    return cur, round((cur - prev) / prev * 100, 2)
+
+
+def fetch_spot():
+    """多源容错：东方财富 → 新浪 → 腾讯。返回 (最新价, 涨跌幅%)，全失败返回 (None, None)。"""
+    sources = [("东方财富", _fetch_em), ("新浪", _fetch_sina), ("腾讯", _fetch_tencent)]
     last_err = None
-    for i in range(retries):
-        try:
-            df = ak.stock_zh_index_spot_em(symbol='沪深重要指数')
-            row = df[df['名称'].astype(str).str.contains('A500|中证A500', na=False)]
-            if not row.empty:
-                return float(row.iloc[0]['最新价']), float(row.iloc[0]['涨跌幅'])
-        except Exception as e:
-            last_err = e
-            time.sleep(3)
+    for name, fn in sources:
+        for attempt in range(2):
+            try:
+                r = fn()
+                if r[0] is not None:
+                    print(f"   ✅ 实时行情来源: {name}")
+                    return r
+            except Exception as e:
+                last_err = e
+            if attempt == 0:
+                time.sleep(0.5)
     if last_err:
-        print(f"   ⚠️ 实时行情获取失败（{retries}次重试）: {last_err}")
+        print(f"   ⚠️ 所有实时数据源均失败: {last_err}")
     return None, None
 
 
