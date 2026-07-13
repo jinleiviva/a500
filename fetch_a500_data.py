@@ -311,6 +311,14 @@ def _render(data: dict):
     with open(OUTPUT, 'w', encoding='utf-8') as f:
         f.write(html)
 
+    # GitHub Pages 以根目录 index.html 为默认首页，必须与 OUTPUT 同步产出实时版本
+    index_path = os.path.join(DIR, "index.html")
+    try:
+        with open(index_path, 'w', encoding='utf-8') as f:
+            f.write(html)
+    except Exception as e:
+        print(f"   ⚠️ 写入 index.html 失败: {e}")
+
 
 if __name__ == '__main__':
     update()
