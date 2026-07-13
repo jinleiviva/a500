@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.5,user-scalable=yes">
 <title>A500 温度计</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<!-- REALTIME_INLINE -->
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{
@@ -635,6 +636,20 @@ body{
   }
 
   function render(){
+    // 若实时数据已就绪（页面内联了 window.__RT），温度环直接以实时值渲染，
+    // 不再走日频占位动画（那会把实时温度先重置为 0 再数到日频值）。
+    if(window.__RT && window.__RT.temperature!=null){
+      var rt=window.__RT, t=Math.round(rt.temperature), ti=tInfo(t);
+      var arc=document.getElementById('mainArc'), numEl=document.getElementById('tempNum'),
+          lblEl=document.getElementById('tempLbl'), adv=document.getElementById('advice'),
+          td=document.getElementById('todayDate');
+      if(arc){var C=2*Math.PI*50;arc.style.strokeDasharray=C;arc.style.strokeDashoffset=C*(1-t/100);arc.style.stroke=ti.c;}
+      if(numEl){numEl.textContent=t;numEl.style.color=ti.c;}
+      if(lblEl){lblEl.textContent=ti.l;lblEl.style.color=ti.c;}
+      if(adv)adv.textContent=tAdv(t);
+      if(td)td.textContent='实时数据 '+rt.ts;
+      return;
+    }
     var d=D,ti=tInfo(d.temperature);
     document.getElementById('todayDate').textContent='数据截至 '+d.date+' 收盘';
 
@@ -653,7 +668,12 @@ body{
     if(lblEl)lblEl.textContent='--';
     
     // Step 2: after a frame, animate to real values
+    // 若实时数据已就绪（window.__RT 存在），温度环交给实时逻辑接管，
+    // 日频动画不再覆盖，避免把实时温度盖回静态日频值。
     setTimeout(function(){
+      if(window.__RT && window.__RT.temperature!=null){
+        return; // 实时已接管，跳过日频动画（数值/弧线由 applyRT 负责）
+      }
       var targetTemp=d.temperature;
       if(arc){
         arc.style.stroke=ti.c;
@@ -664,6 +684,7 @@ body{
       var inc=targetTemp/(duration/step);
       var cur=0;
       var ct=setInterval(function(){
+        if(window.__RT && window.__RT.temperature!=null){clearInterval(ct);return;}
         cur+=inc;
         if(cur>=targetTemp){cur=targetTemp;clearInterval(ct);}
         if(numEl)numEl.textContent=Math.round(cur);
@@ -1168,7 +1189,9 @@ function toggleRef(){
     rtPrev=s;
   }
   function start(){
-    loadRT();                  // 首次加载
+    // 若页面已内联实时数据（生成时注入），立即应用，避免外部文件加载前的空白/旧值
+    if(window.__RT && window.__RT.temperature!=null) applyRT(window.__RT);
+    loadRT();                  // 加载/更新外部 realtime_data.js
     setInterval(loadRT, 30000); // 每30秒轮询（文件每5分钟由后端刷新）
   }
   if(document.body) start();

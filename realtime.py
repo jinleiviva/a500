@@ -29,6 +29,7 @@ BASELINE = os.path.join(DIR, "realtime_baseline.json")
 LASTGOOD = os.path.join(DIR, "realtime_last.json")
 OUT_LOCAL = os.path.join(DIR, "realtime_data.js")
 OUT_MAIN = os.path.join(os.path.dirname(DIR), "realtime_data.js")   # 主目录（与 A500温度计.html 同层）
+OUT_MAIN_HTML = os.path.join(os.path.dirname(DIR), "A500温度计.html")  # 主目录 HTML
 
 
 def load_json(path: str):
@@ -41,6 +42,26 @@ def load_json(path: str):
 def save_json(path: str, data: dict):
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False)
+
+
+def inline_into_html(html_path, payload):
+    """把实时数据内联进 HTML 的 REALTIME_INLINE 锚点（双保险，避免依赖外部文件加载成败）。"""
+    import re
+    if not os.path.exists(html_path):
+        return
+    with open(html_path, encoding='utf-8') as f:
+        h = f.read()
+    marker = "<!-- REALTIME_INLINE -->"
+    inline = marker + "\n<script>" + payload + "</script>"
+    if marker in h:
+        h2 = re.sub(r"<!-- REALTIME_INLINE -->\s*<script>.*?</script>", inline, h, count=1, flags=re.S)
+        if h2 == h:
+            h2 = h.replace(marker, inline, 1)
+    else:
+        h2 = h.replace("</body>", inline + "\n</body>", 1)
+    with open(html_path, 'w', encoding='utf-8') as f:
+        f.write(h2)
+    print(f"   ✅ 内联实时数据 → {html_path}")
 
 
 def is_market_open() -> bool:
@@ -158,6 +179,16 @@ def main():
             print(f"   ✅ 写入 {path}")
         except Exception as e:
             print(f"   ⚠️ 写入失败 {path}: {e}")
+
+    # 内联到 HTML（双保险：即使外部 realtime_data.js 加载失败，页面打开即显示正确温度）
+    inline_into_html(os.path.join(DIR, "a500_dashboard.html"), payload)
+    # 同步主目录（覆盖任何残留，确保 HTML 结构完整 + 内联最新数据）
+    import shutil
+    try:
+        shutil.copy(os.path.join(DIR, "a500_dashboard.html"), OUT_MAIN_HTML)
+        print(f"   ✅ 同步 → {OUT_MAIN_HTML}")
+    except Exception as e:
+        print(f"   ⚠️ 同步失败 {OUT_MAIN_HTML}: {e}")
 
 
 if __name__ == '__main__':
