@@ -1122,103 +1122,48 @@ function toggleRef(){
   else{b.className='cr-body show';cr.className='cr open';a.textContent='▶';}
 }
 
-// ── Real-time ──
+// ── Real-time（后端 realtime_data.js 轮询，盘中每5分钟刷新）──
 (function(){
-  var pr=document.getElementById('rtPrice'),cg=document.getElementById('rtChg'),
-      rt=null,sc=null;
-
-  function parseT(text){
-    var m=text.match(/v_sh000510="([^"]+)"/);
-    if(!m)return null;
-    var f=m[1].split('~');
-    if(f.length<35)return null;
-    return{price:parseFloat(f[3]),yc:parseFloat(f[4]),change:parseFloat(f[31])||0,pct:parseFloat(f[32])||0,ts:f[30]||''};
-  }
-  function compRT(rtD){
-    if(!rtD||!rtD.price)return null;
-    var wd=window.__D,rPe=wd.pe*rtD.price/wd.price,cnt=0,h=wd.peHistory||[];
-    for(var i=0;i<h.length;i++){if(h[i].pe<=rPe)cnt++}
-    var rPct=h.length>0?cnt/h.length*100:wd.pePercentile;
-    var rT=Math.round((rPct*0.6+wd.pricePercentile*0.4)*10)/10;
-    return{pe:rPe,temp:rT};
-  }
-  function upUI(rd,cp){
-    if(!rd)return;
+  function applyRT(rt){
+    if(!rt)return;
     var ih=isMarket();
     var dot=document.getElementById('rtDot'),lbl=document.getElementById('rtLbl'),
         bmDot=document.getElementById('bmDot'),bmSt=document.getElementById('bmStatus'),
         ts=document.getElementById('tempStatus');
-    if(dot){dot.className='pr-dot '+(ih?'on pulse':'off');}
+    if(dot)dot.className='pr-dot '+(ih?'on pulse':'off');
     if(lbl)lbl.textContent=ih?'📡 盘中':'💤 盘后';
     if(bmDot)bmDot.style.background=ih?'#059669':'#94A3B8';
-    if(bmSt)bmSt.textContent=ih?'盘中实时刷新':'盘后数据';
-    if(ts)ts.textContent=ih?'📡 盘中实时（每60秒自动更新）':'💤 盘后数据';
+    if(bmSt)bmSt.textContent=rt.live?'盘中实时刷新':'盘后数据';
+    if(ts)ts.textContent=rt.live?'📡 盘中实时（每5分钟更新）':'💤 盘后数据';
 
-    var up=rd.change>=0,co=up?'#EF4444':'#059669';
-    pr.textContent=rd.price.toLocaleString();pr.style.color=co;
-    cg.textContent=(up?'+':'')+rd.pct.toFixed(2)+'%';cg.style.color=co;
-    if(rd.ts&&rd.ts.length>=14){
-      document.getElementById('rtTime').textContent='最后更新 '+rd.ts.substring(8,10)+':'+rd.ts.substring(10,12)+':'+rd.ts.substring(12,14);
-    }
-    if(cp){
-      // Update main ring with real-time data
-      var tmpT=tInfo(cp.temp),tmpArc=document.getElementById('mainArc');
-      if(tmpArc){
-        var tmpC=2*Math.PI*50;
-        tmpArc.style.strokeDasharray=tmpC;
-        tmpArc.style.strokeDashoffset=tmpC*(1-cp.temp/100);
-        tmpArc.style.stroke=tmpT.c;
-      }
-      var tmpN=document.getElementById('tempNum');
-      if(tmpN){tmpN.textContent=Math.round(cp.temp);tmpN.style.color=tmpT.c;}
-      var tmpL=document.getElementById('tempLbl');
-      if(tmpL){tmpL.textContent=tmpT.l;tmpL.style.color=tmpT.c;}
-    }
-  }
+    var up=rt.change>=0,co=up?'#EF4444':'#059669';
+    var pr=document.getElementById('rtPrice'),cg=document.getElementById('rtChg');
+    if(pr){pr.textContent=Number(rt.price).toLocaleString();pr.style.color=co;}
+    if(cg){cg.textContent=(up?'+':'')+Number(rt.change).toFixed(2)+'%';cg.style.color=co;}
 
-  function rtStatus(ih){
-    var el=document.getElementById('bmStatus');
-    if(!el)return;
-    if(ih){el.textContent='盘中实时刷新';el.style.color='#059669';}
-    else{el.textContent='盘后数据';el.style.color='#94A3B8';}
-  }
+    var t=Math.round(rt.temperature),ti=tInfo(t),
+        arc=document.getElementById('mainArc'),
+        num=document.getElementById('tempNum'),
+        l2=document.getElementById('tempLbl');
+    if(arc){var C=2*Math.PI*50;arc.style.strokeDasharray=C;arc.style.strokeDashoffset=C*(1-t/100);arc.style.stroke=ti.c;}
+    if(num){num.textContent=t;num.style.color=ti.c;}
+    if(l2){l2.textContent=ti.l;l2.style.color=ti.c;}
 
-  function scheduleRT(){
-    var ih=isMarket();
-    var bmDot=document.getElementById('bmDot');
-    var ts=document.getElementById('tempStatus');
-    if(bmDot)bmDot.style.background=ih?'#059669':'#94A3B8';
-    rtStatus(ih);
-    if(ih){
-      fetchRT();
-      if(rt)clearInterval(rt);
-      rt=setInterval(fetchRT,60000);
-      if(sc){clearInterval(sc);sc=null;}
-    }else{
-      fetchRT();
-      if(rt){clearInterval(rt);rt=null;}
-      if(sc)return;
-      sc=setInterval(function(){
-        if(isMarket()){clearInterval(sc);sc=null;scheduleRT();}
-      },30000);
-    }
-  }
-  function fetchRT(){
-    var er=document.getElementById('rtChg');
-    fetch('https://qt.gtimg.cn/q=sh000510&_='+Date.now())
-      .then(function(r){return r.arrayBuffer()})
-      .then(function(buf){
-        var txt=new TextDecoder('gbk').decode(buf),rd=parseT(txt);
-        if(!rd||isNaN(rd.price))return;
-        upUI(rd,compRT(rd));
-      })
-      .catch(function(){});
-  }
+    var peEl=document.getElementById('peVal');if(peEl&&rt.pe)peEl.textContent=rt.pe+' 年';
+    var prEl=document.getElementById('peRank');if(prEl&&rt.pePercentile!=null)prEl.textContent='PE分位 '+rt.pePercentile+'%';
 
-  setTimeout(function(){
-    if(!window.__D)return;
-    scheduleRT();
-  },500);
+    var ut=document.getElementById('rtTime');
+    if(ut)ut.textContent='最后更新 '+rt.ts;
+  }
+  function loadRT(){
+    var s=document.createElement('script');
+    s.src='realtime_data.js?_='+Date.now();
+    s.onload=function(){ if(window.__RT)applyRT(window.__RT); };
+    s.onerror=function(){};
+    document.body.appendChild(s);
+  }
+  loadRT();                 // 打开即加载一次
+  setInterval(loadRT, 30000); // 每30秒轮询（文件每5分钟由后端刷新）
 })();
 
 // ── TAB ──
