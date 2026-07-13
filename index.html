@@ -6,7 +6,7 @@
 <title>A500 温度计</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <!-- REALTIME_INLINE -->
-<script>window.__RT = {"price": 5890.1, "change": -1.93, "pe": 16.0, "pePercentile": 57.4, "pricePercentile": 95.5, "temperature": 73, "live": false, "fresh": true, "delayed": true, "market": false, "ts": "2026-07-13 11:38:04"};</script>
+<script>window.__RT = {"price": 5890.1, "change": -1.93, "pe": 16.0, "pePercentile": 57.4, "pricePercentile": 95.5, "temperature": 73, "live": false, "fresh": true, "delayed": true, "market": true, "ts": "2026-07-13 11:38:04"};</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{
@@ -748,7 +748,7 @@ body{
       {d:"07-08",pe:16.16},
       {d:"07-09",pe:16.62},
       {d:"07-10",pe:16.31}
-    ], 'pageCreatedAt': '2026-07-13 12:31', 'pricePercentile': 93.2,
+    ], 'pageCreatedAt': '2026-07-13 13:56', 'pricePercentile': 93.2,
   };
   window.__D = D;
 
@@ -766,80 +766,44 @@ body{
   }
 
   function render(){
-    // 若实时数据已就绪（页面内联了 window.__RT），温度环直接以实时值渲染，
-    // 不再走日频占位动画（那会把实时温度先重置为 0 再数到日频值）。
-    if(window.__RT && window.__RT.temperature!=null){
-      var rt=window.__RT, t=Math.round(rt.temperature), ti=tInfo(t);
-      var arc=document.getElementById('mainArc'), numEl=document.getElementById('tempNum'),
-          lblEl=document.getElementById('tempLbl'), adv=document.getElementById('advice'),
-          td=document.getElementById('todayDate');
-      if(arc){var C=2*Math.PI*50;arc.style.strokeDasharray=C;arc.style.strokeDashoffset=C*(1-t/100);arc.style.stroke=ti.c;}
-      if(numEl){numEl.textContent=t;numEl.style.color=ti.c;}
-      if(lblEl){lblEl.textContent=ti.l;lblEl.style.color=ti.c;}
-      if(adv)adv.textContent=tAdv(t);
-      if(td)td.textContent='实时数据 '+rt.ts;
-      return;
-    }
-    var d=D,ti=tInfo(d.temperature);
-    document.getElementById('todayDate').textContent='数据截至 '+d.date+' 收盘';
+    // ① 无论走哪条分支，先隐藏加载遮罩、显示内容（否则会卡在"数据加载中"）
+    var loadingEl=document.getElementById('loading');
+    var contentEl=document.getElementById('content');
+    if(loadingEl)loadingEl.style.display='none';
+    if(contentEl)contentEl.style.display='block';
 
-    // Temp ring with loading animation
-    var C=2*Math.PI*50,arc=document.getElementById('mainArc');
+    var d=D;
+    // ② 实时温度优先：页面内联了 window.__RT 就用它，否则用日频值
+    var rt = (window.__RT && window.__RT.temperature!=null) ? window.__RT : null;
+    var effT = rt ? Math.round(rt.temperature) : d.temperature;
+    var ti=tInfo(effT);
+
+    // ③ 温度环 + 数字 + 标签 + 建议（直接落值，不再做 0→目标 的 count-up 动画，
+    //    避免把实时温度盖回静态日频值 / 卡在 0）
+    var C=2*Math.PI*50, arc=document.getElementById('mainArc');
     var numEl=document.getElementById('tempNum');
     var lblEl=document.getElementById('tempLbl');
-    
-    if(arc){
-      // Step 1: set to empty position (CSS transition will animate to target)
-      arc.style.strokeDasharray=C;
-      arc.style.stroke='transparent'; // hide during animation
-      arc.style.strokeDashoffset=C;
-    }
-    if(numEl){numEl.textContent='0';numEl.style.color=ti.c;}
-    if(lblEl)lblEl.textContent='--';
-    
-    // Step 2: after a frame, animate to real values
-    // 若实时数据已就绪（window.__RT 存在），温度环交给实时逻辑接管，
-    // 日频动画不再覆盖，避免把实时温度盖回静态日频值。
-    setTimeout(function(){
-      if(window.__RT && window.__RT.temperature!=null){
-        return; // 实时已接管，跳过日频动画（数值/弧线由 applyRT 负责）
-      }
-      var targetTemp=d.temperature;
-      if(arc){
-        arc.style.stroke=ti.c;
-        arc.style.strokeDashoffset=C*(1-targetTemp/100);
-      }
-      // Number count-up
-      var start=0,duration=800,step=30;
-      var inc=targetTemp/(duration/step);
-      var cur=0;
-      var ct=setInterval(function(){
-        if(window.__RT && window.__RT.temperature!=null){clearInterval(ct);return;}
-        cur+=inc;
-        if(cur>=targetTemp){cur=targetTemp;clearInterval(ct);}
-        if(numEl)numEl.textContent=Math.round(cur);
-      },step);
-      // Label
-      setTimeout(function(){if(lblEl){lblEl.textContent=ti.l;lblEl.style.color=ti.c;}},400);
-    },50);
+    if(arc){arc.style.strokeDasharray=C;arc.style.strokeDashoffset=C*(1-effT/100);arc.style.stroke=ti.c;}
+    if(numEl){numEl.textContent=effT;numEl.style.color=ti.c;}
+    if(lblEl){lblEl.textContent=ti.l;lblEl.style.color=ti.c;}
 
-    // Advice chip
     var adv=document.getElementById('advice');
-    adv.textContent=tAdv(d.temperature);
-    adv.style.display='inline-block';
-    if(d.temperature>=80) adv.className='adv-chip adv-chip-hot';
-    else if(d.temperature>=60) adv.className='adv-chip adv-chip-warn';
-    else if(d.temperature>=30) adv.className='adv-chip adv-chip-ok';
-    else adv.className='adv-chip adv-chip-cold';
+    if(adv){adv.textContent=tAdv(effT);adv.style.display='inline-block';
+      if(effT>=80)adv.className='adv-chip adv-chip-hot';
+      else if(effT>=60)adv.className='adv-chip adv-chip-warn';
+      else if(effT>=30)adv.className='adv-chip adv-chip-ok';
+      else adv.className='adv-chip adv-chip-cold';}
 
-    // Metrics list
+    var td=document.getElementById('todayDate');
+    if(td)td.textContent = rt ? ('实时数据 '+rt.ts) : ('数据截至 '+d.date+' 收盘');
+
+    // ④ 其余指标（PE / 股债差 / 红利 / 实时价 / 趋势图）使用日频数据 d 渲染
     document.getElementById('peVal').textContent=d.pe+' 年';
     var pr=document.getElementById('peRank');
     pr.textContent='PE分位 '+d.pePercentile+'%';
     pr.className='ml-desc '+(d.pePercentile>70?'r':d.pePercentile>50?'y':'g');
 
     document.getElementById('stockVal').textContent=d.stockYield+'%';
-
     document.getElementById('bondVal').textContent=d.bondYield+'%';
     var pd=document.getElementById('premiumDesc');
     if(d.premium>3){pd.textContent='股债差 +'+d.premium+'%';pd.className='ml-desc g';}
@@ -861,8 +825,7 @@ body{
 
     // Temp trend
     if(d.tempHistory&&d.tempHistory.length>0){
-      // Temperature zone colors plugin
-      var zonePlugin = {
+      var zonePlugin={
         id:'tempZones',
         beforeDraw:function(chart){
           var ctx=chart.ctx,ca=chart.chartArea,ys=chart.scales.y;
@@ -902,9 +865,6 @@ body{
         plugins:[zonePlugin]
       });
     }
-
-    document.getElementById('loading').style.display='none';
-    document.getElementById('content').style.display='block';
 
     // Reference values
     var pv=document.getElementById('refPeVal');if(pv)pv.textContent=d.pe+' 年';
