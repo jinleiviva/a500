@@ -218,6 +218,26 @@ def update():
         "peHistory":         [{"d": r["date"][5:], "pe": r["pe"]} for r in pe_history],
     }
 
+    # ── 实时基线（供 realtime.py 使用）──
+    baseline = {
+        "date":             today_date,
+        "price":            price_now,
+        "priceChange":      change,
+        "pe":               pe_now,
+        "pePercentile":     pe_pctl,
+        "pricePercentile":  price_pctl,
+        "bondYield":        bond_yield,
+        "dividendYield":    dividend_yield,
+        "premium":          premium,
+        "temperature":      temp,
+        "dcaPct":           dca_pct,
+        "dcaLabel":         dca_label,
+        "peLastCalibrated": PE_LAST_CALIBRATED,
+        "peHistory":        pe_history,                                   # 全量 PE 历史（用于实时 PE 分位）
+        "closesAll":        [round(float(x), 1) for x in df['close'].values],  # 全量收盘价（用于实时价格分位）
+    }
+    save_json(os.path.join(DIR, "realtime_baseline.json"), baseline)
+
     _render(data)
     print(f"\n✅ {OUTPUT}")
     print(f"   温度历史: {len(temp_history)} 天")
