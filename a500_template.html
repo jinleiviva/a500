@@ -1131,10 +1131,10 @@ function toggleRef(){
         bmDot=document.getElementById('bmDot'),bmSt=document.getElementById('bmStatus'),
         ts=document.getElementById('tempStatus');
     if(dot)dot.className='pr-dot '+(ih?'on pulse':'off');
-    if(lbl)lbl.textContent=ih?'📡 盘中':'💤 盘后';
+    if(lbl)lbl.textContent=rt.live?'📡 盘中':(rt.fresh?(rt.delayed?'📊 延迟':'📊 收盘'):'💤 盘后');
     if(bmDot)bmDot.style.background=ih?'#059669':'#94A3B8';
-    if(bmSt)bmSt.textContent=rt.live?'盘中实时刷新':'盘后数据';
-    if(ts)ts.textContent=rt.live?'📡 盘中实时（每5分钟更新）':'💤 盘后数据';
+    if(bmSt)bmSt.textContent=rt.live?'盘中实时刷新':(rt.fresh?(rt.delayed?'最近数据(略有延迟)':'最新收盘'):'盘后数据');
+    if(ts)ts.textContent=rt.live?'📡 盘中实时（每5分钟更新）':(rt.fresh?(rt.delayed?'💤 数据略有延迟（显示最近一次成功行情）':'💤 非交易时段（显示最新收盘）'):'💤 盘后数据');
 
     var up=rt.change>=0,co=up?'#EF4444':'#059669';
     var pr=document.getElementById('rtPrice'),cg=document.getElementById('rtChg');
@@ -1155,15 +1155,24 @@ function toggleRef(){
     var ut=document.getElementById('rtTime');
     if(ut)ut.textContent='最后更新 '+rt.ts;
   }
+  var rtPrev=null;
   function loadRT(){
+    // file:// 本地打开时不要加查询串（浏览器会把 ?_= 当成文件名一部分导致加载失败）
+    var isFile=(location.protocol==='file:');
+    if(rtPrev && rtPrev.parentNode) rtPrev.parentNode.removeChild(rtPrev);
     var s=document.createElement('script');
-    s.src='realtime_data.js?_='+Date.now();
     s.onload=function(){ if(window.__RT)applyRT(window.__RT); };
     s.onerror=function(){};
-    document.body.appendChild(s);
+    s.src='realtime_data.js'+(isFile?'':'?_='+Date.now());
+    (document.body||document.documentElement).appendChild(s);
+    rtPrev=s;
   }
-  loadRT();                 // 打开即加载一次
-  setInterval(loadRT, 30000); // 每30秒轮询（文件每5分钟由后端刷新）
+  function start(){
+    loadRT();                  // 首次加载
+    setInterval(loadRT, 30000); // 每30秒轮询（文件每5分钟由后端刷新）
+  }
+  if(document.body) start();
+  else window.addEventListener('DOMContentLoaded', start);
 })();
 
 // ── TAB ──
