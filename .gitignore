@@ -2,5 +2,11 @@ venv/
 __pycache__/
 *.pyc
 .DS_Store
-a500_dashboard.html
+
+# 运行时生成的缓存（可重新生成，无需入库）
 pe_cache.json
+
+# ⚠️ 部署说明：
+# - 唯一产物是 index.html（git 跟踪），它既是 GitHub Pages 默认首页，也是本地 A500温度计.html 的源。
+# - 任何页面改动必须改 a500_template.html（源），由 fetch_a500_data.py 重新生成 index.html 后提交。
+# - 切勿再引入第二个 HTML 产物，否则会重现「改了 A 却上线 B」的坑。
