@@ -7,7 +7,7 @@ A500 温度计 · 每日数据更新脚本
 PE 估算基于价格变动。每天自动累积温度历史。
 
 使用:  python3 fetch_a500_data.py
-输出:  a500_dashboard.html
+输出:  index.html（GitHub Pages 首页，也是本地 A500温度计.html 的源；唯一产物）
 """
 
 import os, sys, json, re
@@ -24,7 +24,8 @@ import pandas as pd
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 TEMPLATE = os.path.join(DIR, "a500_template.html")
-OUTPUT   = os.path.join(DIR, "a500_dashboard.html")
+# 唯一产物：既是 GitHub Pages 默认首页，也是本地 A500温度计.html 的源
+OUTPUT   = os.path.join(DIR, "index.html")
 PE_HIST  = os.path.join(DIR, "pe_history.json")
 TEMP_HIST = os.path.join(DIR, "temp_history.json")
 DATA_CACHE = os.path.join(DIR, "data_cache.json")
@@ -310,14 +311,6 @@ def _render(data: dict):
 
     with open(OUTPUT, 'w', encoding='utf-8') as f:
         f.write(html)
-
-    # GitHub Pages 以根目录 index.html 为默认首页，必须与 OUTPUT 同步产出实时版本
-    index_path = os.path.join(DIR, "index.html")
-    try:
-        with open(index_path, 'w', encoding='utf-8') as f:
-            f.write(html)
-    except Exception as e:
-        print(f"   ⚠️ 写入 index.html 失败: {e}")
 
 
 if __name__ == '__main__':

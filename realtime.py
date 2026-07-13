@@ -180,13 +180,12 @@ def main():
         except Exception as e:
             print(f"   ⚠️ 写入失败 {path}: {e}")
 
-    # 内联到 HTML（双保险：即使外部 realtime_data.js 加载失败，页面打开即显示正确温度）
-    inline_into_html(os.path.join(DIR, "a500_dashboard.html"), payload)
-    inline_into_html(os.path.join(DIR, "index.html"), payload)  # GitHub Pages 首页
+    # 内联到唯一产物 index.html（双保险：即使外部 realtime_data.js 加载失败，页面打开即显示正确温度）
+    inline_into_html(os.path.join(DIR, "index.html"), payload)
     # 同步主目录（覆盖任何残留，确保 HTML 结构完整 + 内联最新数据）
     import shutil
     try:
-        shutil.copy(os.path.join(DIR, "a500_dashboard.html"), OUT_MAIN_HTML)
+        shutil.copy(os.path.join(DIR, "index.html"), OUT_MAIN_HTML)
         print(f"   ✅ 同步 → {OUT_MAIN_HTML}")
     except Exception as e:
         print(f"   ⚠️ 同步失败 {OUT_MAIN_HTML}: {e}")
