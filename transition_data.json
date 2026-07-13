@@ -1,5 +1,5 @@
 {
-  "date": "2026-07-12",
+  "date": "2026-07-13",
   "temperature": 60.3,
   "band": "温和区",
   "emoji": "🌤️",
@@ -39,7 +39,7 @@
       "weight": 0.07,
       "auto": true,
       "stale": false,
-      "stale_days": 42
+      "stale_days": 43
     },
     "ppi": {
       "name": "PPI同比",
@@ -52,7 +52,7 @@
       "weight": 0.06,
       "auto": true,
       "stale": false,
-      "stale_days": 12
+      "stale_days": 13
     },
     "pmi": {
       "name": "制造业PMI",
@@ -65,7 +65,7 @@
       "weight": 0.06,
       "auto": true,
       "stale": false,
-      "stale_days": 12
+      "stale_days": 13
     },
     "electricity": {
       "name": "全社会用电量同比",
@@ -78,7 +78,7 @@
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 58
+      "stale_days": 59
     },
     "retail_sales": {
       "name": "社零同比",
@@ -91,7 +91,7 @@
       "weight": 0.06,
       "auto": true,
       "stale": false,
-      "stale_days": 58
+      "stale_days": 59
     },
     "unemployment": {
       "name": "城镇调查失业率",
@@ -104,7 +104,7 @@
       "weight": 0.08,
       "auto": true,
       "stale": false,
-      "stale_days": 58
+      "stale_days": 59
     },
     "disposable_income": {
       "name": "居民可支配收入累计同比",
@@ -117,7 +117,7 @@
       "weight": 0.07,
       "auto": true,
       "stale": false,
-      "stale_days": 193
+      "stale_days": 194
     },
     "m2": {
       "name": "M2同比",
@@ -130,7 +130,7 @@
       "weight": 0.07,
       "auto": true,
       "stale": false,
-      "stale_days": 42
+      "stale_days": 43
     },
     "rmb_loan": {
       "name": "人民币贷款余额同比",
@@ -143,7 +143,7 @@
       "weight": 0.07,
       "auto": true,
       "stale": false,
-      "stale_days": 58
+      "stale_days": 59
     },
     "bond_yield": {
       "name": "10年国债收益率",
@@ -156,7 +156,7 @@
       "weight": 0.04,
       "auto": true,
       "stale": false,
-      "stale_days": 2
+      "stale_days": 3
     },
     "lpr": {
       "name": "1年期LPR",
@@ -169,7 +169,7 @@
       "weight": 0.07,
       "auto": true,
       "stale": false,
-      "stale_days": 20
+      "stale_days": 21
     },
     "industrial_output": {
       "name": "工业增加值同比",
@@ -182,7 +182,7 @@
       "weight": 0.07,
       "auto": true,
       "stale": false,
-      "stale_days": 58
+      "stale_days": 59
     },
     "export": {
       "name": "出口同比增速",
@@ -195,20 +195,20 @@
       "weight": 0.06,
       "auto": true,
       "stale": false,
-      "stale_days": 58
+      "stale_days": 59
     },
     "currency_index": {
       "name": "人民币CFETS汇率指数",
       "score": 90,
       "label": "偏强",
-      "value": 102.65,
-      "date": "2026-07-03",
+      "value": 102.35,
+      "date": "2026-07-10",
       "source": "中国外汇交易中心",
       "line": 4,
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 9
+      "stale_days": 3
     },
     "ai_market_share": {
       "name": "中国AI模型海外调用份额",
@@ -221,7 +221,7 @@
       "weight": 0.07,
       "auto": false,
       "stale": false,
-      "stale_days": 8
+      "stale_days": 9
     },
     "new_energy_penetration": {
       "name": "新能源汽车渗透率",
@@ -234,7 +234,7 @@
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 27
+      "stale_days": 28
     }
   }
 }
