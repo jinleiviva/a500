@@ -906,11 +906,7 @@ body{
     else if(d.dividendYield>2){dd.textContent='中性';dd.className='ml-desc';}
     else{dd.textContent='偏低';dd.className='ml-desc y';}
 
-    // Initial RT display
-    document.getElementById('rtPrice').textContent=d.price.toLocaleString();
-    var rc=document.getElementById('rtChg');
-    rc.textContent=(d.priceChange>0?'+':'')+d.priceChange.toFixed(2)+'%';
-    rc.style.color=d.priceChange>=0?'#EF4444':'#059669';
+    // 实时价格/涨跌由下方 applyRT / 前端直连接管，此处不写，避免用滞后的日频 d 覆盖实时值
 
     // Temp trend
     if(d.tempHistory&&d.tempHistory.length>0){
