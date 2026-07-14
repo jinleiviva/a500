@@ -76,6 +76,66 @@ def fetch_dividend_yield() -> float | None:
 # 核心逻辑
 # ══════════════════════════════════════════════════════
 
+def _fetch_realtime_price():
+    """实时行情兜底（新浪 → 腾讯），返回 (最新价, 涨跌幅%) 或 (None, None)。
+    用于 akshare 日线盘后延迟时，补全当日收盘点位。"""
+    import urllib.request
+    code = "sh000510"
+    ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    # 新浪
+    try:
+        url = f"https://hq.sinajs.cn/list={code}"
+        req = urllib.request.Request(url, headers={"User-Agent": ua, "Referer": "https://finance.sina.com.cn/"})
+        raw = urllib.request.urlopen(req, timeout=10).read().decode("gbk", "ignore")
+        m = re.search(r'hq_str_%s="([^"]+)"' % code, raw)
+        if m:
+            p = m.group(1).split(",")
+            if len(p) >= 4:
+                cur = float(p[3]); prev = float(p[1])
+                return cur, round((cur - prev) / prev * 100, 2)
+    except Exception as e:
+        print(f"   ⚠️ 新浪兜底失败: {e}")
+    # 腾讯
+    try:
+        url = f"https://qt.gtimg.cn/q={code}"
+        req = urllib.request.Request(url, headers={"User-Agent": ua, "Referer": "https://finance.qq.com/"})
+        raw = urllib.request.urlopen(req, timeout=10).read().decode("gbk", "ignore")
+        m = re.search(r'v_%s="([^"]+)"' % code, raw)
+        if m:
+            p = m.group(1).split("~")
+            if len(p) >= 5:
+                cur = float(p[3]); prev = float(p[4])
+                return cur, round((cur - prev) / prev * 100, 2)
+    except Exception as e:
+        print(f"   ⚠️ 腾讯兜底失败: {e}")
+    return None, None
+
+
+def build_temp_history(pe_history: list, df: pd.DataFrame, max_days: int = 180) -> list:
+    """从真实 PE 历史（周度）+ 全量价格序列，确定性重建温度历史。
+    与日频/实时公式完全一致：温度 = PE分位×0.6 + 价格分位×0.4。
+    这样无论脚本多久跑一次，温度走势都不会残缺。"""
+    if not pe_history:
+        return []
+    pe_vals_all = np.array([h['pe'] for h in pe_history], dtype=float)
+    closes_win = df['close'].values.astype(float)
+    if len(closes_win) > 1250:
+        closes_win = closes_win[-1250:]
+    out = []
+    for h in pe_history:
+        pe_d = float(h['pe'])
+        pe_pctl = round(float(np.sum(pe_vals_all <= pe_d) / len(pe_vals_all) * 100), 1)
+        close_d = _price_on_date(df, h['date'])
+        if close_d is None:
+            continue
+        price_pctl = round(float(np.sum(closes_win <= close_d) / len(closes_win) * 100), 1)
+        temp = int(round(pe_pctl * 0.6 + price_pctl * 0.4, 0))
+        out.append({"date": h['date'], "temp": temp})
+    if len(out) > max_days:
+        out = out[-max_days:]
+    return out
+
+
 def update():
     print(f"\n{'='*50}")
     print(f"🌡️  A500 温度计 · 每日更新")
@@ -85,10 +145,23 @@ def update():
     # ── 1. 拉价格（带缓存降级） ──
     price_cache = load_json(DATA_CACHE) or {}
     price_stale = False
+    price_fallback = False
     try:
         df = ak.stock_zh_index_daily(symbol='sh000510')
         df['date'] = pd.to_datetime(df['date'])
         df = df.sort_values('date').reset_index(drop=True)
+
+        # ── 实时行情兜底：akshare 日线盘后延迟时，用新浪/腾讯实时价补当日收盘 ──
+        _now = datetime.now()
+        if (df.iloc[-1]['date'].date() < _now.date()
+                and _now.weekday() < 5 and _now.hour >= 15):
+            rp, _rc = _fetch_realtime_price()
+            if rp:
+                nd = pd.Timestamp(_now.date())
+                df = pd.concat([df, pd.DataFrame({'date': [nd], 'close': [rp]})], ignore_index=True)
+                price_fallback = True
+                print(f"   ↪ akshare 日线延迟，实时行情兜底今日收盘: {rp} (原末日 {df.iloc[-2]['date'].date()})")
+
         print(f"📈 价格: {len(df)} 行 ({df['date'].iloc[0].date()} ~ {df['date'].iloc[-1].date()})")
         today     = df.iloc[-1]
         yesterday = df.iloc[-2]
@@ -166,14 +239,9 @@ def update():
     # ── 6. 温度 ──
     temp = int(round(pe_pctl * 0.6 + price_pctl * 0.4, 0))
 
-    # ── 7. 温度历史维护 ──
-    temp_history = load_json(TEMP_HIST)
-    if not temp_history or temp_history[-1]['date'] != today_date:
-        temp_history.append({"date": today_date, "temp": temp})
-        # 只保留最近 180 天
-        if len(temp_history) > 180:
-            temp_history = temp_history[-180:]
-        save_json(TEMP_HIST, temp_history)
+    # ── 7. 温度历史维护（从 PE 历史 + 价格序列确定性重建，避免只追加导致历史缺失）──
+    temp_history = build_temp_history(pe_history, df, max_days=180)
+    save_json(TEMP_HIST, temp_history)
 
     # ── 8. 风险溢价 ──
     stock_yield = round(1 / pe_now * 100, 1)
@@ -212,6 +280,7 @@ def update():
         "tempHistory":       [{"d": r["date"][5:], "t": r["temp"]} for r in temp_90],
         # 数据新鲜度
         "priceStale":        price_stale,
+        "priceFallback":      price_fallback,
         "peLastCalibrated":  PE_LAST_CALIBRATED,
         # 实时相关
         "pageCreatedAt":     datetime.now().strftime('%Y-%m-%d %H:%M'),
