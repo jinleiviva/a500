@@ -1,0 +1,53 @@
+name: A500 每日收盘更新
+
+on:
+  schedule:
+    - cron: '31 7 * * 1-5'   # 北京 15:31（UTC 7:31），收盘后
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: a500-write
+  cancel-in-progress: false
+
+jobs:
+  daily:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安装依赖
+        run: pip install akshare numpy pandas requests
+
+      - name: 日频数据脚本（重算 PE/温度历史，产出 index.html + baseline）
+        run: python fetch_a500_data.py
+        env:
+          NO_PROXY: '*'
+
+      - name: 内联最新实时温度到 index.html
+        run: python realtime.py
+        env:
+          NO_PROXY: '*'
+
+      - name: 提交并推送（仅当有变化）
+        run: |
+          git config user.name 'a500-bot'
+          git config user.email 'a500-bot@users.noreply.github.com'
+          git add data_cache.json index.html pe_history.json realtime_baseline.json realtime_data.js realtime_last.json temp_history.json
+          if git diff --cached --quiet; then
+            echo "无变化，跳过提交"
+            exit 0
+          fi
+          git commit -m "📊 每日收盘更新 $(date +'%Y-%m-%d')"
+          git pull --rebase --autostash origin main || true
+          git push

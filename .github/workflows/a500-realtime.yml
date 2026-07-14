@@ -1,0 +1,51 @@
+name: A500 盘中实时刷新
+
+on:
+  schedule:
+    # 北京 9:00-15:00 每 5 分钟触发（UTC 1:00-7:00）。
+    # 注意：GitHub 免费 cron 为 best-effort，实际间隔常在 5-15 分钟，高峰期偶发跳过，属正常。
+    - cron: '*/5 1-7 * * 1-5'
+  workflow_dispatch:   # 支持在 Actions 页面手动触发
+
+permissions:
+  contents: write
+
+# 与日频 workflow 共用一把写锁，避免两者同时 push 到 main 撞车
+concurrency:
+  group: a500-write
+  cancel-in-progress: false
+
+jobs:
+  realtime:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai   # runner 默认 UTC，脚本按本地时间判断交易时段，必须设为北京时区
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安装依赖（akshare 为东财源；装不上时脚本自动降级到新浪/腾讯）
+        run: pip install akshare numpy pandas requests || echo "akshare 安装失败，将走新浪/腾讯源"
+
+      - name: 运行实时脚本
+        run: python realtime.py
+        env:
+          NO_PROXY: '*'
+
+      - name: 提交并推送（仅当有变化）
+        run: |
+          git config user.name 'a500-bot'
+          git config user.email 'a500-bot@users.noreply.github.com'
+          git add realtime_data.js index.html realtime_last.json
+          if git diff --cached --quiet; then
+            echo "无变化，跳过提交"
+            exit 0
+          fi
+          git commit -m "📡 盘中实时 $(date +'%Y-%m-%d %H:%M')"
+          git pull --rebase --autostash origin main || true
+          git push
