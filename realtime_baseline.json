@@ -1,16 +1,16 @@
 {
-  "date": "2026-07-10",
-  "price": 6005.9,
-  "priceChange": -1.88,
-  "pe": 16.31,
-  "pePercentile": 75.5,
-  "pricePercentile": 93.2,
+  "date": "2026-07-13",
+  "price": 5851.8,
+  "priceChange": -2.57,
+  "pe": 15.89,
+  "pePercentile": 51.6,
+  "pricePercentile": 82.9,
   "bondYield": 1.74,
-  "dividendYield": 2.35,
-  "premium": 4.4,
-  "temperature": 83,
-  "dcaPct": 0,
-  "dcaLabel": "🛑 暂停买入",
+  "dividendYield": 2.4,
+  "premium": 4.6,
+  "temperature": 64,
+  "dcaPct": 25,
+  "dcaLabel": "⚠️ 减少定投",
   "peLastCalibrated": "2026-07-07",
   "peHistory": [
     {
@@ -388,6 +388,10 @@
     {
       "date": "2026-07-10",
       "pe": 16.31
+    },
+    {
+      "date": "2026-07-13",
+      "pe": 15.89
     }
   ],
   "closesAll": [
@@ -5615,6 +5619,7 @@
     6023.6,
     5952.4,
     6120.9,
-    6005.9
+    6005.9,
+    5851.8
   ]
 }
