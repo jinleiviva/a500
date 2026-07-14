@@ -22,7 +22,10 @@ for k in list(os.environ.keys()):
     if k.lower().endswith('_proxy') or k.lower() == 'no_proxy':
         os.environ.pop(k, None)
 
-import akshare as ak
+try:
+    import akshare as ak
+except Exception:
+    ak = None   # 云端/精简环境未装 akshare 时，自动降级为新浪/腾讯源（纯标准库）
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 BASELINE = os.path.join(DIR, "realtime_baseline.json")
@@ -80,7 +83,9 @@ _UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 
 
 def _fetch_em():
-    """东方财富（akshare）。"""
+    """东方财富（akshare）。akshare 不可用时直接跳过，交由新浪/腾讯源。"""
+    if ak is None:
+        return None, None
     df = ak.stock_zh_index_spot_em(symbol='沪深重要指数')
     row = df[df['名称'].astype(str).str.contains('A500|中证A500', na=False)]
     if not row.empty:
