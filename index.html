@@ -1357,13 +1357,14 @@ function toggleRef(){
     var ut=document.getElementById('rtTime');
     if(ut)ut.textContent='最后更新 '+rt.ts;
   }
+  window.applyRT = applyRT;   // 暴露给前端直连 IIFE：温度/PE 由 gtimg 实时价本地算后注入渲染
   var rtPrev=null;
   function loadRT(){
     // file:// 本地打开时不要加查询串（浏览器会把 ?_= 当成文件名一部分导致加载失败）
     var isFile=(location.protocol==='file:');
     if(rtPrev && rtPrev.parentNode) rtPrev.parentNode.removeChild(rtPrev);
     var s=document.createElement('script');
-    s.onload=function(){ if(window.__RT)applyRT(window.__RT); };
+    s.onload=function(){ if(window.__RT && !window.__frontendLiveTs)applyRT(window.__RT); };
     s.onerror=function(){};
     s.src='realtime_data.js'+(isFile?'':'?_='+Date.now());
     (document.body||document.documentElement).appendChild(s);
@@ -1371,7 +1372,7 @@ function toggleRef(){
   }
   function start(){
     // 若页面已内联实时数据（生成时注入），立即应用，避免外部文件加载前的空白/旧值
-    if(window.__RT && window.__RT.temperature!=null) applyRT(window.__RT);
+    if(window.__RT && window.__RT.temperature!=null && !window.__frontendLiveTs) applyRT(window.__RT);
     loadRT();                  // 加载/更新外部 realtime_data.js
     setInterval(loadRT, 30000); // 每30秒轮询（文件每5分钟由后端刷新）
   }
