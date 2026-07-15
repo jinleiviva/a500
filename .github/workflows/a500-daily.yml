@@ -39,6 +39,11 @@ jobs:
         env:
           NO_PROXY: '*'
 
+      - name: 生成前端自愈基线（a500_baseline.js：含全量收盘价+PE历史，供前端本地算温度）
+        run: python gen_baseline.py
+        env:
+          NO_PROXY: '*'
+
       - name: 提交并推送（仅当有变化）
         run: |
           git config user.name 'a500-bot'
