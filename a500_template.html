@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.5,user-scalable=yes">
 <title>A500 温度计</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="a500_baseline.js"></script>
 <!-- REALTIME_INLINE -->
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -687,11 +688,7 @@ body{
     else if(d.dividendYield>2){dd.textContent='中性';dd.className='ml-desc';}
     else{dd.textContent='偏低';dd.className='ml-desc y';}
 
-    // Initial RT display
-    document.getElementById('rtPrice').textContent=d.price.toLocaleString();
-    var rc=document.getElementById('rtChg');
-    rc.textContent=(d.priceChange>0?'+':'')+d.priceChange.toFixed(2)+'%';
-    rc.style.color=d.priceChange>=0?'#EF4444':'#059669';
+    // 价格/涨跌由下方前端直连(loadPrice)接管，此处不写，避免用滞后日频覆盖实时值
 
     // Temp trend
     if(d.tempHistory&&d.tempHistory.length>0){
@@ -1336,5 +1333,67 @@ setTimeout(function(){
   </div>
 </div>
 
+<script>
+// ── A500 前端直连行情（腾讯 gtimg JSONP：绕过 CORS；后端 GitHub Actions 停摆也能自愈）──
+(function(){
+  var CODE='sh000510';
+  function pad(n){return String(n).padStart(2,'0');}
+  function nowTs(){var n=new Date();return n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate())+' '+pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());}
+  function paint(price,chg){
+    var up=chg>=0,co=up?'#EF4444':'#059669';
+    var pr=document.getElementById('rtPrice'),cg=document.getElementById('rtChg'),
+        lbl=document.getElementById('rtLbl'),dot=document.getElementById('rtDot'),
+        ut=document.getElementById('rtTime');
+    if(pr){pr.textContent=Number(price).toLocaleString();pr.style.color=co;}
+    if(cg){cg.textContent=(up?'+':'')+Number(chg).toFixed(2)+'%';cg.style.color=co;}
+    if(lbl)lbl.textContent='📡 盘中(前端直连)';
+    if(dot)dot.className='pr-dot on pulse';
+    if(ut)ut.textContent='最后更新 '+nowTs();
+  }
+  // 前端自愈：用基线历史 + 实时价本地算温度/PE分位/价格分位（不再依赖 GitHub Actions 推送）
+  function computeTemp(spot){
+    var B=window.__A500_BASE;
+    if(!B||!B.closesAll||!B.peHistory||!B.price)return null;
+    var price0=+B.price, pe0=+B.pe;
+    var r_pe=Math.round(pe0*spot/price0*100)/100;
+    var ph=B.peHistory, n=ph.length, c=0;
+    for(var i=0;i<n;i++){ if(+ph[i].pe <= r_pe) c++; }
+    var peP=Math.round(c/n*1000)/10;
+    var cl=B.closesAll, m=cl.length, d=0;
+    for(var j=0;j<m;j++){ if(+cl[j] <= spot) d++; }
+    var prP=Math.round(d/m*1000)/10;
+    var temp=Math.round(peP*0.6+prP*0.4);
+    return {pe:r_pe, pePercentile:peP, pricePercentile:prP, temperature:temp};
+  }
+  function onData(price,chg){
+    window.__frontendLiveTs=Date.now();
+    var t=computeTemp(price);
+    var rt=window.__RT||{};
+    if(t){ rt.pe=t.pe; rt.pePercentile=t.pePercentile; rt.pricePercentile=t.pricePercentile; rt.temperature=t.temperature; }
+    rt.price=price;rt.change=chg;rt.live=true;rt.fresh=true;rt.market=true;rt.ts=nowTs();
+    window.__RT=rt;
+    paint(price,chg);
+    if(window.applyRT)window.applyRT(rt);
+  }
+  function fetchLive(){
+    var s=document.createElement('script');
+    s.onload=function(){
+      try{
+        var raw=window['v_'+CODE];
+        if(raw){
+          var a=String(raw).split('~');
+          var price=parseFloat(a[3]),pre=parseFloat(a[4]);
+          if(price>0&&pre>0)onData(Math.round(price*100)/100,Math.round((price-pre)/pre*10000)/100);
+        }
+      }catch(e){}
+    };
+    s.onerror=function(){};
+    s.src='https://qt.gtimg.cn/q='+CODE+'&_='+Date.now();
+    (document.body||document.documentElement).appendChild(s);
+  }
+  function start(){fetchLive();setInterval(fetchLive,30000);}
+  if(document.body)start();else window.addEventListener('DOMContentLoaded',start);
+})();
+</script>
 </body>
 </html>

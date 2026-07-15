@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.5,user-scalable=yes">
 <title>A500 温度计</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="a500_baseline.js"></script>
 <!-- REALTIME_INLINE -->
 <script>window.__RT = {"price": 5997.1, "change": 0.09, "pe": 16.28, "pePercentile": 69.8, "pricePercentile": 97.3, "temperature": 81, "live": true, "fresh": true, "delayed": false, "market": true, "ts": "2026-07-15 09:48:21"};</script>
 <style>
@@ -1376,6 +1377,68 @@ function toggleRef(){
   }
   if(document.body) start();
   else window.addEventListener('DOMContentLoaded', start);
+})();
+
+
+// ── 前端直连行情（腾讯 gtimg JSONP：绕过 CORS、无需 Referer；后端 GitHub Actions 停摆也能自愈）──
+(function(){
+  var CODE='sh000510';
+  function pad(n){return String(n).padStart(2,'0');}
+  function nowTs(){var n=new Date();return n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate())+' '+pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());}
+  function paint(price,chg){
+    var up=chg>=0,co=up?'#EF4444':'#059669';
+    var pr=document.getElementById('rtPrice'),cg=document.getElementById('rtChg'),
+        lbl=document.getElementById('rtLbl'),dot=document.getElementById('rtDot'),
+        ut=document.getElementById('rtTime');
+    if(pr){pr.textContent=Number(price).toLocaleString();pr.style.color=co;}
+    if(cg){cg.textContent=(up?'+':'')+Number(chg).toFixed(2)+'%';cg.style.color=co;}
+    if(lbl)lbl.textContent='📡 盘中(前端直连)';
+    if(dot)dot.className='pr-dot on pulse';
+    if(ut)ut.textContent='最后更新 '+nowTs();
+  }
+  // 前端自愈：用基线历史 + 实时价本地算温度/PE分位/价格分位（不再依赖 GitHub Actions 推送）
+  function computeTemp(spot){
+    var B=window.__A500_BASE;
+    if(!B||!B.closesAll||!B.peHistory||!B.price)return null;
+    var price0=+B.price, pe0=+B.pe;
+    var r_pe=Math.round(pe0*spot/price0*100)/100;
+    var ph=B.peHistory, n=ph.length, c=0;
+    for(var i=0;i<n;i++){ if(+ph[i].pe <= r_pe) c++; }
+    var peP=Math.round(c/n*1000)/10;
+    var cl=B.closesAll, m=cl.length, d=0;
+    for(var j=0;j<m;j++){ if(+cl[j] <= spot) d++; }
+    var prP=Math.round(d/m*1000)/10;
+    var temp=Math.round(peP*0.6+prP*0.4);
+    return {pe:r_pe, pePercentile:peP, pricePercentile:prP, temperature:temp};
+  }
+  function onData(price,chg){
+    window.__frontendLiveTs=Date.now();           // 标记：价格/涨跌改由前端直连接管
+    var t=computeTemp(price);
+    var rt=window.__RT||{};
+    if(t){ rt.pe=t.pe; rt.pePercentile=t.pePercentile; rt.pricePercentile=t.pricePercentile; rt.temperature=t.temperature; }
+    rt.price=price;rt.change=chg;rt.live=true;rt.fresh=true;rt.market=true;rt.ts=nowTs();
+    window.__RT=rt;
+    paint(price,chg);                              // 立即刷新价格/涨跌
+    if(window.applyRT)window.applyRT(rt);          // 温度/PE 等由前端 computeTemp 计算后注入
+  }
+  function fetchLive(){
+    var s=document.createElement('script');
+    s.onload=function(){
+      try{
+        var raw=window['v_'+CODE];                 // gtimg 注入的全局变量 v_sh000510
+        if(raw){
+          var a=String(raw).split('~');
+          var price=parseFloat(a[3]),pre=parseFloat(a[4]);   // [3]=当前价 [4]=昨收
+          if(price>0&&pre>0)onData(Math.round(price*100)/100,Math.round((price-pre)/pre*10000)/100);
+        }
+      }catch(e){}
+    };
+    s.onerror=function(){};
+    s.src='https://qt.gtimg.cn/q='+CODE+'&_='+Date.now();
+    (document.body||document.documentElement).appendChild(s);
+  }
+  function start(){fetchLive();setInterval(fetchLive,30000);}   // 打开即直连，每30秒刷新价格/涨跌
+  if(document.body)start();else window.addEventListener('DOMContentLoaded',start);
 })();
 
 // ── TAB ──
