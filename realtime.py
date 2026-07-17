@@ -104,7 +104,8 @@ def _fetch_sina():
     p = m.group(1).split(",")
     if len(p) < 4:
         return None, None
-    cur, prev = float(p[3]), float(p[1])
+    # 新浪格式: 名称,今开,昨收,当前价,最高,最低...
+    cur, prev = float(p[3]), float(p[2])
     return cur, round((cur - prev) / prev * 100, 2)
 
 
