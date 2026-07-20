@@ -1,0 +1,357 @@
+{
+  "_comment": "中国经济健康度温度计 v0.4 - 4线16指标框架",
+  "version": "0.4",
+  "last_updated": "2026-07-11",
+
+  "weights": {
+    "line1_demand_price": 0.30,
+    "line2_employment_income": 0.15,
+    "line3_money_credit": 0.25,
+    "line4_transition_open": 0.30
+  },
+
+  "lines": {
+    "line1": {
+      "id": "line1",
+      "name": "内需与物价",
+      "weight": 0.30,
+      "emoji": "💚",
+      "color": "#27AE60",
+      "description": "消费需求与价格水平，反映经济内循环的活跃度"
+    },
+    "line2": {
+      "id": "line2",
+      "name": "就业与收入",
+      "weight": 0.15,
+      "emoji": "💙",
+      "color": "#2980B9",
+      "description": "居民就业与收入状况，体现经济发展的民生温度"
+    },
+    "line3": {
+      "id": "line3",
+      "name": "货币与信用",
+      "weight": 0.25,
+      "emoji": "💜",
+      "color": "#8E44AD",
+      "description": "货币环境与信用扩张力度，反映金融对实体经济的支持"
+    },
+    "line4": {
+      "id": "line4",
+      "name": "转型与开放",
+      "weight": 0.30,
+      "emoji": "🧡",
+      "color": "#E67E22",
+      "description": "新质生产力发展与对外开放竞争力"
+    }
+  },
+
+  "indicators": {
+    "cpi": {
+      "name": "CPI同比",
+      "line": 1, "weight": 0.07,
+      "data_source": "国家统计局",
+      "auto_fetch": true,
+      "frequency": "月",
+      "unit": "%",
+      "reference_range": "0.5%~3.0%",
+      "thresholds": [
+        {"min": -999, "max": -0.5, "score": 0, "label": "通缩"},
+        {"min": -0.5, "max": 0.5, "score": 25, "label": "接近零"},
+        {"min": 0.5, "max": 1.5, "score": 70, "label": "温和"},
+        {"min": 1.5, "max": 3.0, "score": 100, "label": "健康"},
+        {"min": 3.0, "max": 5.0, "score": 60, "label": "偏高"},
+        {"min": 5.0, "max": 999, "score": 20, "label": "过热"}
+      ],
+      "manual_fallback": 1.2,
+      "last_known_value": 1.2,
+      "last_known_date": "2026-05-31"
+    },
+    "ppi": {
+      "name": "PPI同比",
+      "line": 1, "weight": 0.06,
+      "data_source": "国家统计局",
+      "auto_fetch": true,
+      "frequency": "月",
+      "unit": "%",
+      "reference_range": "-2%~3%",
+      "thresholds": [
+        {"min": -999, "max": -5.0, "score": 0, "label": "深度通缩"},
+        {"min": -5.0, "max": -2.0, "score": 15, "label": "通缩"},
+        {"min": -2.0, "max": -0.5, "score": 35, "label": "弱"},
+        {"min": -0.5, "max": 1.0, "score": 60, "label": "企稳"},
+        {"min": 1.0, "max": 3.0, "score": 85, "label": "复苏"},
+        {"min": 3.0, "max": 999, "score": 100, "label": "扩张"}
+      ],
+      "manual_fallback": 4.1,
+      "last_known_value": 4.1,
+      "last_known_date": "2026-06-30"
+    },
+    "pmi": {
+      "name": "制造业PMI",
+      "line": 1, "weight": 0.06,
+      "data_source": "国家统计局",
+      "auto_fetch": true,
+      "frequency": "月",
+      "unit": "",
+      "reference_range": "48~55",
+      "thresholds": [
+        {"min": 0, "max": 45, "score": 0, "label": "深度收缩"},
+        {"min": 45, "max": 48, "score": 15, "label": "收缩"},
+        {"min": 48, "max": 50, "score": 40, "label": "偏弱"},
+        {"min": 50, "max": 52, "score": 60, "label": "扩张"},
+        {"min": 52, "max": 55, "score": 85, "label": "向好"},
+        {"min": 55, "max": 999, "score": 100, "label": "强劲"}
+      ],
+      "manual_fallback": 50.3,
+      "last_known_value": 50.3,
+      "last_known_date": "2026-06-30"
+    },
+    "electricity": {
+      "name": "全社会用电量同比",
+      "line": 1, "weight": 0.05,
+      "data_source": "国家能源局",
+      "auto_fetch": true,
+      "frequency": "月",
+      "unit": "%",
+      "reference_range": "2%~8%",
+      "thresholds": [
+        {"min": -999, "max": -2, "score": 0, "label": "下降"},
+        {"min": -2, "max": 2, "score": 25, "label": "停滞"},
+        {"min": 2, "max": 5, "score": 55, "label": "温和"},
+        {"min": 5, "max": 8, "score": 80, "label": "稳健"},
+        {"min": 8, "max": 15, "score": 100, "label": "强劲"},
+        {"min": 15, "max": 999, "score": 60, "label": "过热"}
+      ]
+    },
+    "retail_sales": {
+      "name": "社零同比",
+      "line": 1, "weight": 0.06,
+      "data_source": "国家统计局",
+      "auto_fetch": true,
+      "frequency": "月",
+      "unit": "%",
+      "reference_range": "3%~10%",
+      "thresholds": [
+        {"min": -999, "max": -5, "score": 0, "label": "大幅下滑"},
+        {"min": -5, "max": 0, "score": 15, "label": "收缩"},
+        {"min": 0, "max": 3, "score": 40, "label": "疲弱"},
+        {"min": 3, "max": 6, "score": 65, "label": "温和增长"},
+        {"min": 6, "max": 10, "score": 85, "label": "稳健"},
+        {"min": 10, "max": 999, "score": 100, "label": "旺盛"}
+      ],
+      "manual_fallback": 0.2,
+      "last_known_value": -0.6,
+      "last_known_date": "2026-05-31"
+    },
+    "unemployment": {
+      "name": "城镇调查失业率",
+      "line": 2, "weight": 0.08,
+      "data_source": "Trading Economics",
+      "auto_fetch": true,
+      "frequency": "月",
+      "unit": "%",
+      "reference_range": "4.5%~5.5%",
+      "thresholds": [
+        {"min": -999, "max": 4.0, "score": 100, "label": "优异"},
+        {"min": 4.0, "max": 4.5, "score": 80, "label": "良好"},
+        {"min": 4.5, "max": 5.0, "score": 60, "label": "正常"},
+        {"min": 5.0, "max": 5.5, "score": 30, "label": "偏高"},
+        {"min": 5.5, "max": 6.5, "score": 10, "label": "高"},
+        {"min": 6.5, "max": 999, "score": 0, "label": "严峻"}
+      ],
+      "manual_fallback": 5.1,
+      "last_known_value": 5.1,
+      "last_known_date": "2026-05-31"
+    },
+    "disposable_income": {
+      "name": "居民可支配收入累计同比",
+      "line": 2, "weight": 0.07,
+      "data_source": "Trading Economics（年度）",
+      "auto_fetch": true,
+      "frequency": "年",
+      "unit": "%",
+      "reference_range": "4%~7%",
+      "thresholds": [
+        {"min": -999, "max": 0, "score": 0, "label": "负增长"},
+        {"min": 0, "max": 3, "score": 15, "label": "低增长"},
+        {"min": 3, "max": 5, "score": 50, "label": "温和"},
+        {"min": 5, "max": 7, "score": 80, "label": "稳健"},
+        {"min": 7, "max": 10, "score": 100, "label": "强劲"},
+        {"min": 10, "max": 999, "score": 60, "label": "过热"}
+      ],
+      "manual_fallback": 4.3,
+      "last_known_value": 4.3,
+      "last_known_date": "2025-12-31"
+    },
+    "m2": {
+      "name": "M2同比",
+      "line": 3, "weight": 0.07,
+      "data_source": "中国人民银行",
+      "auto_fetch": true,
+      "frequency": "月",
+      "unit": "%",
+      "reference_range": "8%~12%",
+      "thresholds": [
+        {"min": -999, "max": 6, "score": 10, "label": "偏紧"},
+        {"min": 6, "max": 8, "score": 30, "label": "偏紧"},
+        {"min": 8, "max": 10, "score": 60, "label": "适度"},
+        {"min": 10, "max": 13, "score": 85, "label": "宽松"},
+        {"min": 13, "max": 999, "score": 60, "label": "过度"}
+      ],
+      "manual_fallback": 8.6,
+      "last_known_value": 8.6,
+      "last_known_date": "2026-05-31"
+    },
+    "rmb_loan": {
+      "name": "人民币贷款余额同比",
+      "line": 3, "weight": 0.07,
+      "data_source": "中国人民银行",
+      "auto_fetch": true,
+      "frequency": "月",
+      "unit": "%",
+      "reference_range": "8%~14%",
+      "thresholds": [
+        {"min": -999, "max": 5, "score": 5, "label": "收缩"},
+        {"min": 5, "max": 7, "score": 20, "label": "偏弱"},
+        {"min": 7, "max": 10, "score": 50, "label": "适度"},
+        {"min": 10, "max": 14, "score": 85, "label": "扩张"},
+        {"min": 14, "max": 20, "score": 70, "label": "偏快"},
+        {"min": 20, "max": 999, "score": 30, "label": "过热"}
+      ],
+      "manual_fallback": 5.5,
+      "last_known_value": 5.52,
+      "last_known_date": "2026-05-31"
+    },
+    "bond_yield": {
+      "name": "10年国债收益率",
+      "line": 3, "weight": 0.04,
+      "data_source": "中国债券信息网",
+      "auto_fetch": true,
+      "frequency": "日",
+      "unit": "%",
+      "reference_range": "1.8%~3.5%",
+      "thresholds": [
+        {"min": -999, "max": 1.2, "score": 10, "label": "极低"},
+        {"min": 1.2, "max": 1.8, "score": 30, "label": "低"},
+        {"min": 1.8, "max": 2.5, "score": 60, "label": "正常"},
+        {"min": 2.5, "max": 3.5, "score": 85, "label": "偏高"},
+        {"min": 3.5, "max": 999, "score": 100, "label": "高"}
+      ]
+    },
+    "lpr": {
+      "name": "1年期LPR",
+      "line": 3, "weight": 0.07,
+      "data_source": "全国银行间同业拆借中心",
+      "auto_fetch": true,
+      "frequency": "月",
+      "unit": "%",
+      "reference_range": "3.0%~4.5%",
+      "thresholds": [
+        {"min": -999, "max": 2.5, "score": 100, "label": "宽松"},
+        {"min": 2.5, "max": 3.0, "score": 80, "label": "偏低"},
+        {"min": 3.0, "max": 3.55, "score": 60, "label": "正常"},
+        {"min": 3.55, "max": 4.0, "score": 35, "label": "偏高"},
+        {"min": 4.0, "max": 5.0, "score": 10, "label": "紧缩"},
+        {"min": 5.0, "max": 999, "score": 0, "label": "过紧"}
+      ],
+      "manual_fallback": 3.0,
+      "last_known_value": 3.0,
+      "last_known_date": "2026-06-22"
+    },
+    "industrial_output": {
+      "name": "工业增加值同比",
+      "line": 4, "weight": 0.07,
+      "data_source": "Trading Economics",
+      "auto_fetch": true,
+      "frequency": "月",
+      "unit": "%",
+      "reference_range": "4%~8%",
+      "thresholds": [
+        {"min": -999, "max": 0, "score": 0, "label": "萎缩"},
+        {"min": 0, "max": 3, "score": 15, "label": "低迷"},
+        {"min": 3, "max": 5, "score": 40, "label": "偏弱"},
+        {"min": 5, "max": 7, "score": 70, "label": "稳健"},
+        {"min": 7, "max": 10, "score": 90, "label": "强劲"},
+        {"min": 10, "max": 999, "score": 100, "label": "过热"}
+      ],
+      "manual_fallback": 4.5,
+      "last_known_value": 4.5,
+      "last_known_date": "2026-05-31"
+    },
+    "export": {
+      "name": "出口同比增速",
+      "line": 4, "weight": 0.06,
+      "data_source": "Trading Economics",
+      "auto_fetch": true,
+      "frequency": "月",
+      "unit": "%",
+      "reference_range": "3%~10%",
+      "thresholds": [
+        {"min": -999, "max": -10, "score": 0, "label": "大跌"},
+        {"min": -10, "max": -3, "score": 15, "label": "下滑"},
+        {"min": -3, "max": 3, "score": 40, "label": "平稳"},
+        {"min": 3, "max": 10, "score": 70, "label": "增长"},
+        {"min": 10, "max": 999, "score": 100, "label": "强劲"}
+      ],
+      "manual_fallback": 19.4,
+      "last_known_value": 19.4,
+      "last_known_date": "2026-05-31"
+    },
+    "currency_index": {
+      "name": "人民币CFETS汇率指数",
+      "line": 4, "weight": 0.05,
+      "data_source": "中国外汇交易中心",
+      "auto_fetch": true,
+      "frequency": "周",
+      "unit": "",
+      "reference_range": "95~105",
+      "thresholds": [
+        {"min": -999, "max": 90, "score": 10, "label": "偏弱"},
+        {"min": 90, "max": 95, "score": 30, "label": "较弱"},
+        {"min": 95, "max": 102, "score": 70, "label": "稳定"},
+        {"min": 102, "max": 110, "score": 90, "label": "偏强"},
+        {"min": 110, "max": 999, "score": 60, "label": "过强"}
+      ],
+      "manual_fallback": 102.65,
+      "last_known_value": 102.65,
+      "last_known_date": "2026-07-03"
+    },
+    "ai_market_share": {
+      "name": "中国AI模型海外调用份额",
+      "line": 4, "weight": 0.07,
+      "data_source": "OpenRouter排名",
+      "auto_fetch": true,
+      "frequency": "周",
+      "unit": "%",
+      "reference_range": "10%~40%",
+      "thresholds": [
+        {"min": -999, "max": 10, "score": 10, "label": "低"},
+        {"min": 10, "max": 20, "score": 30, "label": "较低"},
+        {"min": 20, "max": 30, "score": 55, "label": "中等"},
+        {"min": 30, "max": 40, "score": 75, "label": "较高"},
+        {"min": 40, "max": 999, "score": 100, "label": "领先"}
+      ],
+      "manual_fallback": 42,
+      "last_known_value": 42,
+      "last_known_date": "2026-07-04"
+    },
+    "new_energy_penetration": {
+      "name": "新能源汽车渗透率",
+      "line": 4, "weight": 0.05,
+      "data_source": "中国汽车工业协会",
+      "auto_fetch": true,
+      "frequency": "月",
+      "unit": "%",
+      "reference_range": "30%~60%",
+      "thresholds": [
+        {"min": -999, "max": 10, "score": 0, "label": "起步"},
+        {"min": 10, "max": 20, "score": 15, "label": "早期"},
+        {"min": 20, "max": 30, "score": 30, "label": "发展"},
+        {"min": 30, "max": 40, "score": 55, "label": "加速"},
+        {"min": 40, "max": 50, "score": 75, "label": "放量"},
+        {"min": 50, "max": 100, "score": 100, "label": "主导"}
+      ],
+      "_note": "通过 car_market_fuel_cpca / car_market_total_cpca 计算"
+    }
+  }
+}

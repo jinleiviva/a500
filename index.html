@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.5,user-scalable=yes">
 <title>A500 温度计</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="a500_baseline.js"></script>
+<!-- REALTIME_INLINE -->
+<script>window.__RT = {"price": 5622.8, "change": 0.81, "pe": 15.27, "pePercentile": 34.3, "pricePercentile": 91.8, "temperature": 57, "live": false, "fresh": true, "delayed": false, "market": false, "ts": "2026-07-20 21:32:50"};</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{
@@ -611,15 +614,10 @@ body{
 <script>
 (function(){
   const D = {
-    'date': '2026-07-10', 'price': 6005.9, 'priceChange': -1.88, 'pe': 16.31,
-    'pePercentile': 75.5, 'pePercentilePrev': 77.5, 'stockYield': 6.1, 'bondYield': 1.74,
-    'premium': 4.4, 'temperature': 83, 'dcaPct': 0, 'dcaLabel': '🛑 暂停买入',
+    'date': '2026-07-17', 'price': 5577.7, 'priceChange': -4.26, 'pe': 15.15,
+    'pePercentile': 31.3, 'pePercentilePrev': 77.5, 'stockYield': 6.6, 'bondYield': 1.74,
+    'premium': 4.9, 'temperature': 49, 'dcaPct': 50, 'dcaLabel': '✋ 半额定投',
     'recentCloses': [
-      6100.1,
-      6030.7,
-      6111.1,
-      6144.5,
-      6113.5,
       6009.4,
       5855.9,
       5981.8,
@@ -644,13 +642,106 @@ body{
       6023.6,
       5952.4,
       6120.9,
-      6005.9
+      6005.9,
+      5851.8,
+      5984.4,
+      5943.9,
+      5826.0,
+      5577.7
     ], 'tempHistory': [
+      {d:"11-26",t:13},
+      {d:"12-03",t:23},
+      {d:"12-10",t:27},
+      {d:"12-17",t:22},
+      {d:"12-24",t:21},
+      {d:"12-31",t:20},
+      {d:"01-07",t:18},
+      {d:"01-14",t:21},
+      {d:"01-21",t:23},
+      {d:"01-28",t:20},
+      {d:"02-05",t:21},
+      {d:"02-12",t:30},
+      {d:"02-19",t:35},
+      {d:"02-26",t:40},
+      {d:"03-04",t:31},
+      {d:"03-11",t:30},
+      {d:"03-18",t:40},
+      {d:"03-25",t:42},
+      {d:"03-31",t:31},
+      {d:"04-07",t:20},
+      {d:"04-14",t:29},
+      {d:"04-21",t:35},
+      {d:"04-29",t:39},
+      {d:"05-06",t:45},
+      {d:"05-13",t:40},
+      {d:"05-20",t:35},
+      {d:"05-27",t:27},
+      {d:"06-03",t:34},
+      {d:"06-10",t:39},
+      {d:"06-17",t:48},
+      {d:"06-24",t:45},
+      {d:"07-01",t:57},
+      {d:"07-08",t:47},
+      {d:"07-15",t:44},
+      {d:"07-22",t:42},
+      {d:"07-29",t:37},
+      {d:"08-05",t:40},
+      {d:"08-12",t:46},
+      {d:"08-19",t:52},
+      {d:"08-26",t:49},
+      {d:"09-02",t:44},
+      {d:"09-09",t:53},
+      {d:"09-16",t:58},
+      {d:"09-23",t:62},
+      {d:"09-30",t:72},
+      {d:"10-07",t:67},
+      {d:"10-14",t:74},
+      {d:"10-21",t:82},
+      {d:"10-28",t:72},
+      {d:"11-04",t:62},
+      {d:"11-11",t:80},
+      {d:"11-18",t:87},
+      {d:"11-25",t:81},
+      {d:"12-02",t:88},
+      {d:"12-09",t:79},
+      {d:"12-16",t:83},
+      {d:"12-23",t:76},
+      {d:"12-30",t:89},
+      {d:"01-06",t:89},
+      {d:"01-13",t:94},
+      {d:"01-20",t:94},
+      {d:"01-27",t:89},
+      {d:"02-03",t:74},
+      {d:"02-10",t:68},
+      {d:"02-17",t:79},
+      {d:"02-24",t:91},
+      {d:"03-03",t:83},
+      {d:"03-10",t:71},
+      {d:"03-17",t:85},
+      {d:"03-24",t:88},
+      {d:"03-31",t:79},
+      {d:"04-07",t:85},
+      {d:"04-14",t:79},
+      {d:"04-21",t:90},
+      {d:"04-28",t:77},
+      {d:"05-05",t:72},
+      {d:"05-12",t:85},
+      {d:"05-19",t:92},
+      {d:"05-26",t:81},
+      {d:"06-02",t:86},
+      {d:"06-30",t:82},
+      {d:"07-07",t:85},
       {d:"07-08",t:74},
-      {d:"07-10",t:83}
+      {d:"07-09",t:95},
+      {d:"07-10",t:83},
+      {d:"07-13",t:64},
+      {d:"07-14",t:79},
+      {d:"07-15",t:73},
+      {d:"07-16",t:63},
+      {d:"07-17",t:49}
     ],
     'priceStale': false, 'peLastCalibrated': '2026-07-07',
-    'dividendYield': 2.35,
+    'dividendYield': 2.4,
     'peHistory': [
       {d:"09-23",pe:12.8},
       {d:"09-30",pe:13.1},
@@ -745,8 +836,13 @@ body{
       {d:"07-07",pe:16.35},
       {d:"07-08",pe:16.16},
       {d:"07-09",pe:16.62},
-      {d:"07-10",pe:16.31}
-    ], 'pageCreatedAt': '2026-07-12 20:30', 'pricePercentile': 93.2,
+      {d:"07-10",pe:16.31},
+      {d:"07-13",pe:15.89},
+      {d:"07-14",pe:16.25},
+      {d:"07-15",pe:16.14},
+      {d:"07-16",pe:15.82},
+      {d:"07-17",pe:15.15}
+    ], 'pageCreatedAt': '2026-07-17 17:28', 'pricePercentile': 75.0,
   };
   window.__D = D;
 
@@ -764,60 +860,44 @@ body{
   }
 
   function render(){
-    var d=D,ti=tInfo(d.temperature);
-    document.getElementById('todayDate').textContent='数据截至 '+d.date+' 收盘';
+    // ① 无论走哪条分支，先隐藏加载遮罩、显示内容（否则会卡在"数据加载中"）
+    var loadingEl=document.getElementById('loading');
+    var contentEl=document.getElementById('content');
+    if(loadingEl)loadingEl.style.display='none';
+    if(contentEl)contentEl.style.display='block';
 
-    // Temp ring with loading animation
-    var C=2*Math.PI*50,arc=document.getElementById('mainArc');
+    var d=D;
+    // ② 实时温度优先：页面内联了 window.__RT 就用它，否则用日频值
+    var rt = (window.__RT && window.__RT.temperature!=null) ? window.__RT : null;
+    var effT = rt ? Math.round(rt.temperature) : d.temperature;
+    var ti=tInfo(effT);
+
+    // ③ 温度环 + 数字 + 标签 + 建议（直接落值，不再做 0→目标 的 count-up 动画，
+    //    避免把实时温度盖回静态日频值 / 卡在 0）
+    var C=2*Math.PI*50, arc=document.getElementById('mainArc');
     var numEl=document.getElementById('tempNum');
     var lblEl=document.getElementById('tempLbl');
-    
-    if(arc){
-      // Step 1: set to empty position (CSS transition will animate to target)
-      arc.style.strokeDasharray=C;
-      arc.style.stroke='transparent'; // hide during animation
-      arc.style.strokeDashoffset=C;
-    }
-    if(numEl){numEl.textContent='0';numEl.style.color=ti.c;}
-    if(lblEl)lblEl.textContent='--';
-    
-    // Step 2: after a frame, animate to real values
-    setTimeout(function(){
-      var targetTemp=d.temperature;
-      if(arc){
-        arc.style.stroke=ti.c;
-        arc.style.strokeDashoffset=C*(1-targetTemp/100);
-      }
-      // Number count-up
-      var start=0,duration=800,step=30;
-      var inc=targetTemp/(duration/step);
-      var cur=0;
-      var ct=setInterval(function(){
-        cur+=inc;
-        if(cur>=targetTemp){cur=targetTemp;clearInterval(ct);}
-        if(numEl)numEl.textContent=Math.round(cur);
-      },step);
-      // Label
-      setTimeout(function(){if(lblEl){lblEl.textContent=ti.l;lblEl.style.color=ti.c;}},400);
-    },50);
+    if(arc){arc.style.strokeDasharray=C;arc.style.strokeDashoffset=C*(1-effT/100);arc.style.stroke=ti.c;}
+    if(numEl){numEl.textContent=effT;numEl.style.color=ti.c;}
+    if(lblEl){lblEl.textContent=ti.l;lblEl.style.color=ti.c;}
 
-    // Advice chip
     var adv=document.getElementById('advice');
-    adv.textContent=tAdv(d.temperature);
-    adv.style.display='inline-block';
-    if(d.temperature>=80) adv.className='adv-chip adv-chip-hot';
-    else if(d.temperature>=60) adv.className='adv-chip adv-chip-warn';
-    else if(d.temperature>=30) adv.className='adv-chip adv-chip-ok';
-    else adv.className='adv-chip adv-chip-cold';
+    if(adv){adv.textContent=tAdv(effT);adv.style.display='inline-block';
+      if(effT>=80)adv.className='adv-chip adv-chip-hot';
+      else if(effT>=60)adv.className='adv-chip adv-chip-warn';
+      else if(effT>=30)adv.className='adv-chip adv-chip-ok';
+      else adv.className='adv-chip adv-chip-cold';}
 
-    // Metrics list
+    var td=document.getElementById('todayDate');
+    if(td)td.textContent = rt ? ('实时数据 '+rt.ts) : ('数据截至 '+d.date+' 收盘');
+
+    // ④ 其余指标（PE / 股债差 / 红利 / 实时价 / 趋势图）使用日频数据 d 渲染
     document.getElementById('peVal').textContent=d.pe+' 年';
     var pr=document.getElementById('peRank');
     pr.textContent='PE分位 '+d.pePercentile+'%';
     pr.className='ml-desc '+(d.pePercentile>70?'r':d.pePercentile>50?'y':'g');
 
     document.getElementById('stockVal').textContent=d.stockYield+'%';
-
     document.getElementById('bondVal').textContent=d.bondYield+'%';
     var pd=document.getElementById('premiumDesc');
     if(d.premium>3){pd.textContent='股债差 +'+d.premium+'%';pd.className='ml-desc g';}
@@ -831,16 +911,11 @@ body{
     else if(d.dividendYield>2){dd.textContent='中性';dd.className='ml-desc';}
     else{dd.textContent='偏低';dd.className='ml-desc y';}
 
-    // Initial RT display
-    document.getElementById('rtPrice').textContent=d.price.toLocaleString();
-    var rc=document.getElementById('rtChg');
-    rc.textContent=(d.priceChange>0?'+':'')+d.priceChange.toFixed(2)+'%';
-    rc.style.color=d.priceChange>=0?'#EF4444':'#059669';
+    // 价格/涨跌由下方前端直连(loadPrice)接管，此处不写，避免用滞后日频覆盖实时值
 
     // Temp trend
     if(d.tempHistory&&d.tempHistory.length>0){
-      // Temperature zone colors plugin
-      var zonePlugin = {
+      var zonePlugin={
         id:'tempZones',
         beforeDraw:function(chart){
           var ctx=chart.ctx,ca=chart.chartArea,ys=chart.scales.y;
@@ -880,9 +955,6 @@ body{
         plugins:[zonePlugin]
       });
     }
-
-    document.getElementById('loading').style.display='none';
-    document.getElementById('content').style.display='block';
 
     // Reference values
     var pv=document.getElementById('refPeVal');if(pv)pv.textContent=d.pe+' 年';
@@ -1251,103 +1323,60 @@ function toggleRef(){
   else{b.className='cr-body show';cr.className='cr open';a.textContent='▶';}
 }
 
-// ── Real-time ──
+// ── Real-time（后端 realtime_data.js 轮询，盘中每5分钟刷新）──
 (function(){
-  var pr=document.getElementById('rtPrice'),cg=document.getElementById('rtChg'),
-      rt=null,sc=null;
-
-  function parseT(text){
-    var m=text.match(/v_sh000510="([^"]+)"/);
-    if(!m)return null;
-    var f=m[1].split('~');
-    if(f.length<35)return null;
-    return{price:parseFloat(f[3]),yc:parseFloat(f[4]),change:parseFloat(f[31])||0,pct:parseFloat(f[32])||0,ts:f[30]||''};
-  }
-  function compRT(rtD){
-    if(!rtD||!rtD.price)return null;
-    var wd=window.__D,rPe=wd.pe*rtD.price/wd.price,cnt=0,h=wd.peHistory||[];
-    for(var i=0;i<h.length;i++){if(h[i].pe<=rPe)cnt++}
-    var rPct=h.length>0?cnt/h.length*100:wd.pePercentile;
-    var rT=Math.round((rPct*0.6+wd.pricePercentile*0.4)*10)/10;
-    return{pe:rPe,temp:rT};
-  }
-  function upUI(rd,cp){
-    if(!rd)return;
+  function applyRT(rt){
+    if(!rt)return;
     var ih=isMarket();
     var dot=document.getElementById('rtDot'),lbl=document.getElementById('rtLbl'),
         bmDot=document.getElementById('bmDot'),bmSt=document.getElementById('bmStatus'),
         ts=document.getElementById('tempStatus');
-    if(dot){dot.className='pr-dot '+(ih?'on pulse':'off');}
-    if(lbl)lbl.textContent=ih?'📡 盘中':'💤 盘后';
+    if(dot)dot.className='pr-dot '+(ih?'on pulse':'off');
+    if(lbl)lbl.textContent=rt.live?'📡 盘中':(rt.fresh?(rt.delayed?'📊 延迟':'📊 收盘'):'💤 盘后');
     if(bmDot)bmDot.style.background=ih?'#059669':'#94A3B8';
-    if(bmSt)bmSt.textContent=ih?'盘中实时刷新':'盘后数据';
-    if(ts)ts.textContent=ih?'📡 盘中实时（每60秒自动更新）':'💤 盘后数据';
+    if(bmSt)bmSt.textContent=rt.live?'盘中实时刷新':(rt.fresh?(rt.delayed?'最近数据(略有延迟)':'最新收盘'):'盘后数据');
+    if(ts)ts.textContent=rt.live?'📡 盘中实时（每5分钟更新）':(rt.fresh?(rt.delayed?'💤 数据略有延迟（显示最近一次成功行情）':'💤 非交易时段（显示最新收盘）'):'💤 盘后数据');
 
-    var up=rd.change>=0,co=up?'#EF4444':'#059669';
-    pr.textContent=rd.price.toLocaleString();pr.style.color=co;
-    cg.textContent=(up?'+':'')+rd.pct.toFixed(2)+'%';cg.style.color=co;
-    if(rd.ts&&rd.ts.length>=14){
-      document.getElementById('rtTime').textContent='最后更新 '+rd.ts.substring(8,10)+':'+rd.ts.substring(10,12)+':'+rd.ts.substring(12,14);
-    }
-    if(cp){
-      // Update main ring with real-time data
-      var tmpT=tInfo(cp.temp),tmpArc=document.getElementById('mainArc');
-      if(tmpArc){
-        var tmpC=2*Math.PI*50;
-        tmpArc.style.strokeDasharray=tmpC;
-        tmpArc.style.strokeDashoffset=tmpC*(1-cp.temp/100);
-        tmpArc.style.stroke=tmpT.c;
-      }
-      var tmpN=document.getElementById('tempNum');
-      if(tmpN){tmpN.textContent=Math.round(cp.temp);tmpN.style.color=tmpT.c;}
-      var tmpL=document.getElementById('tempLbl');
-      if(tmpL){tmpL.textContent=tmpT.l;tmpL.style.color=tmpT.c;}
-    }
-  }
+    var up=rt.change>=0,co=up?'#EF4444':'#059669';
+    var pr=document.getElementById('rtPrice'),cg=document.getElementById('rtChg');
+    if(pr){pr.textContent=Number(rt.price).toLocaleString();pr.style.color=co;}
+    if(cg){cg.textContent=(up?'+':'')+Number(rt.change).toFixed(2)+'%';cg.style.color=co;}
 
-  function rtStatus(ih){
-    var el=document.getElementById('bmStatus');
-    if(!el)return;
-    if(ih){el.textContent='盘中实时刷新';el.style.color='#059669';}
-    else{el.textContent='盘后数据';el.style.color='#94A3B8';}
-  }
+    var t=Math.round(rt.temperature),ti=tInfo(t),
+        arc=document.getElementById('mainArc'),
+        num=document.getElementById('tempNum'),
+        l2=document.getElementById('tempLbl');
+    if(arc){var C=2*Math.PI*50;arc.style.strokeDasharray=C;arc.style.strokeDashoffset=C*(1-t/100);arc.style.stroke=ti.c;}
+    if(num){num.textContent=t;num.style.color=ti.c;}
+    if(l2){l2.textContent=ti.l;l2.style.color=ti.c;}
 
-  function scheduleRT(){
-    var ih=isMarket();
-    var bmDot=document.getElementById('bmDot');
-    var ts=document.getElementById('tempStatus');
-    if(bmDot)bmDot.style.background=ih?'#059669':'#94A3B8';
-    rtStatus(ih);
-    if(ih){
-      fetchRT();
-      if(rt)clearInterval(rt);
-      rt=setInterval(fetchRT,60000);
-      if(sc){clearInterval(sc);sc=null;}
-    }else{
-      fetchRT();
-      if(rt){clearInterval(rt);rt=null;}
-      if(sc)return;
-      sc=setInterval(function(){
-        if(isMarket()){clearInterval(sc);sc=null;scheduleRT();}
-      },30000);
-    }
-  }
-  function fetchRT(){
-    var er=document.getElementById('rtChg');
-    fetch('https://qt.gtimg.cn/q=sh000510&_='+Date.now())
-      .then(function(r){return r.arrayBuffer()})
-      .then(function(buf){
-        var txt=new TextDecoder('gbk').decode(buf),rd=parseT(txt);
-        if(!rd||isNaN(rd.price))return;
-        upUI(rd,compRT(rd));
-      })
-      .catch(function(){});
-  }
+    var peEl=document.getElementById('peVal');if(peEl&&rt.pe)peEl.textContent=rt.pe+' 年';
+    var prEl=document.getElementById('peRank');if(prEl&&rt.pePercentile!=null)prEl.textContent='PE分位 '+rt.pePercentile+'%';
 
-  setTimeout(function(){
-    if(!window.__D)return;
-    scheduleRT();
-  },500);
+    var ut=document.getElementById('rtTime');
+    if(ut)ut.textContent='最后更新 '+rt.ts;
+  }
+  window.applyRT = applyRT;   // 暴露给前端直连 IIFE：温度/PE 由 gtimg 实时价本地算后注入渲染
+  var rtPrev=null;
+  function loadRT(){
+    // file:// 本地打开时不要加查询串（浏览器会把 ?_= 当成文件名一部分导致加载失败）
+    var isFile=(location.protocol==='file:');
+    if(rtPrev && rtPrev.parentNode) rtPrev.parentNode.removeChild(rtPrev);
+    var s=document.createElement('script');
+    s.onload=function(){ if(window.__RT && !window.__frontendLiveTs)applyRT(window.__RT); };
+    s.onerror=function(){};
+    s.src='realtime_data.js'+(isFile?'':'?_='+Date.now());
+    (document.body||document.documentElement).appendChild(s);
+    rtPrev=s;
+  }
+  function start(){
+    // 若页面已内联实时数据（生成时注入），立即应用，避免外部文件加载前的空白/旧值
+    if(window.__RT && window.__RT.temperature!=null && !window.__frontendLiveTs) applyRT(window.__RT);
+    loadRT();                  // 加载/更新外部 realtime_data.js
+    setInterval(loadRT, 30000); // 每30秒轮询（文件每5分钟由后端刷新）
+  }
+  if(document.body) start();
+  else window.addEventListener('DOMContentLoaded', start);
 })();
 
 // ── TAB ──
@@ -1528,5 +1557,69 @@ setTimeout(function(){
   </div>
 </div>
 
+<script>
+// ── A500 前端直连行情（腾讯 gtimg JSONP：绕过 CORS；后端 GitHub Actions 停摆也能自愈）──
+(function(){
+  var CODE='sh000510';
+  function pad(n){return String(n).padStart(2,'0');}
+  function nowTs(){var n=new Date();return n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate())+' '+pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());}
+  function paint(price,chg){
+    var ih=isMarket();
+    var up=chg>=0,co=up?'#EF4444':'#059669';
+    var pr=document.getElementById('rtPrice'),cg=document.getElementById('rtChg'),
+        lbl=document.getElementById('rtLbl'),dot=document.getElementById('rtDot'),
+        ut=document.getElementById('rtTime');
+    if(pr){pr.textContent=Number(price).toLocaleString();pr.style.color=co;}
+    if(cg){cg.textContent=(up?'+':'')+Number(chg).toFixed(2)+'%';cg.style.color=co;}
+    if(lbl)lbl.textContent= ih? '📡 盘中(前端直连)' : '💤 最新收盘(前端直连)';
+    if(dot)dot.className='pr-dot '+(ih?'on pulse':'off');
+    if(ut)ut.textContent='最后更新 '+nowTs();
+  }
+  // 前端自愈：用基线历史 + 实时价本地算温度/PE分位/价格分位（不再依赖 GitHub Actions 推送）
+  function computeTemp(spot){
+    var B=window.__A500_BASE;
+    if(!B||!B.closesAll||!B.peHistory||!B.price)return null;
+    var price0=+B.price, pe0=+B.pe;
+    var r_pe=Math.round(pe0*spot/price0*100)/100;
+    var ph=B.peHistory, n=ph.length, c=0;
+    for(var i=0;i<n;i++){ if(+ph[i].pe <= r_pe) c++; }
+    var peP=Math.round(c/n*1000)/10;
+    var cl=B.closesAll, m=cl.length, d=0;
+    for(var j=0;j<m;j++){ if(+cl[j] <= spot) d++; }
+    var prP=Math.round(d/m*1000)/10;
+    var temp=Math.round(peP*0.6+prP*0.4);
+    return {pe:r_pe, pePercentile:peP, pricePercentile:prP, temperature:temp};
+  }
+  function onData(price,chg){
+    window.__frontendLiveTs=Date.now();
+    var ih=isMarket();
+    var t=computeTemp(price);
+    var rt=window.__RT||{};
+    if(t){ rt.pe=t.pe; rt.pePercentile=t.pePercentile; rt.pricePercentile=t.pricePercentile; rt.temperature=t.temperature; }
+    rt.price=price;rt.change=chg;rt.live=ih;rt.fresh=true;rt.market=ih;rt.ts=nowTs();
+    window.__RT=rt;
+    paint(price,chg);
+    if(window.applyRT)window.applyRT(rt);
+  }
+  function fetchLive(){
+    var s=document.createElement('script');
+    s.onload=function(){
+      try{
+        var raw=window['v_'+CODE];
+        if(raw){
+          var a=String(raw).split('~');
+          var price=parseFloat(a[3]),pre=parseFloat(a[4]);
+          if(price>0&&pre>0)onData(Math.round(price*100)/100,Math.round((price-pre)/pre*10000)/100);
+        }
+      }catch(e){}
+    };
+    s.onerror=function(){};
+    s.src='https://qt.gtimg.cn/q='+CODE+'&_='+Date.now();
+    (document.body||document.documentElement).appendChild(s);
+  }
+  function start(){fetchLive();setInterval(fetchLive,30000);}
+  if(document.body)start();else window.addEventListener('DOMContentLoaded',start);
+})();
+</script>
 </body>
 </html>
