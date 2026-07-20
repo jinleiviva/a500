@@ -49,19 +49,3 @@ jobs:
           git commit -m "📡 盘中实时 $(date +'%Y-%m-%d %H:%M')"
           git pull --rebase --autostash origin main || true
           git push
-
-      - name: 部署到 gh-pages（Pages 实际源，否则线上读不到修复）
-        run: |
-          rm -rf ../ghpages
-          git fetch origin gh-pages
-          git worktree add ../ghpages gh-pages
-          cp -f index.html realtime_data.js dividend_data.json transition_data.json a500_baseline.js pe_history.json temp_history.json data_cache.json realtime_baseline.json realtime_last.json transition_config.json ../ghpages/ || true
-          cd ../ghpages
-          git add -A
-          if git diff --cached --quiet; then echo "gh-pages 无变化"; cd ..; git worktree remove ../ghpages --force; exit 0; fi
-          git config user.name 'a500-bot'
-          git config user.email 'a500-bot@users.noreply.github.com'
-          git commit -m "🚀 deploy $(date +'%Y-%m-%d %H:%M')"
-          git push origin gh-pages
-          cd ..
-          git worktree remove ../ghpages --force
