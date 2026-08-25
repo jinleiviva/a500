@@ -1,12 +1,12 @@
 {
-  "date": "2026-08-24",
-  "price": 5638.0,
-  "priceChange": -1.53,
-  "pe": 15.32,
-  "pePercentile": 34.4,
-  "pricePercentile": 77.0,
+  "date": "2026-08-25",
+  "price": 5630.8,
+  "priceChange": -0.13,
+  "pe": 15.3,
+  "pePercentile": 34.1,
+  "pricePercentile": 76.7,
   "bondYield": 1.68,
-  "dividendYield": 2.27,
+  "dividendYield": 0,
   "premium": 4.8,
   "temperature": 51,
   "dcaPct": 50,
@@ -512,6 +512,10 @@
     {
       "date": "2026-08-24",
       "pe": 15.32
+    },
+    {
+      "date": "2026-08-25",
+      "pe": 15.3
     }
   ],
   "closesAll": [
@@ -5770,6 +5774,7 @@
     5681.7,
     5694.1,
     5725.6,
-    5638.0
+    5638.0,
+    5630.8
   ]
 }
