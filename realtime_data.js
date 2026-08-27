@@ -1,1 +1,1 @@
-window.__RT = {"price": 5740.9, "change": 1.15, "pe": 15.6, "pePercentile": 46.0, "pricePercentile": 92.7, "temperature": 65, "live": false, "fresh": true, "delayed": false, "market": false, "ts": "2026-08-27 19:02:40"};
+window.__RT = {"price": 5740.9, "change": 1.15, "pe": 15.6, "pePercentile": 46.5, "pricePercentile": 92.7, "temperature": 65, "live": false, "fresh": true, "delayed": false, "market": false, "ts": "2026-08-28 02:23:04"};
