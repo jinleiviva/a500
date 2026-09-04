@@ -25,3 +25,15 @@
 pip install -r requirements.txt
 python fetch_a500_data.py
 ```
+
+## 许可证
+
+本仓库的**源代码**采用 [MIT 许可证](LICENSE)。
+
+⚠️ 关于**数据文件**：仓库内的 JSON / JS 市场数据文件（`pe_history.json`、`data_cache.json`、`realtime_data.js`、`dividend_data.json`、`transition_data.json`、`temp_history.json` 等）由脚本在运行时从第三方公开数据源（新浪财经，经 akshare 获取）抓取后落盘，随仓库一并提供是为了让站点可被复现与审计，无需重跑全部历史抓取。
+
+MIT 许可覆盖本仓库的源代码，**不覆盖底层第三方市场数据本身**——后者仍受其原始提供方的条款约束。若你再分发本项目，请先自行确认所用数据源的许可。
+
+## 免责声明
+
+本项目仅为个人研究与数据可视化用途，**不构成任何投资建议**。市场有风险，决策请自负。
