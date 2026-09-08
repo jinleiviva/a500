@@ -31,8 +31,8 @@ PE_HIST  = os.path.join(DIR, "pe_history.json")
 TEMP_HIST = os.path.join(DIR, "temp_history.json")
 DATA_CACHE = os.path.join(DIR, "data_cache.json")
 
-# 真实 PE 接入日期（自该日起 PE 来自中证指数官方静态市盈率，非价格派生）
-PE_LAST_CALIBRATED = "2026-09-08"
+# 真实 PE 边界：该日及之前为价格派生+量级校准，自 2026-08-12 起为逐日真实 PE（中证官方静态市盈率）
+PE_LAST_CALIBRATED = "2026-08-11"
 
 # ══════════════════════════════════════════════════════
 # 历史数据读写
