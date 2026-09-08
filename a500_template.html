@@ -762,7 +762,7 @@ body{
 
 /* ── Info text ── */
 var INFO = {
-  temp:{title:'温度是什么意思？',body:'温度是把当前价格和历史价格做对比，再加上当前股票的贵不贵程度（PE分位），综合算出来的一个参考值。0°C最冷（便宜），100°C最热（贵）。<br><br>⚠️ 温度只是一个参考，不代表一定会涨或跌。'},
+  temp:{title:'温度是什么意思？',body:'温度是把当前价格和历史价格做对比，再加上当前股票的贵不贵程度（PE分位），综合算出来的一个参考值。0°C最冷（便宜），100°C最热（贵）。<br><br>📐 口径：价格分位取近 5 年；PE 分位用累积样本（早期为量级校准值，非逐日真实 PE）；温度为平滑值，已压平单日波动。<br><br>⚠️ 温度只是一个参考，不代表一定会涨或跌。'},
   pe:{title:'回本年限（PE）是什么？',body:'回本年限 = A500的总市值 ÷ 500家公司的年总利润。<br><br>比如现在回本年限是16.6年，意思是如果这些公司每年赚的钱不变，16.6年才能赚回你的本金。<br><br>⚠️ 公司的利润每年会变，这个数字只是当前估值水平。'},
   stockYield:{title:'盈利收益率是什么？',body:'盈利收益率 = 1 ÷ PE。<br><br>比如PE=16.6，盈利收益率≈6%。假设A500里的公司每年赚6块钱利润（每100块投入），全部拿出来分给你。<br><br>⚠️ 这是个理论值，主要用途是和国债利率对比。'},
   bondYield:{title:'10年国债利率是什么？',body:'中国政府发行的10年期债券的年利率。可以近似理解为"无风险收益"——你什么都不用做，买国债每年稳拿这个利息。'},
@@ -1377,10 +1377,13 @@ setTimeout(function(){
     for(var i=0;i<n;i++){ if(+ph[i].pe <= r_pe) c++; }
     var peP=Math.round(c/n*1000)/10;
     var cl=B.closesAll, m=cl.length, d=0;
-    for(var j=0;j<m;j++){ if(+cl[j] <= spot) d++; }
-    var prP=Math.round(d/m*1000)/10;
-    var temp=Math.round(peP*0.6+prP*0.4);
-    return {pe:r_pe, pePercentile:peP, pricePercentile:prP, temperature:temp};
+    var win=(+B.priceWindow)||1250, s=Math.max(0,m-win);
+    for(var j=s;j<m;j++){ if(+cl[j] <= spot) d++; }
+    var prP=Math.round(d/(m-s)*1000)/10;
+    var raw=Math.round(peP*0.6+prP*0.4);
+    var al=(+B.tempAlpha)||0.3, pv=B.tempEmaPrev;
+    var temp=(pv!==undefined&&pv!==null)?Math.round(al*raw+(1-al)*(+pv)):raw;
+    return {pe:r_pe, pePercentile:peP, pricePercentile:prP, temperature:temp, temperatureRaw:raw};
   }
   function onData(price,chg){
     window.__frontendLiveTs=Date.now();

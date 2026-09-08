@@ -34,6 +34,18 @@ DATA_CACHE = os.path.join(DIR, "data_cache.json")
 # 真实 PE 边界：该日及之前为价格派生+量级校准，自 2026-08-12 起为逐日真实 PE（中证官方静态市盈率）
 PE_LAST_CALIBRATED = "2026-08-11"
 
+# 价格分位窗口（交易日）：近 5 年。
+# ⚠️ 日频脚本 / realtime.py / 前端 computeTemp 三处必须共用同一个窗口，
+# 否则同一时刻会算出两套温度（历史上 realtime 用全量 21 年、日频用 5 年，
+# 导致页面显示 61°C 而 temp_history 记为 55°C）。基线只落窗口内数据，
+# 下游无需各自截断；仍保留常量兜底以防读到旧基线。
+PRICE_WINDOW = 1250
+
+# 温度平滑系数（EMA）。PE 历史样本密集在 16~18 区间，分位对价格极敏感：
+# 盘中 ±1% 可让原始温度摆动 ±7 度，日频跳变均值 6.8 度（最大 25 度）。
+# 用 EMA(0.3) 后日变化均值降到 2.2 度，且仍能跟上趋势。原始值保留在 raw 字段。
+TEMP_EMA_ALPHA = 0.3
+
 # ══════════════════════════════════════════════════════
 # 历史数据读写
 # ══════════════════════════════════════════════════════
@@ -133,24 +145,49 @@ def _fetch_realtime_price():
     return None, None
 
 
+def _ema(vals: list, alpha: float, warmup: int = 5) -> list:
+    """指数移动平均，用于压掉温度序列的高频噪声（见 TEMP_EMA_ALPHA 注释）。
+
+    起点取前 warmup 个原始值的均值：PE 历史首条是早期种子值（量级偏低），
+    直接拿它当 EMA 起点会把序列开头几十天整体拉低。
+    """
+    if not vals:
+        return []
+    n = min(warmup, len(vals))
+    out = [sum(float(v) for v in vals[:n]) / n]
+    for v in vals[1:]:
+        out.append(alpha * float(v) + (1 - alpha) * out[-1])
+    return out
+
+
+def _row_index_on_or_before(df: pd.DataFrame, date_str: str) -> int | None:
+    """返回 df 中「日期 ≤ date_str 的最后一行」行号；PE 历史含周末采样点时用它对齐到最近交易日。"""
+    idx = df['date'].searchsorted(pd.Timestamp(date_str), side='right') - 1
+    return int(idx) if idx >= 0 else None
+
+
 def build_temp_history(pe_history: list, df: pd.DataFrame, max_days: int = 180) -> list:
     """从真实 PE 历史（周度）+ 全量价格序列，确定性重建温度历史。
     与日频/实时公式完全一致：温度 = PE分位×0.6 + 价格分位×0.4。
-    这样无论脚本多久跑一次，温度走势都不会残缺。"""
+    这样无论脚本多久跑一次，温度走势都不会残缺。
+
+    价格分位一律用「截至当日的滚动 PRICE_WINDOW 根收盘价」——过去某天的分位
+    只能用那天能看到的数据算，不能拿今天的窗口去算历史（后视偏差）。
+    """
     if not pe_history:
         return []
     pe_vals_all = np.array([h['pe'] for h in pe_history], dtype=float)
-    closes_win = df['close'].values.astype(float)
-    if len(closes_win) > 1250:
-        closes_win = closes_win[-1250:]
+    closes_all = df['close'].values.astype(float)
     out = []
     for h in pe_history:
         pe_d = float(h['pe'])
         pe_pctl = round(float(np.sum(pe_vals_all <= pe_d) / len(pe_vals_all) * 100), 1)
-        close_d = _price_on_date(df, h['date'])
-        if close_d is None:
+        i = _row_index_on_or_before(df, h['date'])
+        if i is None:
             continue
-        price_pctl = round(float(np.sum(closes_win <= close_d) / len(closes_win) * 100), 1)
+        win = closes_all[max(0, i - PRICE_WINDOW + 1): i + 1]
+        close_d = float(closes_all[i])
+        price_pctl = round(float(np.sum(win <= close_d) / len(win) * 100), 1)
         temp = int(round(pe_pctl * 0.6 + price_pctl * 0.4, 0))
         out.append({"date": h['date'], "temp": temp})
     if len(out) > max_days:
@@ -269,16 +306,23 @@ def update():
     else:
         pe_pctl_1m = pe_pctl
 
-    # ── 5. 价格分位 ──
-    p5 = df.tail(1250)['close'].values.astype(float)
+    # ── 5. 价格分位（窗口必须与 realtime.py / 前端一致）──
+    p5 = df.tail(PRICE_WINDOW)['close'].values.astype(float)
     price_pctl = round(float(np.sum(p5 <= p5[-1]) / len(p5) * 100), 1)
 
-    # ── 6. 温度 ──
-    temp = int(round(pe_pctl * 0.6 + price_pctl * 0.4, 0))
+    # ── 6. 温度（原始值，未平滑）──
+    temp_raw = int(round(pe_pctl * 0.6 + price_pctl * 0.4, 0))
 
-    # ── 7. 温度历史维护（从 PE 历史 + 价格序列确定性重建，避免只追加导致历史缺失）──
-    temp_history = build_temp_history(pe_history, df, max_days=180)
+    # ── 7. 温度历史重建 + EMA 平滑 ──
+    # raw 保留原始值便于追溯；对外展示的 temperature 一律用平滑值。
+    raw_hist = build_temp_history(pe_history, df, max_days=180)
+    _sm = _ema([r['temp'] for r in raw_hist], TEMP_EMA_ALPHA) if raw_hist else []
+    temp_history = [{"date": r['date'], "temp": int(round(s)), "raw": r['temp']}
+                    for r, s in zip(raw_hist, _sm)]
     save_json(TEMP_HIST, temp_history)
+    temp = temp_history[-1]['temp'] if temp_history else temp_raw
+    # 前一交易日 EMA：盘中实时脚本据此递推，避免每次刷新自我累积
+    temp_ema_prev = float(_sm[-2]) if len(_sm) >= 2 else (float(_sm[-1]) if _sm else None)
 
     # ── 8. 风险溢价 ──
     stock_yield = round(1 / pe_now * 100, 1)
@@ -311,6 +355,7 @@ def update():
         "dividendYield":     dividend_yield,
         "premium":           premium,
         "temperature":       temp,
+        "temperatureRaw":    temp_raw,
         "dcaPct":            dca_pct,
         "dcaLabel":          dca_label,
         "recentCloses":      closes_30,
@@ -323,6 +368,8 @@ def update():
         "pageCreatedAt":     datetime.now().strftime('%Y-%m-%d %H:%M'),
         "pricePercentile":   price_pctl,
         "peHistory":         [{"d": r["date"][5:], "pe": r["pe"]} for r in pe_history],
+        "priceWindow":       PRICE_WINDOW,
+        "peSampleFrom":      pe_history[0]["date"] if pe_history else None,
     }
 
     # ── 实时基线（供 realtime.py 使用）──
@@ -337,11 +384,18 @@ def update():
         "dividendYield":    dividend_yield,
         "premium":          premium,
         "temperature":      temp,
+        "temperatureRaw":   temp_raw,
+        "tempEmaPrev":      temp_ema_prev,   # 盘中实时据此递推平滑温度
+        "tempAlpha":        TEMP_EMA_ALPHA,
         "dcaPct":           dca_pct,
         "dcaLabel":         dca_label,
         "peLastCalibrated": PE_LAST_CALIBRATED,
         "peHistory":        pe_history,                                   # 全量 PE 历史（用于实时 PE 分位）
-        "closesAll":        [round(float(x), 1) for x in df['close'].values],  # 全量收盘价（用于实时价格分位）
+        # 只落「价格分位窗口内」的收盘价（近 PRICE_WINDOW 个交易日）。
+        # 早期落全量 5267 根（21 年回溯），实时脚本据此算出的分位远高于日频口径，
+        # 是页面温度比 temp_history 高约 6 度的根因。下游直接用、不要再自行截断。
+        "closesAll":        [round(float(x), 1) for x in df.tail(PRICE_WINDOW)['close'].values],
+        "priceWindow":      PRICE_WINDOW,
     }
     save_json(os.path.join(DIR, "realtime_baseline.json"), baseline)
 

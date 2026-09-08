@@ -154,14 +154,24 @@ def compute(spot, chg, base, market, ts, fresh, live, delayed=False):
     else:
         r_pe_pctl = base.get("pePercentile")
 
+    # 价格分位：基线只落了近 PRICE_WINDOW 根收盘价，此处再按 priceWindow 兜底截断，
+    # 兼容读到旧基线（含全量 21 年数据）时不会算出偏高的价格分位。
     closes = base.get("closesAll", [])
+    win = int(base.get("priceWindow", 1250) or 1250)
+    if closes and len(closes) > win:
+        closes = closes[-win:]
     if closes:
         cnt = sum(1 for c in closes if c <= spot)
         r_price_pctl = round(cnt / len(closes) * 100, 1)
     else:
         r_price_pctl = base.get("pricePercentile")
 
-    temp = int(round(r_pe_pctl * 0.6 + r_price_pctl * 0.4, 0))
+    temp_raw = int(round(r_pe_pctl * 0.6 + r_price_pctl * 0.4, 0))
+    # 与日频相同的 EMA 平滑：始终以基线里的「前一交易日 EMA」为起点递推，
+    # 而不是用上一次刷新结果，避免盘中高频刷新时自我累积漂移。
+    alpha = float(base.get("tempAlpha") or 0.3)
+    prev = base.get("tempEmaPrev")
+    temp = int(round(alpha * temp_raw + (1 - alpha) * float(prev))) if prev is not None else temp_raw
     return {
         "price": round(spot, 1),
         "change": round(chg, 2),
@@ -169,6 +179,7 @@ def compute(spot, chg, base, market, ts, fresh, live, delayed=False):
         "pePercentile": r_pe_pctl,
         "pricePercentile": r_price_pctl,
         "temperature": temp,
+        "temperatureRaw": temp_raw,
         "live": live,
         "fresh": fresh,
         "delayed": delayed,

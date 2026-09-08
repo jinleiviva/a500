@@ -31,13 +31,17 @@ def main():
         "pe":               base.get("pe"),            # 基线 PE
         # ── 历史序列（分位计算用）──
         "peHistory":        base.get("peHistory"),     # 全量 PE 历史 [{date, pe}]
-        "closesAll":        base.get("closesAll"),     # 全量收盘价（用于价格分位）
+        "closesAll":        base.get("closesAll"),     # 价格分位窗口内收盘价（近 priceWindow 根）
+        "priceWindow":      base.get("priceWindow", 1250),  # 三处口径必须一致，前端按此兜底截断
         # ── 低频指标（日频，供股债差/股息率展示；前端直接取用）──
         "bondYield":        base.get("bondYield"),
         "dividendYield":    base.get("dividendYield"),
         "peLastCalibrated": base.get("peLastCalibrated"),
         # ── 完整快照（兜底：万一前端计算失败，仍可显示最后已知温度）──
         "temperature":      base.get("temperature"),
+        "temperatureRaw":   base.get("temperatureRaw"),
+        "tempEmaPrev":      base.get("tempEmaPrev"),   # 前端自愈据此递推平滑温度
+        "tempAlpha":        base.get("tempAlpha", 0.3),
         "pePercentile":     base.get("pePercentile"),
         "pricePercentile":  base.get("pricePercentile"),
     }
