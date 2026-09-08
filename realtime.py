@@ -12,7 +12,7 @@ A500 温度计 · 盘中实时脚本
 连续失败且无今日缓存时，才回退日频基线。
 
 使用:  python3 realtime.py
-输出:  realtime_data.js  (+ 同步到主目录)
+输出:  realtime_data.js（仓库内，被 Pages 实际加载） + 内联实时数据到 index.html
 """
 
 import os, json, datetime, time, re, urllib.request
@@ -31,8 +31,6 @@ DIR = os.path.dirname(os.path.abspath(__file__))
 BASELINE = os.path.join(DIR, "realtime_baseline.json")
 LASTGOOD = os.path.join(DIR, "realtime_last.json")
 OUT_LOCAL = os.path.join(DIR, "realtime_data.js")
-OUT_MAIN = os.path.join(os.path.dirname(DIR), "realtime_data.js")   # 主目录（与 A500温度计.html 同层）
-OUT_MAIN_HTML = os.path.join(os.path.dirname(DIR), "A500温度计.html")  # 主目录 HTML
 
 
 def load_json(path: str):
@@ -227,7 +225,8 @@ def main():
             print(f"   ⚠️ 无今日缓存，回退日频基线温度 {base.get('temperature')}°C")
 
     payload = "window.__RT = " + json.dumps(out, ensure_ascii=False) + ";"
-    for path in (OUT_LOCAL, OUT_MAIN):
+    # 写入仓库内的 realtime_data.js（这是被 GitHub Pages 实际加载的文件）
+    for path in (OUT_LOCAL,):
         try:
             with open(path, 'w', encoding='utf-8') as f:
                 f.write(payload)
@@ -237,13 +236,6 @@ def main():
 
     # 内联到唯一产物 index.html（双保险：即使外部 realtime_data.js 加载失败，页面打开即显示正确温度）
     inline_into_html(os.path.join(DIR, "index.html"), payload)
-    # 同步主目录（覆盖任何残留，确保 HTML 结构完整 + 内联最新数据）
-    import shutil
-    try:
-        shutil.copy(os.path.join(DIR, "index.html"), OUT_MAIN_HTML)
-        print(f"   ✅ 同步 → {OUT_MAIN_HTML}")
-    except Exception as e:
-        print(f"   ⚠️ 同步失败 {OUT_MAIN_HTML}: {e}")
 
 
 if __name__ == '__main__':
