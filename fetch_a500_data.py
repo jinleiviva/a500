@@ -4,7 +4,8 @@ A500 温度计 · 每日数据更新脚本
 ================================
 全自动方案：自己累积 PE 历史数据，无需外部干预。
 价格数据来自 akshare(新浪)，国债收益率自动实时拉取，
-PE 估算基于价格变动。每天自动累积温度历史。
+PE 取中证指数官方静态市盈率（真实估值，非价格派生）；历史序列按真实PE量级校准。
+每天自动累积温度历史。
 
 使用:  python3 fetch_a500_data.py
 输出:  index.html（GitHub Pages 首页，也是本地 A500温度计.html 的源；唯一产物）
@@ -30,8 +31,8 @@ PE_HIST  = os.path.join(DIR, "pe_history.json")
 TEMP_HIST = os.path.join(DIR, "temp_history.json")
 DATA_CACHE = os.path.join(DIR, "data_cache.json")
 
-# PE 最后校准日期（手动更新）
-PE_LAST_CALIBRATED = "2026-07-07"
+# 真实 PE 接入日期（自该日起 PE 来自中证指数官方静态市盈率，非价格派生）
+PE_LAST_CALIBRATED = "2026-09-08"
 
 # ══════════════════════════════════════════════════════
 # 历史数据读写
@@ -70,6 +71,27 @@ def fetch_dividend_yield() -> float | None:
     except Exception as e:
         print(f"   ⚠️ 股息率获取失败: {e}")
         return None
+
+
+def fetch_real_pe() -> tuple[float | None, str | None]:
+    """获取中证A500 真实静态市盈率（中证指数官方「市盈率1」）。
+
+    返回 (pe, date_str) 或 (None, None)。这是交易所口径的真实估值，
+    不是按价格等比外推的派生值。csindex 接口每次仅返回最近约 20 个交易日，
+    故历史序列由 pe_history.json 累积 + 按真实PE量级校准得到（见 pe_history 注释）。
+    """
+    try:
+        df = ak.stock_zh_index_value_csindex(symbol="000510")
+        df = df.dropna(subset=["市盈率1"])
+        if df.empty:
+            return None, None
+        row = df.iloc[0]  # 接口按日期降序，取最新一条
+        pe = round(float(row["市盈率1"]), 2)
+        d = str(row["日期"])
+        return pe, d
+    except Exception as e:
+        print(f"   ⚠️ 真实PE获取失败: {e}")
+        return None, None
 
 
 # ══════════════════════════════════════════════════════
@@ -200,24 +222,39 @@ def update():
         print("   ⚠️ 股息率获取失败")
         dividend_yield = 0
 
-    # ── 3. 加载并更新 PE ──
+    # ── 3. 加载并更新 PE（优先真实 PE，失败回退价格派生）──
     pe_history = load_json(PE_HIST)
+    real_pe, real_pe_date = fetch_real_pe()
+    if real_pe is not None:
+        print(f"📐 真实PE(中证指数静态市盈率): {real_pe} (日期 {real_pe_date})")
+    else:
+        print("   ⚠️ 真实PE获取失败，回退价格派生估算")
+
     if not pe_history:
-        print("   ⚠️ 无 PE 历史，从今天开始积累")
-        pe_now = 16.0  # 默认初始值
-        pe_history.append({"date": today_date, "pe": pe_now})
+        print("   ⚠️ 无 PE 历史，从真实PE开始积累")
+        pe_now = real_pe if real_pe is not None else 16.0
+        pe_history.append({"date": real_pe_date or today_date, "pe": pe_now})
         save_json(PE_HIST, pe_history)
     else:
-        last_record = pe_history[-1]
-        last_pe     = last_record['pe']
-        last_price  = _price_on_date(df, last_record['date']) or price_now
-
-        if today_date == last_record['date']:
-            pe_now = last_pe
-        else:
-            pe_now = round(last_pe * (price_now / last_price), 2)
-            pe_history.append({"date": today_date, "pe": pe_now})
+        if real_pe is not None:
+            # 真实 PE 优先：按日期去重追加/更新，避免重复
+            if real_pe_date == pe_history[-1]['date']:
+                pe_history[-1]['pe'] = round(real_pe, 2)
+            else:
+                pe_history.append({"date": real_pe_date, "pe": round(real_pe, 2)})
             save_json(PE_HIST, pe_history)
+            pe_now = round(real_pe, 2)
+        else:
+            # 兜底：价格派生（旧逻辑），保证脚本在网络异常时仍可产出
+            last_record = pe_history[-1]
+            last_pe     = last_record['pe']
+            last_price  = _price_on_date(df, last_record['date']) or price_now
+            if today_date == last_record['date']:
+                pe_now = last_pe
+            else:
+                pe_now = round(last_pe * (price_now / last_price), 2)
+                pe_history.append({"date": today_date, "pe": pe_now})
+                save_json(PE_HIST, pe_history)
 
     # ── 4. 计算 PE 分位 ──
     pe_vals = np.array([h['pe'] for h in pe_history])
