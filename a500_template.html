@@ -612,15 +612,8 @@ body{
 
 <script>
 (function(){
-  const D = {
-    'date': '--', 'price': --, 'priceChange': --, 'pe': --,
-    'pePercentile': --, 'pePercentilePrev': --, 'stockYield': --, 'bondYield': --,
-    'premium': --, 'temperature': --, 'dcaPct': --, 'dcaLabel': '--',
-    'recentCloses': [5000], 'tempHistory': [{d:"01-01",t:50}],
-    'priceStale': false, 'peLastCalibrated': '--',
-    'dividendYield': --,
-    'peHistory': [{d:"01-01",pe:16}], 'pageCreatedAt': '--', 'pricePercentile': --,
-  };
+  /*__PAGE_DATA__*/
+  const D = window.__A500_PAGE_DATA || {};
   window.__D = D;
 
   function tInfo(t){

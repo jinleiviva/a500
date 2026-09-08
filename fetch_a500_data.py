@@ -344,39 +344,14 @@ def _render(data: dict):
     with open(TEMPLATE, encoding='utf-8') as f:
         html = f.read()
 
-    replacements = {
-        "'date': '--'":             f"'date': '{data['date']}'",
-        "'price': --":              f"'price': {data['price']}",
-        "'priceChange': --":        f"'priceChange': {data['priceChange']}",
-        "'pe': --":                 f"'pe': {data['pe']}",
-        "'pePercentile': --":       f"'pePercentile': {data['pePercentile']}",
-        "'pePercentilePrev': --":   f"'pePercentilePrev': {data['pePercentilePrev']}",
-        "'stockYield': --":         f"'stockYield': {data['stockYield']}",
-        "'dividendYield': --":      f"'dividendYield': {data['dividendYield']}",
-        "'bondYield': --":          f"'bondYield': {data['bondYield']}",
-        "'premium': --":            f"'premium': {data['premium']}",
-        "'temperature': --":        f"'temperature': {data['temperature']}",
-        "'dcaPct': --":             f"'dcaPct': {data['dcaPct']}",
-        "'dcaLabel': '--'":         f"'dcaLabel': '{data['dcaLabel']}'",
-        "'priceStale': --":         f"'priceStale': {str(data['priceStale']).lower()}",
-        "'peLastCalibrated': '--'": f"'peLastCalibrated': '{data['peLastCalibrated']}'",
-        "'pageCreatedAt': '--'":     f"'pageCreatedAt': '{data['pageCreatedAt']}'",
-        "'pricePercentile': --":      f"'pricePercentile': {data['pricePercentile']}",
-    }
-    for key, val in replacements.items():
-        html = html.replace(key, val)
-
-    # 替换收盘价数组
-    closes = ",\\n      ".join(str(c) for c in data['recentCloses'])
-    html = re.sub(r"'recentCloses': \[[^]]+\]", f"'recentCloses': [\\n      {closes}\\n    ]", html)
-
-    # 替换温度历史数组
-    temp_items = ",\\n      ".join(f'{{d:"{r["d"]}",t:{r["t"]}}}' for r in data['tempHistory'])
-    html = re.sub(r"'tempHistory': \[[^]]*\]", f"'tempHistory': [\\n      {temp_items}\\n    ]", html)
-
-    # 替换 PE 历史数组
-    pe_items = ",\\n      ".join(f'{{d:"{r["d"]}",pe:{r["pe"]}}}' for r in data['peHistory'])
-    html = re.sub(r"'peHistory': \[[^]]*\]", f"'peHistory': [\\n      {pe_items}\\n    ]", html)
+    # 整段数据一次性注入为 JSON 对象，前端直接读 window.__A500_PAGE_DATA。
+    # 替代原先逐字段字符串 replace：模板格式变动不再导致静默失败/数据留空。
+    payload = "window.__A500_PAGE_DATA = " + json.dumps(data, ensure_ascii=False) + ";"
+    marker = "/*__PAGE_DATA__*/"
+    if marker in html:
+        html = html.replace(marker, payload)
+    else:
+        raise RuntimeError("模板缺少 /*__PAGE_DATA__*/ 注入锚点，请检查 a500_template.html")
 
     with open(OUTPUT, 'w', encoding='utf-8') as f:
         f.write(html)

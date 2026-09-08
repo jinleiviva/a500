@@ -20,6 +20,8 @@ import akshare as ak
 import numpy as np
 import requests
 
+CUR_YEAR = datetime.now().year  # 当前年份：用于替代硬编码的 2025/2026 年份字面量，避免跨年静默降级
+
 DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(DIR, "transition_config.json")
 OUTPUT_JSON = os.path.join(DIR, "transition_data.json")
@@ -156,27 +158,27 @@ def fetch_indicators():
         cpi_date = str(df['日期'].iloc[-1])
     except:
         pass
-    if cpi_val is None or ('2025' in cpi_date):
+    if cpi_val is None or (str(CUR_YEAR) not in cpi_date):
         v, d = None, None
         try:
             html = fetch_url("https://data.eastmoney.com/cjsj/cpi.html")
             if html:
                 lines = html.split('\n')
                 for line in lines:
-                    if '2026' in line:
+                    if str(CUR_YEAR) in line:
                         nums = re.findall(r'[-+]?\d+\.?\d*', line)
                         if nums:
                             v = safe_float(nums[0])
-                            d = "2026-" + re.search(r'(\d+)月', line).group(1) + "-01" if re.search(r'(\d+)月', line) else None
+                            d = f"{CUR_YEAR}-" + re.search(r'(\d+)月', line).group(1) + "-01" if re.search(r'(\d+)月', line) else None
                             break
         except:
             pass
-        if v and d and '2026' in d:
+        if v and d and str(CUR_YEAR) in d:
             cpi_val, cpi_date = v, d
     if cpi_val is None:
         cpi_val = cfg['cpi']['manual_fallback']
         cpi_date = cfg['cpi']['last_known_date']
-    results['cpi'] = {'value': cpi_val, 'date': cpi_date, 'source': '国家统计局', 'auto_fetched': '2026' in (cpi_date or '')}
+    results['cpi'] = {'value': cpi_val, 'date': cpi_date, 'source': '国家统计局', 'auto_fetched': str(CUR_YEAR) in (cpi_date or '')}
 
     # ── PPI ──
     ppi_val, ppi_date = None, None
@@ -186,10 +188,10 @@ def fetch_indicators():
         ppi_date = str(df['日期'].iloc[-1])
     except:
         pass
-    if ppi_val is None or ('2025' in ppi_date):
+    if ppi_val is None or (str(CUR_YEAR) not in ppi_date):
         ppi_val = cfg['ppi']['manual_fallback']
         ppi_date = cfg['ppi']['last_known_date']
-    results['ppi'] = {'value': ppi_val, 'date': ppi_date, 'source': '国家统计局', 'auto_fetched': '2026' in (ppi_date or '')}
+    results['ppi'] = {'value': ppi_val, 'date': ppi_date, 'source': '国家统计局', 'auto_fetched': str(CUR_YEAR) in (ppi_date or '')}
 
     # ── PMI ──
     pmi_val, pmi_date = None, None
@@ -199,10 +201,10 @@ def fetch_indicators():
         pmi_date = str(df['月份'].iloc[-1])
     except:
         pass
-    if pmi_val is None or ('2025' in pmi_date):
+    if pmi_val is None or (str(CUR_YEAR) not in pmi_date):
         pmi_val = cfg['pmi']['manual_fallback']
         pmi_date = cfg['pmi']['last_known_date']
-    results['pmi'] = {'value': pmi_val, 'date': pmi_date, 'source': '国家统计局', 'auto_fetched': '2026' in (pmi_date or '')}
+    results['pmi'] = {'value': pmi_val, 'date': pmi_date, 'source': '国家统计局', 'auto_fetched': str(CUR_YEAR) in (pmi_date or '')}
 
     # ── 全社会用电量 ──
     try:
@@ -215,14 +217,14 @@ def fetch_indicators():
             elec_date = f"{parts[0]}-{int(parts[1]):02d}"
         results['electricity'] = {'value': elec_val, 'date': elec_date, 'source': '国家能源局', 'auto_fetched': True}
     except:
-        results['electricity'] = {'value': cfg['electricity'].get('manual_fallback', 5.0), 'date': '2026-05-31', 'source': '国家能源局（回退）', 'auto_fetched': False}
+        results['electricity'] = {'value': cfg['electricity'].get('manual_fallback', 5.0), 'date': f"{CUR_YEAR}-05-31", 'source': '国家能源局（回退）', 'auto_fetched': False}
 
     # ── 社零 ──
     retail_val, retail_date = None, None
     try:
         df = ak.macro_china_consumer_goods_retail()
         # 找2026年最新数据
-        df_2026 = df[df['月份'].str.contains('2026', na=False)]
+        df_2026 = df[df['月份'].str.contains(str(CUR_YEAR), na=False)]
         if len(df_2026) > 0:
             retail_val = safe_float(df_2026['同比增长'].iloc[0])
             retail_date = str(df_2026['月份'].iloc[0]).replace('年', '-').replace('月', '-01')[:10]  # "2026年05月份" -> "2026-05-01" -> "2026-05"
@@ -232,7 +234,7 @@ def fetch_indicators():
     if retail_val is None:
         retail_val = cfg['retail_sales']['manual_fallback']
         retail_date = cfg['retail_sales']['last_known_date']
-    results['retail_sales'] = {'value': retail_val, 'date': retail_date, 'source': '国家统计局', 'auto_fetched': '2026' in (retail_date or '')}
+    results['retail_sales'] = {'value': retail_val, 'date': retail_date, 'source': '国家统计局', 'auto_fetched': str(CUR_YEAR) in (retail_date or '')}
 
     # ====================================
     # 主线二：就业与收入
@@ -241,7 +243,7 @@ def fetch_indicators():
     # ── 城镇调查失业率（Trading Economics）──
     unemp_val, unemp_date = web_scrape_te("https://tradingeconomics.com/china/unemployment-rate")
     unemp_auto = False
-    if unemp_val and unemp_date and '2026' in unemp_date:
+    if unemp_val and unemp_date and str(CUR_YEAR) in unemp_date:
         unemp_auto = True
     else:
         unemp_val = cfg['unemployment']['manual_fallback']
@@ -279,10 +281,10 @@ def fetch_indicators():
         m2_date = str(df['月份'].iloc[-1])
     except:
         pass
-    if m2_val is None or ('2025' in m2_date):
+    if m2_val is None or (str(CUR_YEAR) not in m2_date):
         m2_val = cfg['m2']['manual_fallback']
         m2_date = cfg['m2']['last_known_date']
-    results['m2'] = {'value': m2_val, 'date': m2_date, 'source': '中国人民银行', 'auto_fetched': '2026' in (m2_date or '')}
+    results['m2'] = {'value': m2_val, 'date': m2_date, 'source': '中国人民银行', 'auto_fetched': str(CUR_YEAR) in (m2_date or '')}
 
     # ── 人民币贷款余额同比 ──
     loan_val, loan_date = None, None
@@ -326,7 +328,7 @@ def fetch_indicators():
     if lpr_val is None or lpr_date == cfg['lpr']['last_known_date']:
         lpr_val = cfg['lpr']['manual_fallback']
         lpr_date = cfg['lpr']['last_known_date']
-    results['lpr'] = {'value': lpr_val, 'date': lpr_date, 'source': '全国银行间同业拆借中心', 'auto_fetched': lpr_val != cfg['lpr']['manual_fallback'] or '2026' in (lpr_date or '')}
+    results['lpr'] = {'value': lpr_val, 'date': lpr_date, 'source': '全国银行间同业拆借中心', 'auto_fetched': lpr_val != cfg['lpr']['manual_fallback'] or str(CUR_YEAR) in (lpr_date or '')}
 
     # ====================================
     # 主线四：转型与开放
@@ -334,7 +336,7 @@ def fetch_indicators():
 
     # ── 工业增加值同比（Trading Economics）──
     ind_val, ind_date = web_scrape_te("https://tradingeconomics.com/china/industrial-production")
-    ind_auto = ind_val and ind_date and '2026' in ind_date
+    ind_auto = ind_val and ind_date and str(CUR_YEAR) in ind_date
     if not ind_auto:
         ind_val = cfg['industrial_output']['manual_fallback']
         ind_date = cfg['industrial_output']['last_known_date']
@@ -342,7 +344,7 @@ def fetch_indicators():
 
     # ── 出口同比（Trading Economics）──
     export_val, export_date = web_scrape_te("https://tradingeconomics.com/china/exports-yoy")
-    export_auto = export_val and export_date and '2026' in export_date
+    export_auto = export_val and export_date and str(CUR_YEAR) in export_date
     if not export_auto:
         export_val = cfg['export']['manual_fallback']
         export_date = cfg['export']['last_known_date']
@@ -376,22 +378,22 @@ def fetch_indicators():
     try:
         df_fuel = ak.car_market_fuel_cpca()
         df_total = ak.car_market_total_cpca()
-        if '2026年' in df_fuel.columns and '2026年' in df_total.columns:
+        if f'{CUR_YEAR}年' in df_fuel.columns and f'{CUR_YEAR}年' in df_total.columns:
             # 取最新的非NaN行
-            fuel_vals = df_fuel['2026年'].dropna()
-            total_vals = df_total['2026年'].dropna()
+            fuel_vals = df_fuel[f'{CUR_YEAR}年'].dropna()
+            total_vals = df_total[f'{CUR_YEAR}年'].dropna()
             if len(fuel_vals) > 0 and len(total_vals) > 0:
                 # 取交集：匹配月份
                 for i in range(len(fuel_vals) - 1, -1, -1):
                     month = df_fuel.iloc[i]['月份']
                     total_row = df_total[df_total['月份'] == month]
                     if len(total_row) > 0:
-                        total_v = safe_float(total_row['2026年'].iloc[0])
+                        total_v = safe_float(total_row[f'{CUR_YEAR}年'].iloc[0])
                         fuel_v = safe_float(fuel_vals.iloc[i])
                         if total_v and fuel_v and total_v > 0:
                             pen_val = round(fuel_v / total_v * 100, 1)
                             m = re.search(r'(\d+)', month)
-                            pen_date = f"2026-{int(m.group(1)):02d}" if m else "2026-06"
+                            pen_date = f"{CUR_YEAR}-{int(m.group(1)):02d}" if m else f"{CUR_YEAR}-06"
                             results['new_energy_penetration'] = {'value': pen_val, 'date': pen_date, 'source': '中国汽车工业协会', 'auto_fetched': True}
                             break
     except:
@@ -403,8 +405,8 @@ def fetch_indicators():
             # 尝试用本年所有可用数据算平均
             df_fuel = ak.car_market_fuel_cpca()
             df_total = ak.car_market_total_cpca()
-            f_vals = df_fuel['2026年'].dropna()
-            t_vals = df_total['2026年'].dropna()
+            f_vals = df_fuel[f'{CUR_YEAR}年'].dropna()
+            t_vals = df_total[f'{CUR_YEAR}年'].dropna()
             if len(f_vals) > 0 and len(t_vals) > 0:
                 f_avg = f_vals.mean()
                 t_avg = t_vals.mean()
@@ -413,8 +415,8 @@ def fetch_indicators():
         except:
             pass
         if pen_val is None:
-            pen_val = 40.0  # 2026年新能源渗透率大约在40%左右
-        results['new_energy_penetration'] = {'value': pen_val, 'date': '2026-05-31', 'source': '中国汽车工业协会（推算）', 'auto_fetched': True}
+            pen_val = 40.0  # 新能源渗透率推算（约40%，随当前年份滚动）
+        results['new_energy_penetration'] = {'value': pen_val, 'date': f"{CUR_YEAR}-05-31", 'source': '中国汽车工业协会（推算）', 'auto_fetched': True}
 
     return results
 
@@ -512,7 +514,7 @@ def main():
     print(f"各指标数据状态:")
     for k, v in results.items():
         name = CONFIG['indicators'].get(k, {}).get('name', k)
-        tag = "🆕" if v.get('auto_fetched') else "⬆️" if '2026' in (v.get('date','') or '') else "⚠️"
+        tag = "🆕" if v.get('auto_fetched') else "⬆️" if str(CUR_YEAR) in (v.get('date','') or '') else "⚠️"
         print(f"  {tag} {name}: {v['value']} ({v.get('date','')}) [{'自动' if v.get('auto_fetched') else '手动'}]")
 
     scores = compute_scores(results)
