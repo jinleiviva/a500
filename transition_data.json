@@ -1,6 +1,6 @@
 {
-  "date": "2026-09-08",
-  "temperature": 59.6,
+  "date": "2026-09-14",
+  "temperature": 58.5,
   "band": "温和区",
   "emoji": "🌤️",
   "color": "#EF9F27",
@@ -18,7 +18,7 @@
     },
     "line3": {
       "name": "货币与信用",
-      "score": 44.0,
+      "score": 39.8,
       "weight": 25.0
     },
     "line4": {
@@ -39,7 +39,7 @@
       "weight": 0.07,
       "auto": true,
       "stale": true,
-      "stale_days": 100
+      "stale_days": 106
     },
     "ppi": {
       "name": "PPI同比",
@@ -52,7 +52,7 @@
       "weight": 0.06,
       "auto": true,
       "stale": true,
-      "stale_days": 70
+      "stale_days": 76
     },
     "pmi": {
       "name": "制造业PMI",
@@ -65,7 +65,7 @@
       "weight": 0.06,
       "auto": true,
       "stale": true,
-      "stale_days": 70
+      "stale_days": 76
     },
     "electricity": {
       "name": "全社会用电量同比",
@@ -77,8 +77,8 @@
       "line": 1,
       "weight": 0.05,
       "auto": true,
-      "stale": false,
-      "stale_days": 55
+      "stale": true,
+      "stale_days": 61
     },
     "retail_sales": {
       "name": "社零同比",
@@ -90,8 +90,8 @@
       "line": 1,
       "weight": 0.06,
       "auto": true,
-      "stale": false,
-      "stale_days": 55
+      "stale": true,
+      "stale_days": 61
     },
     "unemployment": {
       "name": "城镇调查失业率",
@@ -103,8 +103,8 @@
       "line": 2,
       "weight": 0.08,
       "auto": true,
-      "stale": false,
-      "stale_days": 55
+      "stale": true,
+      "stale_days": 61
     },
     "disposable_income": {
       "name": "居民可支配收入累计同比",
@@ -117,7 +117,7 @@
       "weight": 0.07,
       "auto": true,
       "stale": false,
-      "stale_days": 251
+      "stale_days": 257
     },
     "m2": {
       "name": "M2同比",
@@ -130,27 +130,27 @@
       "weight": 0.07,
       "auto": true,
       "stale": true,
-      "stale_days": 100
+      "stale_days": 106
     },
     "rmb_loan": {
       "name": "人民币贷款余额同比",
-      "score": 20,
-      "label": "偏弱",
-      "value": 5.13,
-      "date": "2026-07",
+      "score": 5,
+      "label": "收缩",
+      "value": 4.92,
+      "date": "2026-08",
       "source": "中国人民银行",
       "line": 3,
       "weight": 0.07,
       "auto": true,
       "stale": false,
-      "stale_days": 55
+      "stale_days": 30
     },
     "bond_yield": {
       "name": "10年国债收益率",
       "score": 30,
       "label": "低",
-      "value": 1.6815,
-      "date": "2026-09-08",
+      "value": 1.6888,
+      "date": "2026-09-14",
       "source": "中国债券信息网",
       "line": 3,
       "weight": 0.04,
@@ -169,7 +169,7 @@
       "weight": 0.07,
       "auto": true,
       "stale": false,
-      "stale_days": 19
+      "stale_days": 25
     },
     "industrial_output": {
       "name": "工业增加值同比",
@@ -181,8 +181,8 @@
       "line": 4,
       "weight": 0.07,
       "auto": true,
-      "stale": false,
-      "stale_days": 55
+      "stale": true,
+      "stale_days": 61
     },
     "export": {
       "name": "出口同比增速",
@@ -195,27 +195,27 @@
       "weight": 0.06,
       "auto": true,
       "stale": false,
-      "stale_days": 24
+      "stale_days": 30
     },
     "currency_index": {
       "name": "人民币CFETS汇率指数",
       "score": 70,
       "label": "稳定",
-      "value": 101.64,
-      "date": "2026-09-04",
+      "value": 101.49,
+      "date": "2026-09-11",
       "source": "中国外汇交易中心",
       "line": 4,
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 4
+      "stale_days": 3
     },
     "ai_market_share": {
       "name": "中国AI模型海外调用份额",
       "score": 100,
       "label": "领先",
-      "value": 64.5,
-      "date": "2026-09-08",
+      "value": 60.6,
+      "date": "2026-09-14",
       "source": "OpenRouter",
       "line": 4,
       "weight": 0.07,
@@ -228,13 +228,13 @@
       "score": 75,
       "label": "放量",
       "value": 42.8,
-      "date": "2026-07",
+      "date": "2026-08",
       "source": "中国汽车工业协会",
       "line": 4,
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 55
+      "stale_days": 30
     }
   }
 }
