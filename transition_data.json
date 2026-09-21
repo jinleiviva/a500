@@ -1,6 +1,6 @@
 {
-  "date": "2026-09-14",
-  "temperature": 58.5,
+  "date": "2026-09-21",
+  "temperature": 61.6,
   "band": "温和区",
   "emoji": "🌤️",
   "color": "#EF9F27",
@@ -23,7 +23,7 @@
     },
     "line4": {
       "name": "转型与开放",
-      "score": 76.8,
+      "score": 87.2,
       "weight": 30.0
     }
   },
@@ -39,7 +39,7 @@
       "weight": 0.07,
       "auto": true,
       "stale": true,
-      "stale_days": 106
+      "stale_days": 113
     },
     "ppi": {
       "name": "PPI同比",
@@ -52,7 +52,7 @@
       "weight": 0.06,
       "auto": true,
       "stale": true,
-      "stale_days": 76
+      "stale_days": 83
     },
     "pmi": {
       "name": "制造业PMI",
@@ -65,46 +65,46 @@
       "weight": 0.06,
       "auto": true,
       "stale": true,
-      "stale_days": 76
+      "stale_days": 83
     },
     "electricity": {
       "name": "全社会用电量同比",
       "score": 55,
       "label": "温和",
-      "value": 4.7,
-      "date": "2026-07",
+      "value": 4.3,
+      "date": "2026-08",
       "source": "国家能源局",
       "line": 1,
       "weight": 0.05,
       "auto": true,
-      "stale": true,
-      "stale_days": 61
+      "stale": false,
+      "stale_days": 37
     },
     "retail_sales": {
       "name": "社零同比",
       "score": 40,
       "label": "疲弱",
-      "value": 0.6,
-      "date": "2026-07",
+      "value": 0.4,
+      "date": "2026-08",
       "source": "国家统计局",
       "line": 1,
       "weight": 0.06,
       "auto": true,
-      "stale": true,
-      "stale_days": 61
+      "stale": false,
+      "stale_days": 37
     },
     "unemployment": {
       "name": "城镇调查失业率",
       "score": 30,
       "label": "偏高",
-      "value": 5.2,
-      "date": "2026-07",
+      "value": 5.3,
+      "date": "2026-08",
       "source": "Trading Economics",
       "line": 2,
       "weight": 0.08,
       "auto": true,
-      "stale": true,
-      "stale_days": 61
+      "stale": false,
+      "stale_days": 37
     },
     "disposable_income": {
       "name": "居民可支配收入累计同比",
@@ -117,7 +117,7 @@
       "weight": 0.07,
       "auto": true,
       "stale": false,
-      "stale_days": 257
+      "stale_days": 264
     },
     "m2": {
       "name": "M2同比",
@@ -130,7 +130,7 @@
       "weight": 0.07,
       "auto": true,
       "stale": true,
-      "stale_days": 106
+      "stale_days": 113
     },
     "rmb_loan": {
       "name": "人民币贷款余额同比",
@@ -143,14 +143,14 @@
       "weight": 0.07,
       "auto": true,
       "stale": false,
-      "stale_days": 30
+      "stale_days": 37
     },
     "bond_yield": {
       "name": "10年国债收益率",
       "score": 30,
       "label": "低",
-      "value": 1.6888,
-      "date": "2026-09-14",
+      "value": 1.6829,
+      "date": "2026-09-21",
       "source": "中国债券信息网",
       "line": 3,
       "weight": 0.04,
@@ -163,26 +163,26 @@
       "score": 60,
       "label": "正常",
       "value": 3.0,
-      "date": "2026-08-20",
+      "date": "2026-09-20",
       "source": "全国银行间同业拆借中心",
       "line": 3,
       "weight": 0.07,
       "auto": true,
       "stale": false,
-      "stale_days": 25
+      "stale_days": 1
     },
     "industrial_output": {
       "name": "工业增加值同比",
-      "score": 40,
-      "label": "偏弱",
-      "value": 4.5,
-      "date": "2026-07",
+      "score": 70,
+      "label": "稳健",
+      "value": 5.2,
+      "date": "2026-08",
       "source": "Trading Economics",
       "line": 4,
       "weight": 0.07,
       "auto": true,
-      "stale": true,
-      "stale_days": 61
+      "stale": false,
+      "stale_days": 37
     },
     "export": {
       "name": "出口同比增速",
@@ -195,14 +195,14 @@
       "weight": 0.06,
       "auto": true,
       "stale": false,
-      "stale_days": 30
+      "stale_days": 37
     },
     "currency_index": {
       "name": "人民币CFETS汇率指数",
-      "score": 70,
-      "label": "稳定",
-      "value": 101.49,
-      "date": "2026-09-11",
+      "score": 90,
+      "label": "偏强",
+      "value": 102.54,
+      "date": "2026-09-18",
       "source": "中国外汇交易中心",
       "line": 4,
       "weight": 0.05,
@@ -214,8 +214,8 @@
       "name": "中国AI模型海外调用份额",
       "score": 100,
       "label": "领先",
-      "value": 60.6,
-      "date": "2026-09-14",
+      "value": 50.7,
+      "date": "2026-09-21",
       "source": "OpenRouter",
       "line": 4,
       "weight": 0.07,
@@ -234,7 +234,7 @@
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 30
+      "stale_days": 37
     }
   }
 }
