@@ -1,10 +1,10 @@
 {
-  "date": "2026-09-24",
+  "date": "2026-09-25",
   "price": 5486.0,
-  "priceChange": -1.97,
+  "priceChange": 0.0,
   "pe": 16.51,
   "pePercentile": 18.9,
-  "pricePercentile": 70.9,
+  "pricePercentile": 71.0,
   "bondYield": 1.67,
   "dividendYield": 2.36,
   "premium": 4.4,
@@ -610,7 +610,6 @@
     }
   ],
   "closesAll": [
-    5928.0,
     5910.1,
     5991.4,
     5955.5,
@@ -1859,6 +1858,7 @@
     5626.6,
     5630.5,
     5596.2,
+    5486.0,
     5486.0
   ],
   "priceWindow": 1250
