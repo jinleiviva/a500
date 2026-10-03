@@ -443,7 +443,7 @@ body{
         <span class="t-tag t-tag-auto">✅</span>
         <span class="t-tag t-tag-manual">⚠️</span>
         <span class="t-tag t-tag-stale">⚠️过期</span>
-        <span style="margin-left:auto;font-size:10px">月频更新 · 仅供参考</span>
+        <span style="margin-left:auto;font-size:10px">周一/周四自动更新 · 仅供参考</span>
       </div>
     </div>
 
@@ -1109,6 +1109,12 @@ var TRANS_INFO={
   lpr:{title:'1年期LPR',body:'<b>这是什么：</b>银行给最优质客户贷款的基准利率。<br><br><b>正常范围：</b>3.0-4.5%。利率越低说明货币政策越宽松。<br><br><b>反映的经济状况：</b>LPR持续下调说明央行在主动宽松。'},
   industrial_output:{title:'规模以上工业增加值同比',body:'<b>这是什么：</b>全国规模以上工业企业这个月生产了多少东西，比去年同月多了还是少了。<br><br><b>正常范围：</b>5-8%为正常。<br><br><b>反映的经济状况：</b>工业增加值是实体经济供给端的核心指标。'},
   new_energy_penetration:{title:'新能源汽车渗透率',body:'<b>这是什么：</b>全国新卖出的汽车中，新能源车占了多少比例。<br><br><b>正常范围：</b>30-50%。越高说明新能源替代越快。<br><br><b>反映的经济状况：</b>这是中国新质生产力最具标志性的指标。'},
+  pmi_nonmfg:{title:'非制造业PMI',body:'<b>这是什么：</b>对服务业和建筑业采购经理的月度问卷调查，与制造业PMI互补。<br><br><b>正常范围：</b>50为荣枯线，>52说明服务业景气向好。<br><br><b>反映的经济状况：</b>服务业占GDP比重已超一半，非制造业PMI比制造业PMI更贴近消费和就业的真实温度。'},
+  fixed_asset_investment:{title:'固定资产投资累计同比',body:'<b>这是什么：</b>今年到上个月为止，全国在厂房、设备、基建、房产上投的钱，比去年同期多还是少。<br><br><b>正常范围：</b>3-8%为健康增长，负增长说明企业不敢投资。<br><br><b>反映的经济状况：</b>投资是内需的第二引擎，直接反映企业对未来的信心。'},
+  consumer_confidence:{title:'消费者信心指数',body:'<b>这是什么：</b>国家统计局每月调查居民对收入、就业和消费意愿的感受，合成的指数。<br><br><b>正常范围：</b>92-105为中性，越高越乐观。<br><br><b>反映的经济状况：</b>信心是消费的先行指标——居民敢不敢花钱，比已经花了多少钱更能预判未来。'},
+  m1:{title:'M1同比',body:'<b>这是什么：</b>社会上的"活钱"增速——现金加企业活期存款，随时能花出去的钱。<br><br><b>正常范围：</b>2-10%。M1低迷说明企业把钱存成定期，不愿投资扩张。<br><br><b>反映的经济状况：</b>M1-M2剪刀差是判断资金活化程度的关键，M1回升通常领先经济回暖。'},
+  social_financing:{title:'社融增量同比',body:'<b>这是什么：</b>社会融资规模——实体经济从金融体系拿到的全部资金（贷款、债券、股票等），按滚动12个月增量计算同比。<br><br><b>正常范围：</b>0-15%为平稳扩张。<br><br><b>反映的经济状况：</b>社融是比贷款更全面的信用指标，社融扩张领先经济增长约1-2个季度。'},
+  import_yoy:{title:'进口同比增速',body:'<b>这是什么：</b>今年这个月从国外买入的商品总额，比去年同月多了还是少了。<br><br><b>正常范围：</b>0-10%为正常。<br><br><b>反映的经济状况：</b>出口看别人买不买我们，进口看我们自己买不买——进口是内需强弱的镜像指标。'},
 };
 function toggleRef(){
   var b=document.getElementById('refBody'),a=document.getElementById('refArrow'),cr=a.parentNode;
@@ -1297,13 +1303,13 @@ function renderTrans(d){
       if(sc<40)c='#10B981';else if(sc<70)c='#F59E0B';else c='#EF4444';
       var fresh='';var cardStyle='';
       if(ind.stale){fresh='⚠️';cardStyle=' style="opacity:0.6"';}
-      else if(ind.date&&ind.date.indexOf('2025')>=0)fresh='📅';
+      else if(ind.date&&ind.date.indexOf(String(new Date().getFullYear()))<0)fresh='📅';
       else fresh='🆕';
       var staleBadge=ind.stale?'<span class="tc-tag t-tag-stale">⚠️过期</span>':'';
       var tag=(ind.stale?'':(ind.auto?'<span class="tc-tag t-tag-auto">✅</span>':'<span class="tc-tag t-tag-manual">⚠️</span>'));
-      var um={'cpi':'%','ppi':'%','pmi':'','bond_yield':'%','m2':'%','ai_market_share':'%','export':'%','currency_index':'','electricity':'%','retail_sales':'%','unemployment':'%','disposable_income':'%','rmb_loan':'%','lpr':'%','industrial_output':'%','new_energy_penetration':'%'};
+      var um={'cpi':'%','ppi':'%','pmi':'','pmi_nonmfg':'','bond_yield':'%','m2':'%','m1':'%','social_financing':'%','ai_market_share':'%','export':'%','import_yoy':'%','currency_index':'','electricity':'%','retail_sales':'%','unemployment':'%','disposable_income':'%','consumer_confidence':'','fixed_asset_investment':'%','rmb_loan':'%','lpr':'%','industrial_output':'%','new_energy_penetration':'%'};
       var unit=um[key]||'';
-      var refs={'cpi':'0.5-3%','ppi':'-1~3%','pmi':'荣枯线50','bond_yield':'1.8-3%','m2':'8-10%','ai_market_share':'越高越好','export':'3-10%','currency_index':'95-102','electricity':'2-8%','retail_sales':'3-10%','unemployment':'4.5-5.5%','disposable_income':'4-7%','rmb_loan':'8-14%','lpr':'3.0-4.5%','industrial_output':'5-8%','new_energy_penetration':'30-50%'};
+      var refs={'cpi':'0.5-3%','ppi':'-1~3%','pmi':'荣枯线50','pmi_nonmfg':'荣枯线50','bond_yield':'1.8-3%','m2':'8-10%','m1':'2-10%','social_financing':'0-15%','ai_market_share':'越高越好','export':'3-10%','import_yoy':'0-10%','currency_index':'95-102','electricity':'2-8%','retail_sales':'3-10%','unemployment':'4.5-5.5%','disposable_income':'4-7%','consumer_confidence':'92-105','fixed_asset_investment':'3-8%','rmb_loan':'8-14%','lpr':'3.0-4.5%','industrial_output':'5-8%','new_energy_penetration':'30-50%'};
       var ref=refs[key]||'';
       html+='<div class="t-card" onclick="transInfo(\''+key+'\')" style="cursor:pointer"'+cardStyle+'><div class="tc-hdr"><span class="tc-name">'+fresh+' '+ind.name+'</span>'+staleBadge+tag+'</div><div class="tc-val" style="color:'+c+'">'+ind.value+'<span style="font-size:11px;color:#94A3B8;font-weight:400;margin-left:2px">'+unit+'</span></div><div class="tc-mid"><span class="tc-label" style="color:'+c+'">'+ind.label+'</span><span class="tc-score" style="color:'+c+'">'+Math.round(sc)+'分</span></div><div class="tc-bar"><div class="tc-fill" style="width:'+sc+'%;background:'+c+'"></div></div><div class="tc-foot"><span>参考 '+ref+'</span><span>'+ind.date+'</span></div></div>';
     });
