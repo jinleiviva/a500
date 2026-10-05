@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-03",
+  "date": "2026-10-06",
   "temperature": 56.1,
   "band": "温和区",
   "emoji": "🌤️",
@@ -39,7 +39,7 @@
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 49
+      "stale_days": 52
     },
     "ppi": {
       "name": "PPI同比",
@@ -52,7 +52,7 @@
       "weight": 0.04,
       "auto": true,
       "stale": false,
-      "stale_days": 49
+      "stale_days": 52
     },
     "pmi": {
       "name": "制造业PMI",
@@ -65,7 +65,7 @@
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 18
+      "stale_days": 21
     },
     "pmi_nonmfg": {
       "name": "非制造业PMI",
@@ -78,7 +78,7 @@
       "weight": 0.03,
       "auto": true,
       "stale": false,
-      "stale_days": 18
+      "stale_days": 21
     },
     "retail_sales": {
       "name": "社零同比",
@@ -91,7 +91,7 @@
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 49
+      "stale_days": 52
     },
     "electricity": {
       "name": "全社会用电量同比",
@@ -104,7 +104,7 @@
       "weight": 0.04,
       "auto": true,
       "stale": false,
-      "stale_days": 49
+      "stale_days": 52
     },
     "fixed_asset_investment": {
       "name": "固定资产投资累计同比",
@@ -117,7 +117,7 @@
       "weight": 0.04,
       "auto": true,
       "stale": false,
-      "stale_days": 49
+      "stale_days": 52
     },
     "unemployment": {
       "name": "城镇调查失业率",
@@ -130,7 +130,7 @@
       "weight": 0.07,
       "auto": true,
       "stale": false,
-      "stale_days": 49
+      "stale_days": 52
     },
     "consumer_confidence": {
       "name": "消费者信心指数",
@@ -143,7 +143,7 @@
       "weight": 0.04,
       "auto": true,
       "stale": false,
-      "stale_days": 49
+      "stale_days": 52
     },
     "disposable_income": {
       "name": "居民可支配收入累计同比",
@@ -156,7 +156,7 @@
       "weight": 0.04,
       "auto": true,
       "stale": false,
-      "stale_days": 276
+      "stale_days": 279
     },
     "m2": {
       "name": "M2同比",
@@ -169,7 +169,7 @@
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 49
+      "stale_days": 52
     },
     "m1": {
       "name": "M1同比",
@@ -182,7 +182,7 @@
       "weight": 0.03,
       "auto": true,
       "stale": false,
-      "stale_days": 49
+      "stale_days": 52
     },
     "rmb_loan": {
       "name": "人民币贷款余额同比",
@@ -195,7 +195,7 @@
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 49
+      "stale_days": 52
     },
     "social_financing": {
       "name": "社融增量同比",
@@ -208,7 +208,7 @@
       "weight": 0.06,
       "auto": true,
       "stale": true,
-      "stale_days": 171
+      "stale_days": 174
     },
     "bond_yield": {
       "name": "10年国债收益率",
@@ -220,8 +220,8 @@
       "line": 3,
       "weight": 0.02,
       "auto": false,
-      "stale": false,
-      "stale_days": 5
+      "stale": true,
+      "stale_days": 8
     },
     "lpr": {
       "name": "1年期LPR",
@@ -234,7 +234,7 @@
       "weight": 0.04,
       "auto": true,
       "stale": false,
-      "stale_days": 13
+      "stale_days": 16
     },
     "industrial_output": {
       "name": "工业增加值同比",
@@ -247,7 +247,7 @@
       "weight": 0.06,
       "auto": true,
       "stale": false,
-      "stale_days": 49
+      "stale_days": 52
     },
     "export": {
       "name": "出口同比增速",
@@ -260,7 +260,7 @@
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 49
+      "stale_days": 52
     },
     "import_yoy": {
       "name": "进口同比增速",
@@ -273,7 +273,7 @@
       "weight": 0.04,
       "auto": true,
       "stale": false,
-      "stale_days": 49
+      "stale_days": 52
     },
     "currency_index": {
       "name": "人民币CFETS汇率指数",
@@ -286,14 +286,14 @@
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 9
+      "stale_days": 12
     },
     "ai_market_share": {
       "name": "中国AI模型海外调用份额",
       "score": 100,
       "label": "领先",
-      "value": 49.9,
-      "date": "2026-10-03",
+      "value": 49.0,
+      "date": "2026-10-06",
       "source": "OpenRouter",
       "line": 4,
       "weight": 0.06,
@@ -312,7 +312,7 @@
       "weight": 0.04,
       "auto": true,
       "stale": false,
-      "stale_days": 49
+      "stale_days": 52
     }
   }
 }
