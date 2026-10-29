@@ -1,16 +1,16 @@
 {
-  "date": "2026-10-28",
-  "price": 4959.6,
-  "priceChange": 1.18,
-  "pe": 15.64,
-  "pePercentile": 12.0,
-  "pricePercentile": 59.6,
-  "bondYield": 1.63,
-  "dividendYield": 2.55,
+  "date": "2026-10-29",
+  "price": 4884.9,
+  "priceChange": -1.51,
+  "pe": 15.57,
+  "pePercentile": 10.8,
+  "pricePercentile": 54.9,
+  "bondYield": 1.62,
+  "dividendYield": 2.56,
   "premium": 4.8,
   "temperature": 31,
-  "temperatureRaw": 31,
-  "tempEmaPrev": 31.639372677103204,
+  "temperatureRaw": 28,
+  "tempEmaPrev": 31.57760958633513,
   "tempAlpha": 0.3,
   "dcaPct": 75,
   "dcaLabel": "👍 正常定投",
@@ -679,10 +679,13 @@
     {
       "date": "2026-10-28",
       "pe": 15.64
+    },
+    {
+      "date": "2026-10-29",
+      "pe": 15.57
     }
   ],
   "closesAll": [
-    5782.7,
     5818.0,
     5820.9,
     5802.6,
@@ -1931,7 +1934,8 @@
     5012.4,
     4989.3,
     4901.6,
-    4959.6
+    4959.6,
+    4884.9
   ],
   "priceWindow": 1250
 }
