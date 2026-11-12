@@ -211,6 +211,38 @@ body{
 .d-factor .df-bar{height:4px;border-radius:2px;background:var(--soft);margin-top:6px;overflow:hidden}
 .d-factor .df-fill{height:100%;border-radius:2px}
 
+/* ── ETF 溢价 ── */
+.etf-panel{margin-top:18px}
+.etf-lead{font-size:12px;color:var(--sub);line-height:1.55;margin:-2px 2px 8px}
+.etf-switch{display:flex;gap:6px;margin:0 0 10px}
+.etf-switch button{appearance:none;-webkit-appearance:none;flex:1;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:999px;padding:7px 0;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.etf-switch button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.etf-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:0 1px 2px rgba(16,24,40,.04);margin-bottom:10px}
+.etf-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.etf-name{font-size:15px;font-weight:800;letter-spacing:-.2px}
+.etf-code{font-size:11px;color:var(--mute);margin-top:3px}
+.etf-prem{text-align:right;flex-shrink:0}
+.etf-prem b{display:block;font-size:22px;font-weight:800;letter-spacing:-.4px;line-height:1.1}
+.etf-prem small{font-size:11px;color:var(--mute)}
+.etf-sentence{margin-top:10px;font-size:13px;font-weight:700;line-height:1.45}
+.etf-scale{position:relative;display:flex;height:10px;border-radius:6px;overflow:visible;margin:12px 0 4px}
+.etf-seg{height:10px;min-width:0}
+.etf-deep{flex:1;background:#00794D;border-radius:6px 0 0 6px}
+.etf-cold{flex:2;background:var(--green)}
+.etf-normal{flex:4;background:var(--canary)}
+.etf-hot{flex:2;background:var(--orange)}
+.etf-high{flex:1;background:var(--red);border-radius:0 6px 6px 0}
+.etf-marker{position:absolute;top:-4px;width:4px;height:18px;border-radius:2px;background:var(--ink);box-shadow:0 0 0 2px #fff;transform:translateX(-50%)}
+.etf-ticks{display:flex;font-size:10px;color:var(--mute)}
+.etf-ticks span{text-align:center;line-height:1.3;min-width:0}
+.etf-ticks .w1{flex:1}
+.etf-ticks .w2{flex:2}
+.etf-ticks .w4{flex:4}
+.etf-ticks b{display:block;color:var(--sub);font-weight:700}
+.etf-pause{margin-top:10px;padding:8px 10px;border-radius:10px;background:#FFF8E6;color:#8A6100;font-size:12px;line-height:1.5}
+.etf-meta{margin-top:6px;font-size:11px;color:var(--mute);line-height:1.45}
+.etf-foot{font-size:10px;color:var(--mute);padding:2px 2px 0;line-height:1.55}
+
 /* ── Bottom nav (floating pill) ── */
 .bnv{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);width:calc(100% - 28px);max-width:452px;background:var(--soft);border:1px solid var(--line);border-radius:36px;padding:4px;display:flex;z-index:60;box-shadow:0 6px 20px rgba(16,24,40,.10)}
 .bnv .bn-slider{position:absolute;left:4px;top:4px;bottom:4px;width:calc((100% - 8px)/3 - 4px);background:var(--ink);border-radius:32px;transition:transform .25s cubic-bezier(.4,0,.2,1);z-index:0;pointer-events:none}
@@ -388,6 +420,19 @@ body{
       </div>
 
       <div class="cr-div"></div>
+
+      <!-- ETF 溢价：数据来自 etf_premium.json，缺失或 enabled=false 时不显示 -->
+      <section class="etf-panel" id="etfPremium" hidden>
+        <div class="sec-h">ETF 溢价</div>
+        <p class="etf-lead">纳指 ETF、标普 500 ETF 的日度溢价，在各自历史上的位置。</p>
+        <div class="etf-switch" id="etfSwitch">
+          <button type="button" data-etf-window="y1">近1年</button>
+          <button type="button" data-etf-window="y3">近3年</button>
+          <button type="button" data-etf-window="all">全部</button>
+        </div>
+        <div id="etfCards"></div>
+        <p class="etf-foot">溢价率 = 收盘价 / 单位净值 − 1。收盘价来自腾讯证券不复权日 K，单位净值与申购状态来自东方财富。分位只描述历史位置，不是买卖建议。</p>
+      </section>
 
       <!-- Bottom meta -->
       <div class="bm">
@@ -1413,6 +1458,123 @@ setTimeout(function(){
   }
   function start(){fetchLive();setInterval(fetchLive,30000);}
   if(document.body)start();else window.addEventListener('DOMContentLoaded',start);
+})();
+</script>
+<script>
+// ETF 溢价分位。etf_premium.json 缺失或 enabled 为 false 时整块隐藏，不影响温度页。
+(function(){
+  var WINDOWS=[["y1","近1年"],["y3","近3年"],["all","全部"]];
+  var KEY="a500-etf-window";
+  function esc(s){
+    return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function fmt(n,d){
+    var x=Number(n);
+    if(!isFinite(x))return "--";
+    return x.toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
+  }
+  function zone(pct){
+    if(!isFinite(Number(pct)))return "";
+    var value=Math.round(Number(pct));
+    if(value<10)return "deep";
+    if(value<30)return "cold";
+    if(value<=70)return "normal";
+    if(value<=90)return "hot";
+    return "high";
+  }
+  function phrase(pct){
+    var key=zone(pct);
+    return {deep:"溢价处于历史低位",cold:"溢价较低",normal:"溢价正常",hot:"溢价较高",high:"溢价处于历史高位"}[key]||"";
+  }
+  function zoneColor(key){
+    return {deep:"#00794D",cold:"#00B473",normal:"#8A6100",hot:"#E06A00",high:"#C93B3B"}[key]||"#1C1C1E";
+  }
+  function readWindow(){
+    try{
+      var value=localStorage.getItem(KEY);
+      return WINDOWS.some(function(row){return row[0]===value;})?value:"y1";
+    }catch(e){return "y1";}
+  }
+  function writeWindow(value){
+    try{ if(WINDOWS.some(function(row){return row[0]===value;})) localStorage.setItem(KEY,value); }catch(e){}
+  }
+  function windowLabel(key){
+    for(var i=0;i<WINDOWS.length;i++) if(WINDOWS[i][0]===key) return WINDOWS[i][1];
+    return "近1年";
+  }
+  function sentence(premium,pct,label){
+    var head=isFinite(Number(premium))?("当前溢价率："+fmt(premium,2)+"%"):"当前溢价率：--";
+    if(!isFinite(Number(pct))) return head+" · "+label+"分位 样本不足";
+    return head+" · "+label+"分位 "+Math.round(Number(pct))+"%，"+phrase(pct);
+  }
+  function scale(){
+    return '<div class="etf-scale" aria-hidden="true"><i class="etf-seg etf-deep"></i><i class="etf-seg etf-cold"></i><i class="etf-seg etf-normal"></i><i class="etf-seg etf-hot"></i><i class="etf-seg etf-high"></i><span class="etf-marker"></span></div><div class="etf-ticks"><span class="w1"><b>偏低</b>&lt;10%</span><span class="w2"><b>较低</b>10–30%</span><span class="w4"><b>正常</b>30–70%</span><span class="w2"><b>较高</b>70–90%</span><span class="w1"><b>偏高</b>&gt;90%</span></div>';
+  }
+  function render(data){
+    var panel=document.getElementById("etfPremium");
+    var cards=document.getElementById("etfCards");
+    if(!panel||!cards)return;
+    if(!data||data.enabled===false||!data.items||!data.items.length){
+      panel.hidden=true;
+      return;
+    }
+    var key=readWindow();
+    var label=windowLabel(key);
+    document.querySelectorAll("#etfSwitch button").forEach(function(button){
+      button.className=button.getAttribute("data-etf-window")===key?"on":"";
+    });
+    cards.innerHTML=data.items.map(function(item){
+      var latest=item.latest||{};
+      var stats=(item.percentiles||{})[key];
+      var pct=stats?stats.pct:null;
+      var color=zoneColor(zone(pct));
+      var marker="";
+      var body=scale();
+      if(stats&&isFinite(Number(pct))){
+        body=body.replace('class="etf-marker"', 'class="etf-marker" style="left:'+Math.max(0,Math.min(100,Number(pct)))+'%"');
+      }else{
+        body='<p class="etf-meta">'+esc(label)+' 样本不足</p>';
+      }
+      var pause=item.pause_note?'<p class="etf-pause">'+esc(item.pause_note)+'</p>':"";
+      var dist=stats?'<p class="etf-meta">'+esc(label)+' P10 / P50 / P90 · '+fmt(stats.p10,2)+'% / '+fmt(stats.p50,2)+'% / '+fmt(stats.p90,2)+'%</p><p class="etf-meta">最低 '+fmt(stats.min,2)+'% / 中位 '+fmt(stats.p50,2)+'% / 最高 '+fmt(stats.max,2)+'% · 样本 '+esc(stats.n)+' · 自 '+esc(stats.since)+'</p>':"";
+      return '<article class="etf-card"><div class="etf-head"><div><div class="etf-name">'+esc(item.name||item.symbol)+'</div><div class="etf-code">'+esc(item.symbol)+' · 截至 '+esc(latest.date||"--")+'</div></div><div class="etf-prem"><b style="color:'+color+'">'+fmt(latest.premium_pct,2)+'%</b><small>溢价率</small></div></div><p class="etf-sentence" style="color:'+color+'">'+esc(sentence(latest.premium_pct,pct,label))+'</p>'+body+pause+dist+'</article>';
+    }).join("");
+    panel.hidden=false;
+  }
+  function paintButtons(){
+    var box=document.getElementById("etfSwitch");
+    if(!box||box._bound)return;
+    box._bound=true;
+    box.addEventListener("click",function(event){
+      var button=event.target.closest?event.target.closest("button"):null;
+      if(!button)return;
+      var value=button.getAttribute("data-etf-window");
+      writeWindow(value);
+      if(window.__ETF_PREMIUM) render(window.__ETF_PREMIUM);
+    });
+  }
+  function load(){
+    paintButtons();
+    var panel=document.getElementById("etfPremium");
+    if(!panel)return;
+    try{
+      var x=new XMLHttpRequest();
+      var isFile=location.protocol==="file:";
+      x.open("GET","etf_premium.json"+(isFile?"":"?_="+Date.now()),true);
+      x.onload=function(){
+        if(x.status===200||(x.status===0&&x.responseText)){
+          try{ window.__ETF_PREMIUM=JSON.parse(x.responseText); render(window.__ETF_PREMIUM); }
+          catch(e){ panel.hidden=true; }
+        }else panel.hidden=true;
+      };
+      x.onerror=function(){ panel.hidden=true; };
+      x.send();
+    }catch(e){ panel.hidden=true; }
+  }
+  if(document.body) load();
+  else window.addEventListener("DOMContentLoaded", load);
 })();
 </script>
 </body>
