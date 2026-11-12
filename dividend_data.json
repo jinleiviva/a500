@@ -7,7 +7,7 @@
   "dividend_yield_percentile": 95,
   "pb": 0.99,
   "roe": 11.7,
-  "bond_yield": 1.6039,
+  "bond_yield": 1.6032,
   "spread": 3.09,
   "etf_price": null,
   "etf_premium": 0,
@@ -184,5 +184,5 @@
       "v": 4.69
     }
   ],
-  "update_time": "2026-11-11 23:40"
+  "update_time": "2026-11-13 00:20"
 }
