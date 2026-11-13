@@ -1,15 +1,15 @@
 {
-  "date": "2026-11-12",
-  "price": 4899.9,
-  "priceChange": -1.04,
+  "date": "2026-11-13",
+  "price": 4842.5,
+  "priceChange": -1.17,
   "pe": 15.55,
   "pePercentile": 13.1,
-  "pricePercentile": 56.1,
-  "bondYield": 1.6,
+  "pricePercentile": 53.3,
+  "bondYield": 1.74,
   "dividendYield": 2.74,
-  "premium": 4.8,
+  "premium": 4.7,
   "temperature": 31,
-  "temperatureRaw": 30,
+  "temperatureRaw": 29,
   "tempEmaPrev": 31.03835505451708,
   "tempAlpha": 0.3,
   "dcaPct": 75,
@@ -722,7 +722,6 @@
     }
   ],
   "closesAll": [
-    6012.3,
     5993.7,
     5931.6,
     5883.5,
@@ -1971,7 +1970,8 @@
     4910.1,
     4921.5,
     4951.5,
-    4899.9
+    4899.9,
+    4842.5
   ],
   "priceWindow": 1250
 }
