@@ -1,6 +1,6 @@
 {
-  "date": "2026-11-10",
-  "temperature": 54.5,
+  "date": "2026-11-17",
+  "temperature": 52.7,
   "band": "温和区",
   "emoji": "🌤️",
   "color": "#EF9F27",
@@ -23,7 +23,7 @@
     },
     "line4": {
       "name": "转型与开放",
-      "score": 87.0,
+      "score": 81.0,
       "weight": 30.0
     }
   },
@@ -39,7 +39,7 @@
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 26
+      "stale_days": 33
     },
     "ppi": {
       "name": "PPI同比",
@@ -52,7 +52,7 @@
       "weight": 0.04,
       "auto": true,
       "stale": false,
-      "stale_days": 26
+      "stale_days": 33
     },
     "pmi": {
       "name": "制造业PMI",
@@ -65,7 +65,7 @@
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 26
+      "stale_days": 33
     },
     "pmi_nonmfg": {
       "name": "非制造业PMI",
@@ -78,20 +78,20 @@
       "weight": 0.03,
       "auto": true,
       "stale": false,
-      "stale_days": 26
+      "stale_days": 33
     },
     "retail_sales": {
       "name": "社零同比",
       "score": 40,
       "label": "疲弱",
-      "value": 1.1,
-      "date": "2026-09",
+      "value": 0.4,
+      "date": "2026-10",
       "source": "国家统计局",
       "line": 1,
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 56
+      "stale_days": 33
     },
     "electricity": {
       "name": "全社会用电量同比",
@@ -103,34 +103,34 @@
       "line": 1,
       "weight": 0.04,
       "auto": true,
-      "stale": false,
-      "stale_days": 56
+      "stale": true,
+      "stale_days": 63
     },
     "fixed_asset_investment": {
       "name": "固定资产投资累计同比",
       "score": 0,
       "label": "深度收缩",
-      "value": -10.1,
-      "date": "2026-09",
+      "value": -10.8,
+      "date": "2026-10",
       "source": "国家统计局",
       "line": 1,
       "weight": 0.04,
       "auto": true,
       "stale": false,
-      "stale_days": 56
+      "stale_days": 33
     },
     "unemployment": {
       "name": "城镇调查失业率",
       "score": 30,
       "label": "偏高",
-      "value": 5.2,
-      "date": "2026-09",
+      "value": 5.1,
+      "date": "2026-10",
       "source": "国家统计局",
       "line": 2,
       "weight": 0.07,
       "auto": true,
       "stale": false,
-      "stale_days": 56
+      "stale_days": 33
     },
     "consumer_confidence": {
       "name": "消费者信心指数",
@@ -142,8 +142,8 @@
       "line": 2,
       "weight": 0.04,
       "auto": true,
-      "stale": false,
-      "stale_days": 56
+      "stale": true,
+      "stale_days": 63
     },
     "disposable_income": {
       "name": "居民可支配收入累计同比",
@@ -156,46 +156,46 @@
       "weight": 0.04,
       "auto": true,
       "stale": false,
-      "stale_days": 314
+      "stale_days": 321
     },
     "m2": {
       "name": "M2同比",
       "score": 30,
       "label": "偏紧",
-      "value": 7.2,
-      "date": "2026-09",
+      "value": 7.1,
+      "date": "2026-10",
       "source": "中国人民银行",
       "line": 3,
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 56
+      "stale_days": 33
     },
     "m1": {
       "name": "M1同比",
       "score": 60,
       "label": "温和",
-      "value": 3.2,
-      "date": "2026-09",
+      "value": 4.4,
+      "date": "2026-10",
       "source": "中国人民银行",
       "line": 3,
       "weight": 0.03,
       "auto": true,
       "stale": false,
-      "stale_days": 56
+      "stale_days": 33
     },
     "rmb_loan": {
       "name": "人民币贷款余额同比",
       "score": 5,
       "label": "收缩",
-      "value": 4.82,
-      "date": "2026-09",
+      "value": 4.92,
+      "date": "2026-08",
       "source": "中国人民银行",
       "line": 3,
       "weight": 0.05,
-      "auto": true,
-      "stale": false,
-      "stale_days": 56
+      "auto": false,
+      "stale": true,
+      "stale_days": 94
     },
     "social_financing": {
       "name": "社融增量同比",
@@ -206,81 +206,81 @@
       "source": "中国人民银行（滚动12月）",
       "line": 3,
       "weight": 0.06,
-      "auto": true,
+      "auto": false,
       "stale": true,
-      "stale_days": 209
+      "stale_days": 216
     },
     "bond_yield": {
       "name": "10年国债收益率",
       "score": 30,
       "label": "低",
-      "value": 1.5874,
-      "date": "2026-11-09",
+      "value": 1.679,
+      "date": "2026-09-28",
       "source": "中国债券信息网",
       "line": 3,
       "weight": 0.02,
-      "auto": true,
-      "stale": false,
-      "stale_days": 1
+      "auto": false,
+      "stale": true,
+      "stale_days": 50
     },
     "lpr": {
       "name": "1年期LPR",
       "score": 60,
       "label": "正常",
       "value": 3.0,
-      "date": "2026-10-20",
+      "date": "2026-09-20",
       "source": "全国银行间同业拆借中心",
       "line": 3,
       "weight": 0.04,
-      "auto": true,
+      "auto": false,
       "stale": false,
-      "stale_days": 21
+      "stale_days": 58
     },
     "industrial_output": {
       "name": "工业增加值同比",
-      "score": 70,
-      "label": "稳健",
-      "value": 5.5,
-      "date": "2026-09",
+      "score": 40,
+      "label": "偏弱",
+      "value": 4.8,
+      "date": "2026-10",
       "source": "国家统计局",
       "line": 4,
       "weight": 0.06,
       "auto": true,
       "stale": false,
-      "stale_days": 56
+      "stale_days": 33
     },
     "export": {
       "name": "出口同比增速",
       "score": 100,
       "label": "强劲",
-      "value": 36.3,
-      "date": "2026-09",
+      "value": 35.2,
+      "date": "2026-10",
       "source": "海关总署",
       "line": 4,
       "weight": 0.05,
       "auto": true,
       "stale": false,
-      "stale_days": 56
+      "stale_days": 33
     },
     "import_yoy": {
       "name": "进口同比增速",
       "score": 85,
       "label": "偏热",
-      "value": 31.0,
-      "date": "2026-09",
+      "value": 41.6,
+      "date": "2026-10",
       "source": "海关总署",
       "line": 4,
       "weight": 0.04,
       "auto": true,
       "stale": false,
-      "stale_days": 56
+      "stale_days": 33
     },
     "currency_index": {
       "name": "人民币CFETS汇率指数",
       "score": 90,
       "label": "偏强",
-      "value": 103.65,
-      "date": "2026-11-06",
+      "value": 104.43,
+      "date": "2026-11-13",
       "source": "中国外汇交易中心",
       "line": 4,
       "weight": 0.05,
@@ -292,8 +292,8 @@
       "name": "中国AI模型海外调用份额",
       "score": 100,
       "label": "领先",
-      "value": 47.8,
-      "date": "2026-11-10",
+      "value": 48.2,
+      "date": "2026-11-17",
       "source": "OpenRouter",
       "line": 4,
       "weight": 0.06,
@@ -305,14 +305,14 @@
       "name": "新能源汽车渗透率",
       "score": 75,
       "label": "放量",
-      "value": 41.8,
-      "date": "2026-09",
+      "value": 42.8,
+      "date": "2026-08",
       "source": "中国汽车工业协会",
       "line": 4,
       "weight": 0.04,
-      "auto": true,
-      "stale": false,
-      "stale_days": 56
+      "auto": false,
+      "stale": true,
+      "stale_days": 94
     }
   }
 }
