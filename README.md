@@ -31,7 +31,23 @@ python fetch_a500_data.py
 
 本仓库的**源代码**采用 [MIT 许可证](LICENSE)。
 
-⚠️ 关于**数据文件**：仓库内的 JSON / JS 市场数据文件（`pe_history.json`、`data_cache.json`、`realtime_data.js`、`dividend_data.json`、`transition_data.json`、`temp_history.json` 等）由脚本在运行时从第三方公开数据源（新浪财经，经 akshare 获取）抓取后落盘，随仓库一并提供是为了让站点可被复现与审计，无需重跑全部历史抓取。
+⚠️ 关于**数据文件**：仓库内的 JSON / JS 市场数据文件（`pe_history.json`、`data_cache.json`、`realtime_data.js`、`dividend_data.json`、`transition_data.json`、`temp_history.json`、`etf_premium.json` 等）由脚本在运行时从第三方公开数据源抓取后落盘，随仓库一并提供是为了让站点可被复现与审计，无需重跑全部历史抓取。
+
+## ETF 溢价分位
+
+首页底部的「ETF 溢价」面板给出两只跨境 ETF 的日度溢价，以及它在近 1 年、近 3 年和全部历史上的位置：
+
+- 纳指ETF国泰 `513100`
+- 标普500ETF博时 `513500`
+
+溢价率 = 收盘价 / 单位净值 − 1。收盘价用腾讯证券不复权日 K，单位净值用东方财富，申购状态用东方财富 `SGZT`。分位分成五档：偏低 &lt;10%、较低 10–30%、正常 30–70%、较高 70–90%、偏高 &gt;90%。样本少于 60 个交易日的区间不展示。申购状态含「暂停申购」或「限制申购」时，面板会注明溢价可能结构性偏高，分位只供参考。
+
+每日收盘任务在 A500 数据写完之后跑 `fetch_etf_premium.py`。这一步失败会保留上一份 `etf_premium.json`，不影响温度更新。
+
+不想显示这个面板时，任选其一：
+
+1. 把 `etf_premium.json` 的 `"enabled"` 改成 `false`，或删掉该文件。页面发现没有可用数据就会藏起整块面板。
+2. 在 `.github/workflows/a500-daily.yml` 的「ETF 溢价历史分位」步骤加上 `A500_ETF_PREMIUM: "0"`，脚本会把 `enabled` 写成 `false` 并停止抓取。也可以直接删掉这一步。
 
 MIT 许可覆盖本仓库的源代码，**不覆盖底层第三方市场数据本身**——后者仍受其原始提供方的条款约束。若你再分发本项目，请先自行确认所用数据源的许可。
 
