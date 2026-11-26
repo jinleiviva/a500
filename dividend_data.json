@@ -5,7 +5,7 @@
   "dividend_yield": null,
   "dividend_yield_date": null,
   "dividend_yield_percentile": 50,
-  "pb": 1.02,
+  "pb": 1.03,
   "roe": 11.7,
   "bond_yield": 1.74,
   "spread": null,
@@ -22,5 +22,5 @@
   "trend_reason": "",
   "temp_history": [],
   "dividend_history": [],
-  "update_time": "2026-11-26 02:13"
+  "update_time": "2026-11-27 01:55"
 }
